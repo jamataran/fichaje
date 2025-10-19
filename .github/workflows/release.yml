@@ -1,4 +1,4 @@
-name: Release assets
+name: 'Release: Create GitHub Release on Tag'
 on:
   push:
     tags: ['v*']
