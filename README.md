@@ -8,6 +8,7 @@
 [![Backend](https://img.shields.io/badge/Spring%20Boot-2.5-brightgreen)](https://spring.io/projects/spring-boot)
 [![Java](https://img.shields.io/badge/Java-11-orange)](https://adoptium.net/temurin/releases/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-informational)](deploy/)
+[![CodeQL](https://github.com/jamataran/fichaje/actions/workflows/codeql.yml/badge.svg)](https://github.com/jamataran/fichaje/actions/workflows/codeql.yml)
 
 Fichaje es una aplicación para el registro de jornada de empleados en empresas. Permite gestionar usuarios, fichajes (entradas/salidas), calendarios, vacaciones e incidencias desde una interfaz web sencilla, con un backend robusto y base de datos MySQL.
 

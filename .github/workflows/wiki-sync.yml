@@ -1,4 +1,4 @@
-name: Sync Wiki
+name: 'Wiki Sync: Sync docs/wiki to GitHub Wiki'
 
 on:
   push:
