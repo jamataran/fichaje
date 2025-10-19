@@ -20,7 +20,17 @@ logs/
 # OS
 .DS_Store
 
-# Docker
+# Docker & Environment
 **/.env
+**/.env.dev
+**/.env.test
+**/.env.prod
 **/data/
 
+# Spring Boot
+**/application-local.properties
+
+# Turborepo
+node_modules/
+dist/
+.turbo/
