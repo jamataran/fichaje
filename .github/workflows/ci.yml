@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  frontend:
+    name: Frontend (Angular)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: angular_fichajesPi
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16.x
+          cache: 'npm'
+          cache-dependency-path: angular_fichajesPi/package-lock.json
+      - name: Install deps
+        run: npm ci --legacy-peer-deps
+      - name: Build
+        env:
+          apiURL: http://localhost:8080
+        run: npm run build
+
+  backend:
+    name: Backend (Spring Boot)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'maven'
+      - name: Build with Maven
+        run: mvn -B -ntp -f spring-boot_fichajesPi/pom.xml clean package -DskipTests
+
+  desktop:
+    name: Desktop (Maven)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'maven'
+      - name: Build with Maven
+        run: mvn -B -ntp -f fichajesPi_desktop/pom.xml clean package -DskipTests
+
+  aggregate:
+    name: Aggregator
+    runs-on: ubuntu-latest
+    needs: [frontend, backend, desktop]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Summary
+        run: |
+          echo "Frontend, Backend y Desktop build OK"

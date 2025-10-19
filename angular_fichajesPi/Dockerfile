@@ -8,7 +8,7 @@ COPY package.json /app
 COPY package-lock.json /app
 RUN npm install --legacy-peer-deps
 COPY . /app
-RUN npm run build --prod
+RUN npm run build
 
 #Segunda Etapa
 FROM nginx:1.17.1-alpine

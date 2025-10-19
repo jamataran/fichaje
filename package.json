@@ -1,0 +1,24 @@
+{
+  "name": "fichajespi-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo para FichajesPi: backend Spring Boot, frontend Angular y app de escritorio.",
+  "engines": {
+    "node": ">=16 <18",
+    "npm": ">=7"
+  },
+  "workspaces": [
+    "angular_fichajesPi",
+    "packages/*"
+  ],
+  "scripts": {
+    "frontend:install": "npm --workspace angular_fichajesPi ci",
+    "frontend:build": "npm --workspace angular_fichajesPi run build",
+    "frontend:start": "npm --workspace angular_fichajesPi start",
+    "backend:build": "mvn -B -ntp -f spring-boot_fichajesPi/pom.xml package",
+    "desktop:build": "mvn -B -ntp -f fichajesPi_desktop/pom.xml package",
+    "ci": "npm run frontend:build && npm run backend:build && npm run desktop:build",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down"
+  }
+}

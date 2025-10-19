@@ -8,6 +8,50 @@
 FichajesPi es una aplicación ideada para permitir cumplir una necesidad de las empresas: __registrar las horas de trabajo de sus empleados__.
 
 
+# Monorepo
+
+Este repositorio está organizado como monorepo y contiene:
+
+- Frontend: Angular (carpeta `angular_fichajesPi`)
+- Backend: Spring Boot (carpeta `spring-boot_fichajesPi`)
+- App de escritorio: Java (carpeta `fichajesPi_desktop`)
+- Infra: docker-compose, GitHub Actions, scripts de setup
+
+Estructura principal:
+
+- `package.json` raíz con workspaces (Angular)
+- `pom.xml` raíz (aggregator) para construir módulos Maven (backend y desktop)
+- `.github/workflows/ci.yml` con CI para frontend, backend y escritorio
+- `.env.example` con variables de entorno comunes para docker-compose
+
+Comandos rápidos desde la raíz:
+
+- Instalar frontend: `npm run frontend:install`
+- Build frontend: `npm run frontend:build`
+- Build backend: `npm run backend:build`
+- Build desktop: `npm run desktop:build`
+- Build todo (CI local): `npm run ci`
+- Levantar stack Docker: `npm run docker:up`
+- Parar stack Docker: `npm run docker:down`
+
+Requisitos de versión:
+
+- Node 16.x (archivo `.nvmrc` incluido). Recomendado usar `nvm use`.
+- Java 11 (Temurin) y Maven 3.8+ para backend/desktop.
+
+Variables de entorno (Docker):
+
+Copia `.env.example` a `.env` y ajusta valores si lo necesitas. Por defecto se usan:
+
+- `MYSQL_DATABASE=db_fichajespi`, `MYSQL_USER=fichajes`, `MYSQL_PASSWORD=fichajes`
+- `API_URL` o `IP` para apuntar el frontend al backend (por defecto `http://localhost:8080`)
+
+CI/CD:
+
+- El workflow `ci.yml` construye las tres apps en cada push/PR a `main`/`master`.
+- Siguientes pasos recomendados (CD): publicar imágenes en GHCR y despliegue automático.
+
+---
 
 # Instalación
 
@@ -126,20 +170,3 @@ Este script creará las imágenes de los contenedores de docker y levantará los
 usuario por defecto tras instalación:
 user: fichajesPi000
 pass: fichajesPi000
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
