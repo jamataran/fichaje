@@ -1,0 +1,46 @@
+name: Sync Wiki
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'docs/wiki/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Clone wiki repository
+        env:
+          REPO: ${{ github.repository }}
+        run: |
+          git clone "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${REPO}.wiki.git" wiki
+
+      - name: Copy docs/wiki to wiki
+        run: |
+          mkdir -p wiki
+          rsync -av --exclude='.git' docs/wiki/ wiki/
+
+      - name: Commit and push if changes
+        working-directory: wiki
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "chore(wiki): sync from docs/wiki at ${GITHUB_SHA}"
+            git push origin HEAD:master || git push origin HEAD:main || true
+          else
+            echo "No changes to commit"
+          fi
+

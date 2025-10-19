@@ -1,0 +1,106 @@
+name: Publish Docker images
+
+on:
+  push:
+    branches: [ main, master, develop ]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push-images:
+    name: Build and push Docker images (frontend/backend)
+    runs-on: ubuntu-latest
+    env:
+      # Permite definir por repo var FE_API_URL; si no, usa http://localhost:8080
+      FE_API_URL: ${{ vars.FE_API_URL != '' && vars.FE_API_URL || 'http://localhost:8080' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          filters: |
+            fe:
+              - 'apps/fichaje-fe/**'
+            be:
+              - 'apps/fichaje-be/**'
+
+      - name: Set repo owner (lowercase)
+        id: repo_owner
+        run: |
+          OWNER="${{ github.repository_owner }}"
+          OWNER_LC="${OWNER,,}"
+          echo "owner=${OWNER_LC}" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Frontend metadata (tags/labels)
+      - name: Docker metadata (frontend)
+        id: meta_fe
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ steps.repo_owner.outputs.owner }}/fichaje-frontend
+          tags: |
+            type=ref,event=branch
+            type=sha
+            type=semver,pattern={{version}},event=tag
+            type=semver,pattern={{major}}.{{minor}},event=tag
+            type=semver,pattern={{major}},event=tag
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' }}
+
+      # Backend metadata (tags/labels)
+      - name: Docker metadata (backend)
+        id: meta_be
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ steps.repo_owner.outputs.owner }}/fichaje-backend
+          tags: |
+            type=ref,event=branch
+            type=sha
+            type=semver,pattern={{version}},event=tag
+            type=semver,pattern={{major}}.{{minor}},event=tag
+            type=semver,pattern={{major}},event=tag
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' }}
+
+      - name: Build and push frontend image
+        if: startsWith(github.ref, 'refs/tags/v') || steps.changes.outputs.fe == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: ./apps/fichaje-fe
+          file: ./apps/fichaje-fe/Dockerfile
+          push: true
+          build-args: |
+            apiURL=${{ env.FE_API_URL }}
+          tags: ${{ steps.meta_fe.outputs.tags }}
+          labels: ${{ steps.meta_fe.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push backend image
+        if: startsWith(github.ref, 'refs/tags/v') || steps.changes.outputs.be == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: ./apps/fichaje-be
+          file: ./apps/fichaje-be/Dockerfile
+          push: true
+          tags: ${{ steps.meta_be.outputs.tags }}
+          labels: ${{ steps.meta_be.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

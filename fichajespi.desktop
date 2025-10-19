@@ -1,3 +1,0 @@
-[Desktop Entry]
-Name=FichajesPi_Desktop
-Exec=java -jar /home/pi/fichajespi/fichajesPi_desktop/target/fichajespi-desktp-jar-with-dependencies.jar

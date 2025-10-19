@@ -1,0 +1,31 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["pnpm-lock.yaml"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["target/**", "dist/**"],
+      "cache": true
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "cache": true
+    },
+    "lint": { "outputs": [], "cache": true },
+    "dev":  { "cache": false, "persistent": true },
+    "clean": { "cache": false },
+
+    "db:dev:up":   { "cache": false },
+    "db:dev:down": { "cache": false },
+    "db:test:up":  { "cache": false },
+    "db:test:down":{ "cache": false },
+
+    "dev:up":   { "cache": false },
+    "dev:down": { "cache": false },
+    "dev:logs": { "cache": false, "persistent": true },
+    "prod:up":  { "cache": false },
+    "prod:down":{ "cache": false },
+    "prod:logs":{ "cache": false, "persistent": true }
+  }
+}

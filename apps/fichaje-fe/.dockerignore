@@ -1,0 +1,14 @@
+# Ignorar archivos innecesarios en el contexto de build
+node_modules
+.dist
+/dist
+.git
+.github
+.vscode
+.idea
+Dockerfile*
+.dockerignore
+npm-debug.log*
+yarn.lock
+pnpm-lock.yaml
+

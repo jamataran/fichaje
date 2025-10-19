@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main, master, develop ]
+  push:
+    branches:
+      - main
+      - master
+      - develop
+      - 'feature/**'
+      - 'hotfix/**'
+      - 'release/**'
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Monorepo build (Turbo)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16.x
+          cache: 'pnpm'
+          cache-dependency-path: '**/pnpm-lock.yaml'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.3
+
+      - name: Setup Java 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'maven'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages with Turbo
+        run: pnpm turbo run build --color
+
+      # Opcional: lint/test si están listos para CI sin dependencias extra
+      # - name: Lint
+      #   run: pnpm turbo run lint --color
+      # - name: Test
+      #   run: pnpm turbo run test --color

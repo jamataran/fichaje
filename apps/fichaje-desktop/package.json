@@ -1,0 +1,11 @@
+{
+  "name": "@fichaje/desktop",
+  "private": true,
+  "scripts": {
+    "dev": "mvn exec:java -Dexec.mainClass=com.fichajespi.fichajespidestopapp.MainWindow",
+    "build": "mvn -q -DskipTests package",
+    "test": "mvn -q test",
+    "lint": "echo \"(Checkstyle/Spotless via Maven)\" && exit 0",
+    "clean": "mvn -q clean"
+  }
+}

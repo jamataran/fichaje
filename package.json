@@ -1,0 +1,33 @@
+{
+  "name": "fichajespi-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo para FichajesPi: backend Spring Boot, frontend Angular y app de escritorio.",
+  "packageManager": "pnpm@10.18.3",
+  "engines": {
+    "node": ">=16",
+    "pnpm": ">=8"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:db": "turbo run db:dev:up --filter=@fichaje/be",
+    "dev:db:down": "turbo run db:dev:down --filter=@fichaje/be",
+    "dev:be": "turbo run dev --filter=@fichaje/be",
+    "dev:fe": "turbo run dev --filter=@fichaje/fe",
+    "dev:full": "turbo run db:dev:up --filter=@fichaje/be && turbo run dev --filter=@fichaje/be --filter=@fichaje/fe --parallel",
+    "dev:stack": "pnpm dev:full",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean",
+    "docker:dev:up": "turbo run dev:up --filter=@fichaje/infra",
+    "docker:dev:down": "turbo run dev:down --filter=@fichaje/infra",
+    "docker:dev:logs": "turbo run dev:logs --filter=@fichaje/infra",
+    "docker:prod:up": "turbo run prod:up --filter=@fichaje/infra",
+    "docker:prod:down": "turbo run prod:down --filter=@fichaje/infra",
+    "docker:prod:logs": "turbo run prod:logs --filter=@fichaje/infra"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.8"
+  }
+}

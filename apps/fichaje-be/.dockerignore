@@ -1,0 +1,12 @@
+# Ignorar archivos innecesarios en el contexto de build
+.git
+.github
+.vscode
+.idea
+node_modules
+.target
+/target
+Dockerfile*
+.dockerignore
+pom.xml.versionsBackup
+

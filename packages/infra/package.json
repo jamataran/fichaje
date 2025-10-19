@@ -1,0 +1,14 @@
+{
+  "name": "@fichaje/infra",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Infraestructura local: comandos de Docker Compose para dev y prod",
+  "scripts": {
+    "dev:up": "docker compose -f ../../deploy/dev/compose.yaml up -d",
+    "dev:down": "docker compose -f ../../deploy/dev/compose.yaml down",
+    "dev:logs": "docker compose -f ../../deploy/dev/compose.yaml logs -f",
+    "prod:up": "docker compose -f ../../deploy/prod/compose.yaml up -d",
+    "prod:down": "docker compose -f ../../deploy/prod/compose.yaml down",
+    "prod:logs": "docker compose -f ../../deploy/prod/compose.yaml logs -f"
+  }
+}
