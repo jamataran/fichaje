@@ -9,11 +9,11 @@
 		<version>2.5.1</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.fichajespi</groupId>
+	<groupId>org.fichaje</groupId>
 	<artifactId>fichaje-be</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>fichaje-be</name>
-	<description>Backend for FichajesPi App</description>
+	<description>Backend for Fichaje</description>
 	<properties>
 		<java.version>11</java.version>
 		<maven.compiler.release>11</maven.compiler.release>

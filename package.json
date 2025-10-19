@@ -9,10 +9,13 @@
     "pnpm": ">=8"
   },
   "scripts": {
-    "dev": "turbo run dev --parallel",
-    "dev:infra": "turbo run dev:up --filter=@fichaje/infra",
-    "dev:down": "turbo run dev:down --filter=@fichaje/infra",
-    "dev:stack": "pnpm dev:infra && pnpm dev",
+    "dev": "turbo run dev",
+    "dev:db": "turbo run db:dev:up --filter=@fichaje/be",
+    "dev:db:down": "turbo run db:dev:down --filter=@fichaje/be",
+    "dev:be": "turbo run dev --filter=@fichaje/be",
+    "dev:fe": "turbo run dev --filter=@fichaje/fe",
+    "dev:full": "turbo run db:dev:up --filter=@fichaje/be && turbo run dev --filter=@fichaje/be --filter=@fichaje/fe --parallel",
+    "dev:stack": "pnpm dev:full",
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",

@@ -8,8 +8,8 @@
     "test:with-db": "docker compose -f docker-compose.test.yml up -d && ./mvnw test -Dspring.profiles.active=test; docker compose -f docker-compose.test.yml down",
     "lint": "echo \"(Checkstyle/Spotless via Maven)\" && exit 0",
     "clean": "./mvnw -q clean",
-    "db:dev:up": "docker compose -f ../../deploy/dev/compose.yaml --env-file ../../deploy/dev/.env up -d db-dev phpmyadmin-dev mailhog",
-    "db:dev:down": "docker compose -f ../../deploy/dev/compose.yaml --env-file ../../deploy/dev/.env down",
+    "db:dev:up": "docker compose -f ../../deploy/dev/compose.yaml up -d db-dev phpmyadmin-dev mailhog",
+    "db:dev:down": "docker compose -f ../../deploy/dev/compose.yaml down",
     "db:test:up": "docker compose -f docker-compose.test.yml up -d",
     "db:test:down": "docker compose -f docker-compose.test.yml down"
   }

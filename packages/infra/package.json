@@ -4,11 +4,11 @@
   "private": true,
   "description": "Infraestructura local: comandos de Docker Compose para dev y prod",
   "scripts": {
-    "dev:up": "docker compose -f ../../deploy/dev/compose.yaml --env-file ../../deploy/dev/.env up -d",
-    "dev:down": "docker compose -f ../../deploy/dev/compose.yaml --env-file ../../deploy/dev/.env down",
-    "dev:logs": "docker compose -f ../../deploy/dev/compose.yaml --env-file ../../deploy/dev/.env logs -f",
-    "prod:up": "docker compose -f ../../deploy/prod/compose.yaml --env-file ../../deploy/prod/.env up -d",
-    "prod:down": "docker compose -f ../../deploy/prod/compose.yaml --env-file ../../deploy/prod/.env down",
-    "prod:logs": "docker compose -f ../../deploy/prod/compose.yaml --env-file ../../deploy/prod/.env logs -f"
+    "dev:up": "docker compose -f ../../deploy/dev/compose.yaml up -d",
+    "dev:down": "docker compose -f ../../deploy/dev/compose.yaml down",
+    "dev:logs": "docker compose -f ../../deploy/dev/compose.yaml logs -f",
+    "prod:up": "docker compose -f ../../deploy/prod/compose.yaml up -d",
+    "prod:down": "docker compose -f ../../deploy/prod/compose.yaml down",
+    "prod:logs": "docker compose -f ../../deploy/prod/compose.yaml logs -f"
   }
 }

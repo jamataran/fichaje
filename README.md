@@ -12,7 +12,8 @@
 Fichaje es una aplicación para el registro de jornada de empleados en empresas. Permite gestionar usuarios, fichajes (entradas/salidas), calendarios, vacaciones e incidencias desde una interfaz web sencilla, con un backend robusto y base de datos MySQL.
 
 **Repositorio actual**: https://github.com/jamataran/fichaje  
-**Repositorio original**: https://github.com/alejandroferrin/fichajespi
+**Repositorio original**: https://github.com/alejandroferrin/fichajespi  
+**Wiki del proyecto**: https://github.com/jamataran/fichaje/wiki
 
 ---
 
@@ -67,8 +68,8 @@ docker build -t fichaje-frontend:local apps/fichaje-fe
 Actualiza `deploy/prod/.env` para usar estas imágenes locales:
 
 ```
-FRONTEND_IMAGE=fichaje-backend:local
-BACKEND_IMAGE=fichaje-frontend:local
+FRONTEND_IMAGE=fichaje-frontend:local
+BACKEND_IMAGE=fichaje-backend:local
 ```
 
 Y levanta el stack:
@@ -128,4 +129,5 @@ Esto arrancará:
 ## Enlaces útiles
 - **Guía de desarrollo**: [SETUP.md](SETUP.md) - Estructura del monorepo y comandos Turborepo
 - **Orquestación Docker**: [DOCKER.md](DOCKER.md) - Detalles de compose dev/test/prod
+- **CI/CD**: consulta la **Wiki** ➜ https://github.com/jamataran/fichaje/wiki/CI-CD
 - **Proyecto original**: https://github.com/alejandroferrin/fichajespi

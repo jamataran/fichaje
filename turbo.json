@@ -16,6 +16,11 @@
     "dev":  { "cache": false, "persistent": true },
     "clean": { "cache": false },
 
+    "db:dev:up":   { "cache": false },
+    "db:dev:down": { "cache": false },
+    "db:test:up":  { "cache": false },
+    "db:test:down":{ "cache": false },
+
     "dev:up":   { "cache": false },
     "dev:down": { "cache": false },
     "dev:logs": { "cache": false, "persistent": true },
