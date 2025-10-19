@@ -1,0 +1,61 @@
+# Compose para DESARROLLO LOCAL
+# Uso:
+#  - docker compose -f deploy/dev/compose.yaml up -d
+#  - docker compose -f deploy/dev/compose.yaml down
+
+version: '3.9'
+
+services:
+  db-dev:
+    container_name: fichajespi_db_dev
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-dev_root_pass}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-db_fichajespi_dev}
+      MYSQL_USER: ${MYSQL_USER:-fichajes_dev}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-fichajes_dev}
+      TZ: ${TZ:-Europe/Madrid}
+    volumes:
+      - db_dev_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$$MYSQL_USER", "-p$$MYSQL_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - fichajes-dev
+
+  phpmyadmin-dev:
+    container_name: fichajespi_dbadmin_dev
+    image: phpmyadmin:latest
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db-dev
+      PMA_PORT: 3306
+      PMA_USER: ${MYSQL_USER:-fichajes_dev}
+      PMA_PASSWORD: ${MYSQL_PASSWORD:-fichajes_dev}
+    depends_on:
+      - db-dev
+    networks:
+      - fichajes-dev
+
+  mailhog:
+    container_name: fichajespi_mailhog_dev
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - fichajes-dev
+
+networks:
+  fichajes-dev:
+    name: fichajes-dev-network
+
+volumes:
+  db_dev_data:
+    name: fichajes_db_dev_data
+

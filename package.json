@@ -3,22 +3,28 @@
   "version": "1.0.0",
   "private": true,
   "description": "Monorepo para FichajesPi: backend Spring Boot, frontend Angular y app de escritorio.",
+  "packageManager": "pnpm@10.18.3",
   "engines": {
-    "node": ">=16 <18",
-    "npm": ">=7"
+    "node": ">=16",
+    "pnpm": ">=8"
   },
-  "workspaces": [
-    "angular_fichajesPi",
-    "packages/*"
-  ],
   "scripts": {
-    "frontend:install": "npm --workspace angular_fichajesPi ci",
-    "frontend:build": "npm --workspace angular_fichajesPi run build",
-    "frontend:start": "npm --workspace angular_fichajesPi start",
-    "backend:build": "mvn -B -ntp -f spring-boot_fichajesPi/pom.xml package",
-    "desktop:build": "mvn -B -ntp -f fichajesPi_desktop/pom.xml package",
-    "ci": "npm run frontend:build && npm run backend:build && npm run desktop:build",
-    "docker:up": "docker compose up -d --build",
-    "docker:down": "docker compose down"
+    "dev": "turbo run dev --parallel",
+    "dev:infra": "turbo run dev:up --filter=@fichaje/infra",
+    "dev:down": "turbo run dev:down --filter=@fichaje/infra",
+    "dev:stack": "pnpm dev:infra && pnpm dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean",
+    "docker:dev:up": "turbo run dev:up --filter=@fichaje/infra",
+    "docker:dev:down": "turbo run dev:down --filter=@fichaje/infra",
+    "docker:dev:logs": "turbo run dev:logs --filter=@fichaje/infra",
+    "docker:prod:up": "turbo run prod:up --filter=@fichaje/infra",
+    "docker:prod:down": "turbo run prod:down --filter=@fichaje/infra",
+    "docker:prod:logs": "turbo run prod:logs --filter=@fichaje/infra"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.8"
   }
 }

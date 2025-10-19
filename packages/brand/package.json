@@ -1,0 +1,11 @@
+{
+  "name": "@fichaje/brand",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Paquete de marca compartido (logos, paleta, tokens)",
+  "files": ["assets"],
+  "exports": {
+    "./assets/*": "./assets/*"
+  }
+}
+

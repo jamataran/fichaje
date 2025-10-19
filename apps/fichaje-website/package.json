@@ -1,0 +1,12 @@
+{
+  "name": "@fichaje/website",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'Website not implemented yet'",
+    "build": "echo 'Website not implemented yet'",
+    "test": "echo 'No tests'",
+    "lint": "echo 'No lint'",
+    "clean": "echo 'Nothing to clean'"
+  }
+}
+

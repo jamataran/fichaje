@@ -1,172 +1,131 @@
-![logo](resources/fichajesPi.png  "logo")
+![Fichaje logo](packages/brand/assets/logo.svg)
 
+# Fichaje
 
-[Demo de funcionamiento](https://youtu.be/SXFIXl85gbs) 
+[![Monorepo](https://img.shields.io/badge/monorepo-turborepo-6A5ACD)](https://turbo.build/repo)
+[![Package Manager](https://img.shields.io/badge/pnpm-%E2%89%A58-blueviolet)](https://pnpm.io/)
+[![Frontend](https://img.shields.io/badge/Angular-13-red)](https://angular.io/)
+[![Backend](https://img.shields.io/badge/Spring%20Boot-2.5-brightgreen)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-11-orange)](https://adoptium.net/temurin/releases/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-informational)](deploy/)
 
-[Videotutorial instalación](https://youtu.be/58yBoo8ru_I) 
+Fichaje es una aplicación para el registro de jornada de empleados en empresas. Permite gestionar usuarios, fichajes (entradas/salidas), calendarios, vacaciones e incidencias desde una interfaz web sencilla, con un backend robusto y base de datos MySQL.
 
-FichajesPi es una aplicación ideada para permitir cumplir una necesidad de las empresas: __registrar las horas de trabajo de sus empleados__.
-
-
-# Monorepo
-
-Este repositorio está organizado como monorepo y contiene:
-
-- Frontend: Angular (carpeta `angular_fichajesPi`)
-- Backend: Spring Boot (carpeta `spring-boot_fichajesPi`)
-- App de escritorio: Java (carpeta `fichajesPi_desktop`)
-- Infra: docker-compose, GitHub Actions, scripts de setup
-
-Estructura principal:
-
-- `package.json` raíz con workspaces (Angular)
-- `pom.xml` raíz (aggregator) para construir módulos Maven (backend y desktop)
-- `.github/workflows/ci.yml` con CI para frontend, backend y escritorio
-- `.env.example` con variables de entorno comunes para docker-compose
-
-Comandos rápidos desde la raíz:
-
-- Instalar frontend: `npm run frontend:install`
-- Build frontend: `npm run frontend:build`
-- Build backend: `npm run backend:build`
-- Build desktop: `npm run desktop:build`
-- Build todo (CI local): `npm run ci`
-- Levantar stack Docker: `npm run docker:up`
-- Parar stack Docker: `npm run docker:down`
-
-Requisitos de versión:
-
-- Node 16.x (archivo `.nvmrc` incluido). Recomendado usar `nvm use`.
-- Java 11 (Temurin) y Maven 3.8+ para backend/desktop.
-
-Variables de entorno (Docker):
-
-Copia `.env.example` a `.env` y ajusta valores si lo necesitas. Por defecto se usan:
-
-- `MYSQL_DATABASE=db_fichajespi`, `MYSQL_USER=fichajes`, `MYSQL_PASSWORD=fichajes`
-- `API_URL` o `IP` para apuntar el frontend al backend (por defecto `http://localhost:8080`)
-
-CI/CD:
-
-- El workflow `ci.yml` construye las tres apps en cada push/PR a `main`/`master`.
-- Siguientes pasos recomendados (CD): publicar imágenes en GHCR y despliegue automático.
+**Repositorio actual**: https://github.com/jamataran/fichaje  
+**Repositorio original**: https://github.com/alejandroferrin/fichajespi
 
 ---
 
-# Instalación
+## Tabla de contenidos
+- [Requisitos](#requisitos)
+- [Instalación con Docker Compose](#instalación-con-docker-compose)
+  - [Usando imágenes preconstruidas](#usando-imágenes-preconstruidas)
+  - [Construyendo localmente](#construyendo-localmente)
+- [Acceso y credenciales](#acceso-y-credenciales)
+- [Desarrollo](#desarrollo)
+- [Enlaces útiles](#enlaces-útiles)
 
-## Requisitos previos
+## Requisitos
+- Docker y Docker Compose
+- Máquina con al menos 2 vCPU, 2 GB RAM y 10 GB de disco libres
 
-Los clientes interesados en montar un sistema de control de presencia mediante la implementación de FichajesPi en sus empresas deben contar con unos requisitos de hardware y software que pasaremos a enumerar:
+## Instalación con Docker Compose
 
-- __Ordenador Raspberry Pi 4 Model B.__ Raspberry Pi es un mini ordenador de placa reducida y de bajo costo que ejecuta sistemas operativos basados en linux. Su uso está muy extendido para la realización de proyectos personales ligados al IoT, Robótica, etc gracias a sus entradas y salidas digitales y analógicas que permiten que se comunique con dispositivos externos.
-También es comúnmente empleada como servidor debido a su bajo consumo y la poca demanda de recursos que suelen requerir los servidores basados en sistemas linux.
-En esta ocasión se ha seleccionado el modelo 4B ya que cuenta con un buen equilibrio entre prestaciones y precio, pudiéndose adquirir por unos 50€ el modelo de 2GB de RAM.
+La orquestación vive en `deploy/prod/`. Necesitas crear un archivo `.env` con tus variables.
 
-- __Pantalla táctil LCD de 3,5”__. Con esta pantalla los empleados pueden verificar que se ha realizado correctamente el fichaje con tarjeta NFC. Es sencillo encontrar pantallas de este tipo en comercios especializados en venta de material para Raspberry 
-Pi.
+1) Crea el archivo de entorno de producción y ajústalo:
 
-- __Lector de tarjetas NFC__. Para que los empleados puedan fichar sus entradas y salidas de forma ágil, se conectará al micro-ordenador un lector USB. El modelo escogido es el ACR122U, que es fácilmente conseguible en multitud de tiendas online.
-Este lector soporta los protocolos: ISO 14443 Type A and B cards, MIFARE, FeliCa, y los 4 tipos de NFC tags (ISO/IEC 18092).
-
-- __Tarjetas NFC compatibles.__ Se entregará una a cada empleado. Han de ser de alguno de los tipos compatibles indicados en el apartado anterior.
-
-- __Cargador__ USB tipo C de 12W.
-
-- __Tarjeta micro SD.__ En la que grabaremos la imagen con el sistema operativo y que servirá de unidad de almacenamiento principal al sistema. Dado que la aplicación contará con una base de datos en la que se insertarán registros habitualmente es preferible que la tarjeta micro SD sea de gran capacidad y velocidad, al menos 64GB Clase 10, para que el rendimiento sea óptimo.
-
-- __Disipadores de calor__ para los microprocesadores de Raspberry. De esta manera aumentaremos la vida útil de la máquina.
-
-- __Carcasa__ para proteger el equipo.
-
-- __Monitor, teclado y ratón__ para la configuración inicial del sistema. Opcional. - si no se desea o no se puede hacer por conexión SSH -
-
-- __Red Local,__ para que los empleados puedan acceder a la aplicación web desde sus PC 's estos deben estar conectados a la misma red local que la Raspberry Pi.
-
-- __Servidor de correo electrónico.__ Para que la aplicación pueda enviar emails de notificación a los usuarios se debe contar con un servidor de correo electrónico SMTP para poder indicar a la aplicación parámetros como: host, puerto, username y password.
-
-- __Conexión a internet.__ La instalación se lleva a cabo descargando software desde internet por lo que para instalar Fichajes Pi se debe contar con conexión a internet, no así para su uso,  salvo que el servidor de correo electrónico no esté instalado localmente.
-
-##Instalación de Raspberry Pi OS en la tarjeta micro SD:
-
-Este sistema operativo basado en Debian es el escogido para servir de host a la aplicación, ya que, cuenta con una amplio soporte y es muy sencillo encontrar documentación que nos ayude en caso de aparecer errores o querer personalizar configuraciones.
-
-Proceso de instalación desde linux:
-
-- Instalar Raspberry Pi Imager desde https://www.raspberrypi.com/software/
-
-- Ejecutar el programa y seleccionar ‘RASPBERRY PI OS (32-BIT)’ en el apartado ‘Operating System’. En ‘Storage’ seleccionar la tarjeta microSD.
-
-- Pulsar ‘WRITE’ y esperar a que se complete el proceso.
-
-- Entrar en la carpeta ‘boot’ de la micro sd y crear un archivo llamado ssh. Esto sirve para que se active la conexión remota por ssh.
-
-- Fijar una IP estática. Editamos con permisos de super usuario el archivo `/etc/dhcpcd.conf` de la tarjeta microSD.
-
-Descomentamos las siguientes líneas e introducimos los parámetros adecuados a nuestra red:
-
-```
-#Example static IP configuration:
-#interface eth0
-#static ip_address=192.168.0.10/24
-#static ip6_address=fd51:42f8:caae:d92e::ff/64
-#static routers=192.168.0.1
-#static domain_name_servers=192.168.0.1 8.8.8.8
+```bash
+cp deploy/prod/.env.example deploy/prod/.env
+# Edita deploy/prod/.env: credenciales MySQL, JWT_SECRET y SMTP
 ```
 
-- Introducimos la microSD en la RaspberryPi y la encendemos.
+### Usando imágenes preconstruidas
 
-- Escribimos en la terminal `ssh pi@192.168.0.10` para conectarnos remotamente a la RaspberryPi que debe estar conectada a la red. La ip la debemos sustituir por la que hayamos indicado en el paso 5.
+Si tienes acceso a imágenes publicadas en GHCR:
 
-- El password por defecto para el usuario pi es raspberry.
+```bash
+# Las imágenes por defecto apuntan a:
+# ghcr.io/jamataran/fichaje-frontend:latest
+# ghcr.io/jamataran/fichaje-backend:latest
 
-- Ejecutamos `sudo raspi-config` para cambiar la configuración del sistema, como por ejemplo seleccionar un nuevo password.
+docker compose -f deploy/prod/compose.yaml --env-file deploy/prod/.env up -d
+```
 
-- Tras seguir estos pasos ya estaríamos listos para seguir las instrucciones de instalación de FichajesPi.
+### Construyendo localmente
 
-## Instalación en el servidor
+Si prefieres construir las imágenes tú mismo:
 
-FichajesPi está pensado para ser instalado en una Raspberry Pi, este hecho estandariza su despliegue ya que permite construir un script que automatice la instalación de dependencias y empaquetado de la aplicación.
+```bash
+# Backend
+docker build -t fichaje-backend:local apps/fichaje-be
 
-La configuración y puesta en marcha del sistema debería ser llevada a cabo por el personal informático de la empresa o por una persona con conocimientos suficientes en informática para poder solventar posibles eventualidades surgidas en el proceso.
+# Frontend
+docker build -t fichaje-frontend:local apps/fichaje-fe
+```
 
-Para poder instalar la aplicación debemos partir de una Raspberry Pi con Raspberry OS instalado y con el servicio de ssh activado para poder acceder al sistema de forma remota. También se debe haber instalado una pantalla táctil de 3.5”.
+Actualiza `deploy/prod/.env` para usar estas imágenes locales:
 
-Los pasos para la instalación del SO vienen descritos en el apartado anterior.
+```
+FRONTEND_IMAGE=fichaje-backend:local
+BACKEND_IMAGE=fichaje-frontend:local
+```
 
-Primero debemos conectarnos vía ssh a la Raspberry con el siguiente comando:
-`ssh pi@192.168.1.99`
+Y levanta el stack:
 
-Donde 192.168.1.99 debe ser sustituido por la ip estática que hayamos elegido en el proceso de configuración.
+```bash
+docker compose -f deploy/prod/compose.yaml --env-file deploy/prod/.env up -d
+```
 
-A continuación comenzamos con la instalación mediante el siguiente comando:
+Una vez arriba, podrás acceder a:
+- **Frontend**: http://localhost
+- **Backend (API)**: http://localhost:8080
+- **phpMyAdmin**: http://localhost:81
 
-`curl -s https://raw.githubusercontent.com/alejandroferrin/fichajespi/main/setup | sudo bash`
+Para ver logs o parar:
 
-El script realizará las siguientes acciones:
+```bash
+docker compose -f deploy/prod/compose.yaml --env-file deploy/prod/.env logs -f
+docker compose -f deploy/prod/compose.yaml --env-file deploy/prod/.env down
+```
 
-- Crea carpeta para almacenar el volumen del contenedor Docker de la BD.
-- Actualiza el sistema.
-- Clona el repositorio.
-- Instala JDK.
-- Instala dependencias del lector de tarjetas NFC.
-- Instala Docker y Docker-Compose.
-- Instala Vim y VNC.
-- Empaqueta la app de escritorio y configurar el arranque de la misma al iniciar el sistema.
-- Configura el servicio pcscd que activa el lector de tarjetas.
-- Instala Drivers de la pantalla táctil.
+## Acceso y credenciales
 
-Tras la ejecución de este primer lote de acciones se reiniciará el dispositivo.
+El sistema crea un usuario por defecto tras la instalación (cámbialo tras el primer acceso):
 
-Cuando se haya vuelto a iniciar el sistema nos volvemos a conectar mediante ssh para __ejecutar el script ‘setup_app’__ que se encuentra en la carpeta del repositorio.
+- **Usuario**: `fichajesPi000`
+- **Contraseña**: `fichajesPi000`
 
-__Antes de ejecutar este último paso podemos personalizar ciertos parámetros del sistema como son: usuario y contraseñas de base de datos, parámetros del servidor smtp y secret key del token JWT.__
+## Desarrollo
 
-Para modificar los parámetros por defecto debemos abrir el archivo ‘docker-compose.yml’ y fijarnos en los comentarios de las líneas que podemos modificar.
+Si quieres contribuir o desarrollar localmente, consulta **[SETUP.md](SETUP.md)** donde encontrarás:
 
-Este script creará las imágenes de los contenedores de docker y levantará los mismos mediante el uso de docker-compose.
+- Cómo levantar el entorno completo con **un solo comando** usando Turborepo
+- Estructura del monorepo (apps, packages, deploy)
+- Comandos para desarrollo, tests y builds
+- Puertos y servicios disponibles en local
 
+**Inicio rápido para desarrolladores**:
 
-usuario por defecto tras instalación:
-user: fichajesPi000
-pass: fichajesPi000
+```bash
+# 1. Instalar dependencias
+pnpm install
+
+# 2. Preparar entorno de desarrollo
+cp deploy/dev/.env.example deploy/dev/.env
+
+# 3. Levantar todo (infraestructura + backend + frontend)
+pnpm dev:stack
+```
+
+Esto arrancará:
+- MySQL (puerto 3307)
+- phpMyAdmin (puerto 8081)
+- MailHog para captura de emails (puerto 8025)
+- Backend Spring Boot (puerto 8080)
+- Frontend Angular (puerto 4200)
+
+## Enlaces útiles
+- **Guía de desarrollo**: [SETUP.md](SETUP.md) - Estructura del monorepo y comandos Turborepo
+- **Orquestación Docker**: [DOCKER.md](DOCKER.md) - Detalles de compose dev/test/prod
+- **Proyecto original**: https://github.com/alejandroferrin/fichajespi

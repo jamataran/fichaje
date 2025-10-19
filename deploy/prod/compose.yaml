@@ -1,0 +1,87 @@
+# Compose para PRODUCCIÓN (usa imágenes ya construidas)
+# Uso:
+#  - docker compose -f deploy/prod/compose.yaml --env-file deploy/prod/.env up -d
+#  - docker compose -f deploy/prod/compose.yaml --env-file deploy/prod/.env down
+
+version: '3.9'
+
+services:
+  db:
+    container_name: fichajespi_db
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: ${TZ:-Europe/Madrid}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$$MYSQL_USER", "-p$$MYSQL_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - fichajes-network
+
+  backend:
+    container_name: fichajespi_back
+    image: ${BACKEND_IMAGE:-ghcr.io/jamataran/fichaje-backend:latest}
+    environment:
+      TZ: ${TZ:-Europe/Madrid}
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/${MYSQL_DATABASE}?useSSL=false&serverTimezone=Europe/Madrid
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      CLIENT_URL: ${CLIENT_URL}
+      SPRING_MAIL_HOST: ${SPRING_MAIL_HOST}
+      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - fichajes-network
+
+  frontend:
+    container_name: fichajespi_front
+    image: ${FRONTEND_IMAGE:-ghcr.io/jamataran/fichaje-frontend:latest}
+    ports:
+      - "80:80"
+    environment:
+      TZ: ${TZ:-Europe/Madrid}
+    restart: unless-stopped
+    networks:
+      - fichajes-network
+
+  phpmyadmin:
+    container_name: fichajespi_dbadmin
+    image: phpmyadmin:latest
+    ports:
+      - "81:80"
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: db
+      PMA_USER: ${MYSQL_USER}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - fichajes-network
+
+networks:
+  fichajes-network:
+    name: fichajes-prod-network
+
+volumes:
+  db_data:
+    name: fichajes_db_prod_data

@@ -1,0 +1,17 @@
+# Ejemplo de override de logging para Docker Compose
+# Úsalo con: docker compose -f deploy/dev/compose.yaml -f deploy/overrides/logging.yaml up -d
+
+services:
+  backend:
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+  db:
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
