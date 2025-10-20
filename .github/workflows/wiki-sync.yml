@@ -1,10 +1,9 @@
-name: 'Wiki Sync: Sync docs/wiki to GitHub Wiki'
-
+# .github/workflows/wiki-sync.yml
+name: 'Wiki Sync: docs/wiki → Wiki'
 on:
   push:
     branches: [ main, master ]
-    paths:
-      - 'docs/wiki/**'
+    paths: ['docs/wiki/**']
   workflow_dispatch:
 
 permissions:
@@ -14,33 +13,39 @@ jobs:
   sync-wiki:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - name: Ensure wiki exists (abort nicely if not)
+        env: { REPO: ${{ github.repository }} }
+        run: |
+          set -e
+          git ls-remote "https://github.com/${REPO}.wiki.git" &>/dev/null || {
+            echo "❌ La Wiki aún no existe. Actívala y crea una página inicial."
+            exit 1
+          }
 
       - name: Setup Git
         run: |
-          git config --global user.name "github-actions[bot]"
+          git config --global user.name  "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Clone wiki repository
-        env:
-          REPO: ${{ github.repository }}
+        env: { REPO: ${{ github.repository }} }
         run: |
           git clone "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${REPO}.wiki.git" wiki
 
-      - name: Copy docs/wiki to wiki
+      - name: Mirror docs/wiki → wiki
         run: |
           mkdir -p wiki
-          rsync -av --exclude='.git' docs/wiki/ wiki/
+          rsync -av --delete --exclude='.git' docs/wiki/ wiki/
 
-      - name: Commit and push if changes
+      - name: Commit & push
         working-directory: wiki
         run: |
           if [ -n "$(git status --porcelain)" ]; then
             git add .
             git commit -m "chore(wiki): sync from docs/wiki at ${GITHUB_SHA}"
-            git push origin HEAD:master || git push origin HEAD:main || true
+            git push origin HEAD:master || git push origin HEAD:main
           else
             echo "No changes to commit"
           fi
-
