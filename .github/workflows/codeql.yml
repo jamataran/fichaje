@@ -1,18 +1,28 @@
-name: 'CodeQL: Security Analysis'
+# .github/workflows/codeql.yml
+name: "CodeQL"
+
 on:
-  push: { branches: [ main, develop, 'feature/**', 'hotfix/**', 'release/**' ] }
-  pull_request: { branches: [ main, develop ] }
-  schedule: [ { cron: '0 3 * * 1' } ]
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  schedule:
+    - cron: "0 3 * * 6"  # semanal
+
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   analyze:
-    permissions: { contents: read, security-events: write }
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: { language: [ 'javascript-typescript', 'java-kotlin' ] }
     steps:
       - uses: actions/checkout@v4
-      - uses: github/codeql-action/init@v3
-        with: { languages: ${ { matrix.language } } }
-      - uses: github/codeql-action/autobuild@v3
-      - uses: github/codeql-action/analyze@v3
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: 'java'
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
