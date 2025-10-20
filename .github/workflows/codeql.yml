@@ -1,66 +1,28 @@
-# .github/workflows/wiki-sync.yml
-name: "Wiki Sync: docs/wiki → Wiki"
+# .github/workflows/codeql.yml
+name: "CodeQL"
 
 on:
   push:
-    branches: [ main, master ]
-    paths:
-      - "docs/wiki/**"
-  workflow_dispatch:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  schedule:
+    - cron: "0 3 * * 6"  # semanal
 
 permissions:
-  contents: write
-
-concurrency:
-  group: wiki-sync-${{ github.ref }}
-  cancel-in-progress: true
+  contents: read
+  security-events: write
 
 jobs:
-  sync-wiki:
+  analyze:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
         with:
-          fetch-depth: 0
-
-      - name: Ensure wiki exists (abort nicely if not)
-        env:
-          REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          if ! git ls-remote "https://github.com/${REPO}.wiki.git" &>/dev/null; then
-            echo "❌ La Wiki aún no existe. Actívala y crea una página inicial."
-            exit 1
-          fi
-
-      - name: Setup Git
-        run: |
-          git config --global user.name  "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-      - name: Clone wiki repository
-        env:
-          REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          git clone "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${REPO}.wiki.git" wiki
-
-      - name: Mirror docs/wiki → wiki
-        run: |
-          set -euo pipefail
-          test -d docs/wiki || { echo "⚠️ No existe docs/wiki, nada que sincronizar"; exit 0; }
-          rsync -av --delete --exclude='.git' docs/wiki/ wiki/
-
-      - name: Commit & push
-        working-directory: wiki
-        run: |
-          set -euo pipefail
-          if [ -n "$(git status --porcelain)" ]; then
-            git add .
-            git commit -m "chore(wiki): sync from docs/wiki at ${GITHUB_SHA}"
-            # Detectar rama por defecto del wiki (suele ser master)
-            DEFAULT_BRANCH="$(git remote show origin | awk -F': ' '/HEAD branch/ {print $2}')"
-            git push origin HEAD:"${DEFAULT_BRANCH}"
-          else
-            echo "✅ No changes to commit"
-          fi
+          languages: 'java'
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
