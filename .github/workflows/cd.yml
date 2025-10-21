@@ -133,8 +133,7 @@ jobs:
       - name: Build Angular app for GitHub Pages
         working-directory: apps/fichaje-fe
         env:
-          # Usa la variable de entorno para el backend desplegado
-          FE_API_URL: ${{ vars.FE_API_URL != '' && vars.FE_API_URL || 'https://your-backend.northflank.app' }}
+          apiURL: https://api.fichaje.org
         run: |
           # Extrae el nombre del repo para base-href
           REPO_NAME="${{ github.event.repository.name }}"
