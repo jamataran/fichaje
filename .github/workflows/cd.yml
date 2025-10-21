@@ -116,7 +116,7 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: https://demo.fichaje.org
 
     steps:
       - uses: actions/checkout@v4
@@ -130,15 +130,21 @@ jobs:
         working-directory: apps/fichaje-fe
         run: npm ci --legacy-peer-deps
 
-      - name: Build Angular app for GitHub Pages
+      - name: Build Angular app for GitHub Pages (base-href en raíz)
         working-directory: apps/fichaje-fe
         env:
-          # Usa la variable de entorno para el backend desplegado
+          # Backend público por defecto para el front
           FE_API_URL: ${{ vars.FE_API_URL != '' && vars.FE_API_URL || 'https://demo.api.fichaje.org' }}
         run: |
-          # Extrae el nombre del repo para base-href
-          REPO_NAME="${{ github.event.repository.name }}"
-          npm run build -- --configuration production --base-href /${REPO_NAME}/ --deploy-url /${REPO_NAME}/
+          npm run build -- --configuration production --base-href "/"
+
+      - name: Add SPA fallback (404.html) and CNAME
+        run: |
+          DIST="apps/fichaje-fe/dist/angular-fichajesPi"
+          # Fallback SPA para rutas profundas en GitHub Pages
+          cp "$DIST/index.html" "$DIST/404.html"
+          # Asegura el dominio personalizado en el artifact
+          echo "demo.fichaje.org" > "$DIST/CNAME"
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4

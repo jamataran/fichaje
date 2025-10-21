@@ -9,12 +9,20 @@
 [![Java](https://img.shields.io/badge/Java-11-orange)](https://adoptium.net/temurin/releases/)
 [![Docker](https://img.shields.io/badge/Docker-Compose-informational)](deploy/)
 [![CodeQL](https://github.com/jamataran/fichaje/actions/workflows/codeql.yml/badge.svg)](https://github.com/jamataran/fichaje/actions/workflows/codeql.yml)
+[![Deployed on Northflank](https://img.shields.io/badge/Deployed%20on-Northflank-0ea5e9)](https://northflank.com)
 
 Fichaje es una aplicación para el registro de jornada de empleados en empresas. Permite gestionar usuarios, fichajes (entradas/salidas), calendarios, vacaciones e incidencias desde una interfaz web sencilla, con un backend robusto y base de datos MySQL.
 
 **Repositorio actual**: https://github.com/jamataran/fichaje  
 **Repositorio original**: https://github.com/alejandroferrin/fichajespi  
 **Wiki del proyecto**: https://github.com/jamataran/fichaje/wiki
+
+## 👥 Autores del Fork
+
+Este fork ha sido ideado y mantenido por:
+
+[![Javier Velasco García](https://img.shields.io/badge/LinkedIn-Javier%20Velasco%20García-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/javier-velasco-garc%C3%ADa-32434827b/)
+[![José Antonio Matarán](https://img.shields.io/badge/LinkedIn-José%20Antonio%20Matarán-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/jamataran/)
 
 ---
 
