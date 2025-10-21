@@ -133,8 +133,7 @@ jobs:
       - name: Build Angular app for GitHub Pages (base-href en raíz)
         working-directory: apps/fichaje-fe
         env:
-          # Backend público por defecto para el front
-          FE_API_URL: ${{ vars.FE_API_URL != '' && vars.FE_API_URL || 'https://demo.api.fichaje.org' }}
+          apiURL: https://demo.api.fichaje.org
         run: |
           npm run build -- --configuration production --base-href "/"
 
