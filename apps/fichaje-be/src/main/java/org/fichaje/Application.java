@@ -10,7 +10,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import org.fichaje.converter.UsuarioDtoConverter;
 import org.fichaje.dto.entity.UsuarioDto;
 import org.fichaje.provider.db.entity.Rol;
 import org.fichaje.provider.db.entity.Usuario;
@@ -26,8 +25,6 @@ public class Application {
 	RolService rolService;
 	@Autowired
 	UsuarioService usuarioService;
-	@Autowired
-	UsuarioDtoConverter dtoConverter;
 
 	@PostConstruct
 	public void init() {
@@ -68,8 +65,7 @@ public class Application {
 			List<String> rolesAdmin = new ArrayList<>();
 //			rolesAdmin.add("admin");
 			rolesAdmin.add("rrhh");
-			rolesAdmin.add("user");
-			
+
 			UsuarioDto adminDto = new UsuarioDto().builder()
 					.nombreEmpleado("AdminFichaje")
 					.numero(adminCredential)
@@ -79,8 +75,7 @@ public class Application {
 					.dni("zzz")
 					.build();
 
-			admin = dtoConverter.transformNewAdmin(adminDto);
-			usuarioService.save(admin);
+			usuarioService.createNewAdminUser(adminDto);
 			System.out.println(
 					"Usuario admin creado con número: " + adminCredential + " y pass: "
 							+ adminCredential);

@@ -28,6 +28,7 @@ import org.fichaje.provider.mail.EmailService;
 import org.fichaje.provider.db.entity.RrhhDto;
 import org.fichaje.service.SecurityService;
 import org.fichaje.service.VacacionesService;
+import org.fichaje.service.NotificationService;
 import org.fichaje.provider.db.specifications.VacacionesSpecifications;
 
 import io.swagger.annotations.ApiOperation;
@@ -43,6 +44,8 @@ public class VacacionesController
 	@Autowired
 	EmailService emailService;
 	@Autowired
+	NotificationService notificationService;
+	@Autowired
 	VacacionesSpecifications specifications;
 	@Autowired
     SecurityService securityService;
@@ -50,7 +53,7 @@ public class VacacionesController
 	@PostMapping("/create")
 	public ResponseEntity<?> newVacaciones(@RequestBody VacacionesDto dto) {
 
-		emailService.sendNotification(dto.getNumeroUsuario(),
+		notificationService.sendNotification(dto.getNumeroUsuario(),
 				"Petición de vacaciones",
 				emailService.generateBodyForVacaciones(dto.getNombreUsuario(),
 						dto.getNumeroUsuario(),
@@ -81,7 +84,7 @@ public class VacacionesController
 			d.setAprobado(true);
 			d.setEstado(EstadosPeticion.APROBADO.toString());
 
-			emailService.sendNotification(d.getUsuario().getNumero(),
+			notificationService.sendNotification(d.getUsuario().getNumero(),
 					"Petición de vacaciones",
 					emailService.generateBodyForVacaciones(
 							d.getUsuario().getNombreEmpleado(),
@@ -102,7 +105,7 @@ public class VacacionesController
 			d.setAprobado(false);
 			d.setEstado(EstadosPeticion.DENEGADO.toString());
 
-			emailService.sendNotification(d.getUsuario().getNumero(),
+			notificationService.sendNotification(d.getUsuario().getNumero(),
 					"Petición de vacaciones",
 					emailService.generateBodyForVacaciones(
 							d.getUsuario().getNombreEmpleado(),
@@ -116,16 +119,6 @@ public class VacacionesController
 			return ResponseEntity.notFound().build();
 		});
 	}
-
-//	@ApiOperation("Obtiene una lista de objetos dado un id de usuario")
-//	@GetMapping("/usuario/{id}")
-//	public ResponseEntity<?> getByUsuarioId(@PathVariable Long id) {
-//		List<Vacaciones> result = service.findByUser(id);
-//		if (result == null)
-//			return ResponseEntity.notFound().build();
-//		else
-//			return ResponseEntity.ok(result);
-//	}
 
 	@ApiOperation("Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
 	@PostMapping("/pagesFiltered")

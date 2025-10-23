@@ -15,12 +15,10 @@ public class EventService {
 	@Autowired
 	private IncidenciaService incidenciaService;
 	@Autowired
-	private EmailService emailService;
+	private NotificationService notificationService;
 
 	public void createEvent(String subject, String descripcion, LocalDate dia,
 			Usuario usuario, String resumen) {
-
-		String[] destinatarios = emailService.getDestinatarios(usuario);
 
 		// Creamos la incidencia
 		Incidencia incidencia = new Incidencia();
@@ -31,7 +29,9 @@ public class EventService {
 		incidencia.setResuelta(false);
 		incidencia.setExplicacion("");
 		incidenciaService.save(incidencia);
-		emailService.sendEmail(destinatarios, subject, descripcion);
+
+		// Enviar notificación a RRHH y al usuario
+		notificationService.sendNotification(usuario.getNumero(), subject, descripcion);
 	}
 
 }

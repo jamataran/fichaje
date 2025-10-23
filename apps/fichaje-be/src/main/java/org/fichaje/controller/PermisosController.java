@@ -31,6 +31,7 @@ import org.fichaje.provider.mail.EmailService;
 import org.fichaje.provider.db.entity.RrhhDto;
 import org.fichaje.service.SecurityService;
 import org.fichaje.service.PermisoService;
+import org.fichaje.service.NotificationService;
 import org.fichaje.provider.db.specifications.PermisoSpecifications;
 
 import io.swagger.annotations.ApiOperation;
@@ -46,6 +47,8 @@ public class PermisosController
 	@Autowired
 	EmailService emailService;
 	@Autowired
+	NotificationService notificationService;
+	@Autowired
 	PermisoSpecifications specifications;
 	@Autowired
     SecurityService securityService;
@@ -53,7 +56,7 @@ public class PermisosController
 	@PostMapping("/create")
 	public ResponseEntity<?> newPermiso(@RequestBody PermisoDto dto) {
 
-		emailService.sendNotification(dto.getNumeroUsuario(),
+		notificationService.sendNotification(dto.getNumeroUsuario(),
 				"Petición de permiso",
 				emailService.generateBodyForPermiso(dto.getNombreUsuario(),
 						dto.getNumeroUsuario(),
@@ -85,7 +88,7 @@ public class PermisosController
 			d.setAprobado(true);
 			d.setEstado(EstadosPeticion.APROBADO.toString());
 
-			emailService.sendNotification(d.getUsuario().getNumero(),
+			notificationService.sendNotification(d.getUsuario().getNumero(),
 					"Petición de permiso",
 					emailService.generateBodyForPermiso(
 							d.getUsuario().getNombreEmpleado(),
@@ -108,7 +111,7 @@ public class PermisosController
 			d.setAprobado(false);
 			d.setEstado(EstadosPeticion.DENEGADO.toString());
 
-			emailService.sendNotification(d.getUsuario().getNumero(),
+			notificationService.sendNotification(d.getUsuario().getNumero(),
 					"Petición de permiso",
 					emailService.generateBodyForPermiso(
 							d.getUsuario().getNombreEmpleado(),
