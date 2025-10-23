@@ -1,104 +1,225 @@
-<div class="container-fluid mt-3">
-
-  <h3 class="mb-4 text-center selected bg-waves rounded p-3">Búsqueda de Fichajes</h3>
-
-  <form class="my-3 mx-0 bg-light px-4 pt-2 rounded ">
-    <div class="row mb-4">
-
-      <div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 d-flex align-items-end justify-content-end mb-3">
-        <app-input-filter-range-time class="w-100" [(inputValue)]="dto.horaDesde" (clear)="clearHoraDesde()"
-          (list)="listarElementos()" [name]="'Hora Desde'" [id]="'hora-desde'">
-        </app-input-filter-range-time>
-      </div>
-
-      <div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 d-flex align-items-end justify-content-end mb-3">
-        <app-input-filter-range-time class="w-100" [(inputValue)]="dto.horaHasta" (clear)="clearHoraHasta()"
-          (list)="listarElementos()" [name]="'Hora Hasta'" [id]="'hora-hasta'">
-        </app-input-filter-range-time>
-      </div>
-
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
-        <app-input-filter-range-dates class="w-100" [(inputValue)]="dto.diaDesde" (clear)="clearDiaDesde()"
-          (list)="listarElementos()" [name]="'Desde'" [id]="'desde'">
-        </app-input-filter-range-dates>
-      </div>
-
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
-        <app-input-filter-range-dates class="w-100" [(inputValue)]="dto.diaHasta" (clear)="clearDiaHasta()"
-          (list)="listarElementos()" [name]="'Hasta'" [id]="'hasta'">
-        </app-input-filter-range-dates>
-      </div>
-
-      <div *ngIf="isAdmin"
-        class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
-        <app-input-filter-text class="w-100" [(inputValue)]="dto.nombreUsuario" (clear)="clearNombre()"
-          (list)="listarElementos()" [name]="'Nombre Emp'" [id]="'nombre'"></app-input-filter-text>
-      </div>
-
-      <div *ngIf="isAdmin"
-        class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
-        <app-input-filter-text class="w-100" [(inputValue)]="dto.numeroUsuario" (clear)="clearNumero()"
-          (list)="listarElementos()" [name]="'Número Emp'" [id]="'numero'"></app-input-filter-text>
-      </div>
-
-
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
-        <app-boton-borrar-filtros class="w-100" (click)="clear()"></app-boton-borrar-filtros>
-      </div>
+<div class="list-container">
+  <!-- Header Section -->
+  <div class="list-header">
+    <div>
+      <h1 class="list-title">Fichajes</h1>
+      <p class="list-subtitle">Gestiona y visualiza el historial de fichajes</p>
     </div>
-  </form>
-  <table class="table table-hover text-center">
+  </div>
 
-    <thead>
-      <tr>
-        <th>
-          <app-th-sort [entity]="'dia'" [name]="'Día'" [asc]="asc" [order]="order" (sort)="setOrder($event)">
-          </app-th-sort>
-        </th>
-        <th>
-          <app-th-sort [entity]="'hora'" [name]="'Hora'" [asc]="asc" [order]="order" (sort)="setOrder($event)">
-          </app-th-sort>
-        </th>
-        <th>
-          <app-th-sort [entity]="'tipo'" [name]="'Tipo'" [asc]="asc" [order]="order" (sort)="setOrder($event)">
-          </app-th-sort>
-        </th>
-        <th>
-          <app-th-sort [entity]="'usuarioNombreEmpleado'" [name]="'Nombre Empleado'" [asc]="asc" [order]="order"
-            (sort)="setOrder($event)">
-          </app-th-sort>
-        </th>
-        <th>
-          <app-th-sort [entity]="'usuarioNumero'" [name]="'Número Empleado'" [asc]="asc" [order]="order"
-            (sort)="setOrder($event)">
-          </app-th-sort>
-        </th>
-        <th>
-          <app-th-sort [entity]="'origen'" [name]="'Origen'" [asc]="asc" [order]="order" (sort)="setOrder($event)">
-          </app-th-sort>
-        </th>
-        <th *ngIf="isAdmin">Ver Detalle</th>
-      </tr>
-    </thead>
+  <!-- Filters Section -->
+  <div class="filters-card">
+    <div class="filters-header">
+      <h5 class="filters-title">
+        <i class="bi bi-funnel"></i>
+        Filtros de búsqueda
+      </h5>
+      <button class="btn-clear-filters" (click)="clear()" title="Limpiar todos los filtros">
+        <i class="bi bi-x-circle"></i>
+        Limpiar filtros
+      </button>
+    </div>
 
-    <tbody>
+    <form class="filters-form">
+      <div class="filters-grid">
+        <!-- Rango Horario -->
+        <div class="filter-group">
+          <label class="filter-label">Hora Desde</label>
+          <div class="filter-input-wrapper">
+            <app-input-filter-range-time
+              [(inputValue)]="dto.horaDesde"
+              (clear)="clearHoraDesde()"
+              (list)="listarElementos()"
+              [name]="'Hora Desde'"
+              [id]="'hora-desde'">
+            </app-input-filter-range-time>
+          </div>
+        </div>
 
-      <!--       <tr routerLink='/intranet/fichajes/list/{{elemento.id}}' *ngFor="let elemento of listaElementos"> -->
-      <tr *ngFor="let elemento of listaElementos">
-        <td>{{elemento.dia}}</td>
-        <td>{{elemento.hora}}</td>
-        <td>{{elemento.tipo}}</td>
-        <td>{{elemento.usuario.nombreEmpleado}}</td>
-        <td>{{elemento.usuario.numero}}</td>
-        <td>{{elemento.origen}}</td>
-        <td *ngIf="isAdmin" routerLink='/intranet/fichajes/list/{{elemento.id}}'><div class="w-100 h-100 btn btn-outline-secondary"><i class="bi bi-eye-fill"></i></div></td>
-      </tr>
-    </tbody>
-  </table>
+        <div class="filter-group">
+          <label class="filter-label">Hora Hasta</label>
+          <div class="filter-input-wrapper">
+            <app-input-filter-range-time
+              [(inputValue)]="dto.horaHasta"
+              (clear)="clearHoraHasta()"
+              (list)="listarElementos()"
+              [name]="'Hora Hasta'"
+              [id]="'hora-hasta'">
+            </app-input-filter-range-time>
+          </div>
+        </div>
 
-  <app-pagination [pag]="pag" (paginacion)="onPaginate($event)"></app-pagination>
+        <!-- Rango de Fechas -->
+        <div class="filter-group">
+          <label class="filter-label">Desde</label>
+          <div class="filter-input-wrapper">
+            <app-input-filter-range-dates
+              [(inputValue)]="dto.diaDesde"
+              (clear)="clearDiaDesde()"
+              (list)="listarElementos()"
+              [name]="'Desde'"
+              [id]="'desde'">
+            </app-input-filter-range-dates>
+          </div>
+        </div>
 
+        <div class="filter-group">
+          <label class="filter-label">Hasta</label>
+          <div class="filter-input-wrapper">
+            <app-input-filter-range-dates
+              [(inputValue)]="dto.diaHasta"
+              (clear)="clearDiaHasta()"
+              (list)="listarElementos()"
+              [name]="'Hasta'"
+              [id]="'hasta'">
+            </app-input-filter-range-dates>
+          </div>
+        </div>
+
+        <!-- Admin Filters -->
+        <ng-container *ngIf="isAdmin">
+          <div class="filter-group">
+            <label class="filter-label">Nombre Empleado</label>
+            <div class="filter-input-wrapper">
+              <app-input-filter-text
+                [(inputValue)]="dto.nombreUsuario"
+                (clear)="clearNombre()"
+                (list)="listarElementos()"
+                [name]="'Nombre Emp'"
+                [id]="'nombre'">
+              </app-input-filter-text>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label">Número Empleado</label>
+            <div class="filter-input-wrapper">
+              <app-input-filter-text
+                [(inputValue)]="dto.numeroUsuario"
+                (clear)="clearNumero()"
+                (list)="listarElementos()"
+                [name]="'Número Emp'"
+                [id]="'numero'">
+              </app-input-filter-text>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </form>
+  </div>
+
+  <!-- Results Section -->
+  <div class="results-card">
+    <div class="results-header">
+      <h5 class="results-title">
+        <i class="bi bi-list-ul"></i>
+        Resultados
+      </h5>
+      <app-boton-descarga-csv
+        [apiEndPoint]="'fichaje/listFiltered'"
+        [dto]="dto"
+        [fileName]="'fichajes'"
+        [service]="service"
+        [headers]="headers">
+      </app-boton-descarga-csv>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>
+              <app-th-sort
+                [entity]="'dia'"
+                [name]="'Día'"
+                [asc]="asc"
+                [order]="order"
+                (sort)="setOrder($event)">
+              </app-th-sort>
+            </th>
+            <th>
+              <app-th-sort
+                [entity]="'hora'"
+                [name]="'Hora'"
+                [asc]="asc"
+                [order]="order"
+                (sort)="setOrder($event)">
+              </app-th-sort>
+            </th>
+            <th>
+              <app-th-sort
+                [entity]="'tipo'"
+                [name]="'Tipo'"
+                [asc]="asc"
+                [order]="order"
+                (sort)="setOrder($event)">
+              </app-th-sort>
+            </th>
+            <th>
+              <app-th-sort
+                [entity]="'usuarioNombreEmpleado'"
+                [name]="'Nombre Empleado'"
+                [asc]="asc"
+                [order]="order"
+                (sort)="setOrder($event)">
+              </app-th-sort>
+            </th>
+            <th>
+              <app-th-sort
+                [entity]="'usuarioNumero'"
+                [name]="'Número Empleado'"
+                [asc]="asc"
+                [order]="order"
+                (sort)="setOrder($event)">
+              </app-th-sort>
+            </th>
+            <th>
+              <app-th-sort
+                [entity]="'origen'"
+                [name]="'Origen'"
+                [asc]="asc"
+                [order]="order"
+                (sort)="setOrder($event)">
+              </app-th-sort>
+            </th>
+            <th class="actions-column">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let elemento of listaElementos" class="table-row">
+            <td class="cell-date">{{ elemento.dia }}</td>
+            <td class="cell-time">{{ elemento.hora }}</td>
+            <td class="cell-type">
+              <span class="badge-type" [ngClass]="'type-' + (elemento.tipo | lowercase)">
+                {{ elemento.tipo }}
+              </span>
+            </td>
+            <td class="cell-name">{{ elemento.usuario.nombreEmpleado }}</td>
+            <td class="cell-number">{{ elemento.usuario.numero }}</td>
+            <td class="cell-origin">
+              <span class="badge-origin" [ngClass]="'origin-' + (elemento.origen | lowercase)">
+                {{ elemento.origen }}
+              </span>
+            </td>
+            <td class="cell-actions">
+              <button
+                *ngIf="isAdmin"
+                class="btn-view-detail"
+                [routerLink]="'/intranet/fichajes/list/' + elemento.id"
+                title="Ver detalles">
+                <i class="bi bi-eye"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-wrapper">
+      <app-pagination [pag]="pag" (paginacion)="onPaginate($event)"></app-pagination>
+    </div>
+  </div>
 </div>
 
-<app-boton-descarga-csv [apiEndPoint]="'fichaje/listFiltered'" [dto]="dto" [fileName]="'fichajes'" [service]="service"
-  [headers]="headers"></app-boton-descarga-csv>

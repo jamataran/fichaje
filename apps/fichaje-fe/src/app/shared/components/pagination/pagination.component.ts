@@ -8,7 +8,6 @@ import { Pagination } from './model/pagination.model';
 })
 export class PaginationComponent implements OnInit {
 
-
   @Input() pag: Pagination | null = null;
   @Output() paginacion = new EventEmitter<Pagination>();
 
@@ -19,13 +18,14 @@ export class PaginationComponent implements OnInit {
 
   rewind(): void {
     if (!this.pag!.isFirst) {
-      this.pag!.page--
+      this.pag!.page--;
       this.paginacion.emit(this.pag!);
     }
   }
+
   forward(): void {
     if (!this.pag!.isLast) {
-      this.pag!.page++
+      this.pag!.page++;
       this.paginacion.emit(this.pag!);
     }
   }
@@ -37,11 +37,11 @@ export class PaginationComponent implements OnInit {
 
   setSize(size: number): void {
     if (size < this.pag!.sizeLimit) {
-      this.pag!.size = size
-      this.setPage(0)
+      this.pag!.size = size;
+      this.setPage(0);
     } else {
-      this.pag!.size = this.pag!.sizeLimit
-      this.setPage(0)
+      this.pag!.size = this.pag!.sizeLimit;
+      this.setPage(0);
     }
   }
 }
