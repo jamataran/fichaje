@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.fichaje.dto.entity.Mensaje;
-import org.fichaje.dto.entity.UsuarioDto;
+import org.fichaje.dto.entity.UsuarioDTO;
 import org.fichaje.dto.JwtDto;
 import org.fichaje.dto.LoginUsuario;
 import org.fichaje.config.security.jwt.JwtProvider;
@@ -43,46 +43,12 @@ public class AuthController {
 
 	@PostMapping("/nuevo")
 	public ResponseEntity<?> nuevo(
-			@Valid @RequestBody UsuarioDto nuevoUsuario,
+			@Valid @RequestBody UsuarioDTO nuevoUsuario,
 			BindingResult bindingResult) {
 
-		// Validar que los campos requeridos no están en blanco
-		if (nuevoUsuario.getDni().isBlank() ||
-				nuevoUsuario.getEmail().isBlank() ||
-				nuevoUsuario.getNombreEmpleado().isBlank() ||
-				nuevoUsuario.getNumero().isBlank()) {
-			return ResponseEntity
-					.status(HttpStatus.BAD_REQUEST)
-					.body(new Mensaje("Los campos nombre, numero, email o dni no pueden estar en blanco"));
-		}
+        final ResponseEntity<Mensaje> BAD_REQUEST = validarUsuario(nuevoUsuario, bindingResult);
+        if (BAD_REQUEST != null) return BAD_REQUEST;
 
-		// Validar formato de email y otros campos
-		if (bindingResult.hasErrors()) {
-			return ResponseEntity
-					.status(HttpStatus.BAD_REQUEST)
-					.body(new Mensaje("Campos mal puestos o email inválido."));
-		}
-
-		// Validar que no existan duplicados
-		if (usuarioService.existsByNumero(nuevoUsuario.getNumero())) {
-			return ResponseEntity
-					.status(HttpStatus.BAD_REQUEST)
-					.body(new Mensaje("Ya existe el número de empleado."));
-		}
-
-		if (usuarioService.existsByDni(nuevoUsuario.getDni())) {
-			return ResponseEntity
-					.status(HttpStatus.BAD_REQUEST)
-					.body(new Mensaje("Ya existe el dni del empleado."));
-		}
-
-		if (usuarioService.existsByEmail(nuevoUsuario.getEmail())) {
-			return ResponseEntity
-					.status(HttpStatus.BAD_REQUEST)
-					.body(new Mensaje("Email en uso."));
-		}
-
-		// Crear usuario (la lógica de creación está en UsuarioService)
 		usuarioService.createNewUser(nuevoUsuario);
 
 		return ResponseEntity
@@ -90,7 +56,8 @@ public class AuthController {
 				.body(new Mensaje("Usuario creado"));
 	}
 
-	@PostMapping("/login")
+
+    @PostMapping("/login")
 	public ResponseEntity<JwtDto> login(
 			@Valid @RequestBody LoginUsuario loginUsuario,
 			BindingResult bindingResult) {
@@ -109,5 +76,44 @@ public class AuthController {
 		JwtDto jwtDto = new JwtDto(jwt);
 		return ResponseEntity.status(HttpStatus.OK).body(jwtDto);
 	}
+
+    private ResponseEntity<Mensaje> validarUsuario(UsuarioDTO nuevoUsuario, BindingResult bindingResult) {
+        // Validar que los campos requeridos no están en blanco
+        if (nuevoUsuario.getDni().isBlank() ||
+                nuevoUsuario.getEmail().isBlank() ||
+                nuevoUsuario.getNombreEmpleado().isBlank() ||
+                nuevoUsuario.getNumero().isBlank()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new Mensaje("Los campos nombre, numero, email o dni no pueden estar en blanco"));
+        }
+
+        // Validar formato de email y otros campos
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new Mensaje("Campos mal puestos o email inválido."));
+        }
+
+        // Validar que no existan duplicados
+        if (usuarioService.existsByNumero(nuevoUsuario.getNumero())) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new Mensaje("Ya existe el número de empleado."));
+        }
+
+        if (usuarioService.existsByDni(nuevoUsuario.getDni())) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new Mensaje("Ya existe el dni del empleado."));
+        }
+
+        if (usuarioService.existsByEmail(nuevoUsuario.getEmail())) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new Mensaje("Email en uso."));
+        }
+        return null;
+    }
 
 }

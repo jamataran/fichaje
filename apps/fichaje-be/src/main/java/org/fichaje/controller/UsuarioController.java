@@ -2,6 +2,7 @@ package org.fichaje.controller;
 
 import java.util.List;
 
+import org.fichaje.dto.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,11 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.fichaje.converter.UsuarioDtoConverter;
-import org.fichaje.dto.entity.Mensaje;
-import org.fichaje.dto.entity.UsuarioDto;
-import org.fichaje.dto.entity.UsuarioDtoEdit;
-import org.fichaje.dto.entity.UsuarioDtoEditPassword;
-import org.fichaje.dto.entity.UsuarioDtoFilter;
+import org.fichaje.dto.entity.UsuarioDTO;
 import org.fichaje.provider.db.entity.Usuario;
 import org.fichaje.config.security.jwt.JwtProvider;
 import org.fichaje.service.UsuarioService;
@@ -47,7 +44,7 @@ public class UsuarioController
 
 	@ApiOperation("Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
 	@PostMapping("/pagesFiltered")
-	public ResponseEntity<Page<UsuarioDto>> pageDtoSpec(
+	public ResponseEntity<Page<UsuarioDTO>> pageDtoSpec(
 			@RequestBody UsuarioDtoFilter dto,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
@@ -98,7 +95,7 @@ public class UsuarioController
 					spec,
 					PageRequest.of(page, size, Sort.by(order).descending()));
 
-		Page<UsuarioDto> entitiesDto = entities
+		Page<UsuarioDTO> entitiesDto = entities
 				.map(usu -> dtoConverter.inverseTransform(usu));
 
 		return ResponseEntity
@@ -148,7 +145,7 @@ public class UsuarioController
 
 		List<Usuario> entities = service.filterAndList(spec);
 
-//		List<UsuarioDto> entitiesDto = (List<UsuarioDto>) entities.stream()
+//		List<UsuarioDTO> entitiesDto = (List<UsuarioDTO>) entities.stream()
 //				.map(usu -> dtoConverter.inverseTransform(usu));
 
 		return ResponseEntity

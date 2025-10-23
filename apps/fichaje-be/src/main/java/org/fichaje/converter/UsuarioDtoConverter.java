@@ -1,10 +1,10 @@
 package org.fichaje.converter;
 
+import org.fichaje.dto.entity.UsuarioDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import org.fichaje.dto.entity.UsuarioDto;
 import org.fichaje.dto.entity.UsuarioDtoEdit;
 import org.fichaje.dto.entity.UsuarioDtoEditPassword;
 import org.fichaje.provider.db.entity.Usuario;
@@ -16,10 +16,10 @@ public class UsuarioDtoConverter {
 	PasswordEncoder passwordEncoder;
 
 	/**
-	 * Convierte un Usuario a UsuarioDto (lectura/respuesta)
+	 * Convierte un Usuario a UsuarioDTO (lectura/respuesta)
 	 */
-	public UsuarioDto inverseTransform(Usuario u) {
-		return UsuarioDto
+	public UsuarioDTO inverseTransform(Usuario u) {
+		return UsuarioDTO
 				.builder()
 				.id(u.getId())
 				.email(u.getEmail())

@@ -10,7 +10,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import org.fichaje.dto.entity.UsuarioDto;
+import org.fichaje.dto.entity.UsuarioDTO;
 import org.fichaje.provider.db.entity.Rol;
 import org.fichaje.provider.db.entity.Usuario;
 import org.fichaje.config.security.enums.RolNombre;
@@ -66,7 +66,7 @@ public class Application {
 //			rolesAdmin.add("admin");
 			rolesAdmin.add("rrhh");
 
-			UsuarioDto adminDto = new UsuarioDto().builder()
+			UsuarioDTO adminDto = new UsuarioDTO().builder()
 					.nombreEmpleado("AdminFichaje")
 					.numero(adminCredential)
 					.password(adminCredential)
