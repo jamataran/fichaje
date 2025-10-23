@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.2.4" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
-  <class id="1" language="java" name="com.fichajespi.schedule.ScheduledTasks" project="fichajesPi.2021" 
+  <class id="1" language="java" name="schedule.org.fichaje.ScheduledTasks" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/schedule/ScheduledTasks.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1269" y="380"/>    
@@ -11,7 +11,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="com.fichajespi.service.CalendarioService" project="fichajesPi.2021" 
+  <class id="2" language="java" name="service.org.fichaje.CalendarioService" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/service/CalendarioService.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="161" width="341" x="478" y="186"/>    
@@ -21,7 +21,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="com.fichajespi.service.DiaLaborableService" project="fichajesPi.2021" 
+  <class id="3" language="java" name="service.org.fichaje.DiaLaborableService" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/service/DiaLaborableService.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="553" y="496"/>    
@@ -31,7 +31,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="com.fichajespi.service.UsuarioService" project="fichajesPi.2021" 
+  <class id="4" language="java" name="service.org.fichaje.UsuarioService" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/service/UsuarioService.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="744" y="-12"/>    
@@ -41,7 +41,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="com.fichajespi.service.FichajeService" project="fichajesPi.2021" 
+  <class id="5" language="java" name="service.org.fichaje.FichajeService" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/service/FichajeService.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="119" width="424" x="1239" y="-72"/>    
@@ -51,7 +51,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="com.fichajespi.events.EventSender" project="fichajesPi.2021" 
+  <class id="6" language="java" name="service.org.fichaje.EventService" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/events/EventSender.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="161" width="426" x="1758" y="66"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -60,7 +60,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="com.fichajespi.dto.converter.FichajeDtoConverter" project="fichajesPi.2021" 
+  <class id="7" language="java" name="converter.org.fichaje.FichajeDtoConverter" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/dto/converter/FichajeDtoConverter.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1155" y="-303"/>    
@@ -70,7 +70,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="com.fichajespi.service.VacacionesService" project="fichajesPi.2021" 
+  <class id="8" language="java" name="service.org.fichaje.VacacionesService" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/service/VacacionesService.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1938" y="419"/>    
@@ -80,7 +80,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="com.fichajespi.service.PermisoService" project="fichajesPi.2021" 
+  <class id="9" language="java" name="service.org.fichaje.PermisoService" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/service/PermisoService.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="161" width="542" x="1006" y="607"/>    
@@ -90,7 +90,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="10" language="java" name="com.fichajespi.service.IncidenciaService" project="fichajesPi.2021" 
+  <class id="10" language="java" name="service.org.fichaje.IncidenciaService" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/service/IncidenciaService.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1973" y="-165"/>    
@@ -100,7 +100,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="11" language="java" name="com.fichajespi.mail.EmailService" project="fichajesPi.2021" 
+  <class id="11" language="java" name="mail.provider.org.fichaje.EmailService" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/mail/EmailService.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1647" y="-417"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -109,7 +109,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="12" language="java" name="com.fichajespi.service.RolService" project="fichajesPi.2021" 
+  <class id="12" language="java" name="service.org.fichaje.RolService" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/service/RolService.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1020" y="-528"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
