@@ -1,13 +1,100 @@
-<div class="d-flex flex-column justify-content-center align-items-center mt-4 ">
-  <img class="" src="../../assets/images/fichajespi_logo_mano.svg" alt="" height="200">
-  <button class="btn bg-pink text-white px-5 py-3 m-5 shadow fs-5 fw-bold" (click)="fichar()"><i
-      class="bi bi-watch feather"></i> Fichar</button>
-  <div class="bg-light rounded p-4">
-    <div class="text-center my-3"><b>Número Tarjeta: {{model.numero}}</b></div>
-    <div class="text-center my-3"><b>Último fichaje: </b>{{model.ultimoFichaje}}</div>
-    <div class="text-center my-3" *ngIf="model.working"><b>Estado: </b>Trabajando</div>
-    <div class="text-center my-3" *ngIf="!model.working"><b>Estado: </b>Fuera del trabajo</div>
-    <div class="text-center my-3"><b>Vacaciones restantes: </b>{{model.diasVacaciones}}</div>
-    <div class="text-center my-3"><b>Horas generadas: </b>{{model.horasGeneradas}}</div>
+<div class="dashboard-container">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <div>
+      <h1 class="dashboard-title">Bienvenido</h1>
+      <p class="dashboard-subtitle">{{ model.nombreEmpleado }}</p>
+    </div>
+    <div class="header-time">
+      <span class="time-label">Hora actual</span>
+      <span class="time-value">{{ getCurrentTime() }}</span>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="dashboard-grid">
+    <!-- Large Fichar Card -->
+    <div class="card card-fichar">
+      <div class="card-body fichar-body">
+        <div class="fichar-content">
+          <i class="bi bi-clock-history fichar-icon"></i>
+          <h2 class="fichar-title">Fichar</h2>
+          <p class="fichar-subtitle">Registra tu entrada o salida</p>
+          <button
+            class="btn btn-fichar btn-lg mt-4"
+            (click)="fichar()"
+            [disabled]="isLoading">
+            <span *ngIf="!isLoading">
+              <i class="bi bi-play-circle me-2"></i>Iniciar Fichaje
+            </span>
+            <span *ngIf="isLoading">
+              <span class="spinner-border spinner-border-sm me-2"></span>Registrando...
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Card -->
+    <div class="card card-status">
+      <div class="card-header">
+        <h5 class="card-title">Estado Actual</h5>
+      </div>
+      <div class="card-body">
+        <div class="status-item">
+          <span class="status-label">Último Fichaje</span>
+          <span class="status-value">{{ model.ultimoFichaje || 'Sin registros' }}</span>
+        </div>
+        <div class="status-divider"></div>
+        <div class="status-item">
+          <span class="status-label">Estado</span>
+          <div class="status-badge" [ngClass]="{ 'working': model.working, 'off-duty': !model.working }">
+            <i class="bi" [ngClass]="model.working ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
+            {{ model.working ? 'En el trabajo' : 'Fuera del trabajo' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="card card-stat">
+      <div class="card-header">
+        <h5 class="card-title">Vacaciones</h5>
+      </div>
+      <div class="card-body">
+        <div class="stat-number">{{ model.diasVacaciones }}</div>
+        <div class="stat-label">Días disponibles</div>
+        <div class="progress mt-3" style="height: 4px;">
+          <div class="progress-bar" [style.width.%]="(model.diasVacaciones || 0) / 30 * 100" style="background: linear-gradient(90deg, #0ea5e9, #22c55e);"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-stat">
+      <div class="card-header">
+        <h5 class="card-title">Horas Generadas</h5>
+      </div>
+      <div class="card-body">
+        <div class="stat-number">{{ model.horasGeneradas | number:'1.1-1' }}</div>
+        <div class="stat-label">Horas acumuladas</div>
+      </div>
+    </div>
+
+    <!-- Employee Info Card -->
+    <div class="card card-info">
+      <div class="card-header">
+        <h5 class="card-title">Información Personal</h5>
+      </div>
+      <div class="card-body">
+        <div class="info-item">
+          <span class="info-label">Número de Empleado</span>
+          <span class="info-value">{{ model.numero }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Correo Electrónico</span>
+          <span class="info-value">{{ model.email }}</span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

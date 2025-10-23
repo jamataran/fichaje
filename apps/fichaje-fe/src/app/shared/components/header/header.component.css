@@ -1,38 +1,212 @@
+/* Header - Navbar */
+:host {
+  --header-height: 3.5rem;
+}
+
+header {
+  height: var(--header-height);
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 99;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  height: 100%;
+  background: #ffffff !important;
+}
 
 .navbar-brand {
-  padding-top: .75rem;
-  padding-bottom: .75rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 !important;
+  margin-right: 2rem;
+  color: #1a202c;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.navbar-brand img {
+  height: 32px;
+  width: auto;
+}
+
+.navbar-brand span {
+  background: linear-gradient(135deg, #0ea5e9 0%, #22c55e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Header Content */
+.navbar-content {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-left: auto;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+}
+
+.user-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0;
+}
+
+.user-role {
+  font-size: 0.8rem;
+  color: #718096;
+  margin: 0;
+}
+
+/* Logout Button */
+.btn-logout {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: linear-gradient(135deg, #0ea5e9 0%, #22c55e 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-logout:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+.btn-logout:active {
+  transform: translateY(0);
+}
+
+.btn-logout i {
   font-size: 1rem;
-/*   background-color: rgba(0, 0, 0, .25); */
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
 }
-@media (max-width: 767.98px) {
+
+/* Mobile Menu Toggle */
+.navbar-toggler {
+  display: none;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: #0ea5e9 !important;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.navbar-toggler:hover {
+  color: #22c55e !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  :host {
+    --header-height: 3.5rem;
+  }
+
+  .navbar {
+    padding: 0 1rem;
+  }
+
   .navbar-brand {
-  box-shadow: inset 0px 0 0 rgba(0, 0, 0, .25);
+    margin-right: auto;
   }
-  .btn-margin-top{
-    margin-top: 1rem;
+
+  .navbar-brand span {
+    display: none;
+  }
+
+  .navbar-brand img {
+    height: 28px;
+  }
+
+  .navbar-toggler {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .navbar-content {
+    display: none;
+    position: absolute;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 1rem;
+    gap: 1rem;
+    z-index: 50;
+  }
+
+  .navbar-content.show {
+    display: flex;
+  }
+
+  .navbar-user {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 0;
+    gap: 1rem;
+  }
+
+  .user-info {
+    align-items: flex-start;
+  }
+
+  .btn-logout {
+    width: 100%;
+    justify-content: center;
   }
 }
 
-.navbar .navbar-toggler {
-  top: .25rem;
-  right: 1rem;
-}
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 0.75rem;
+  }
 
-/* .navbar .form-control {
-  padding: .75rem 1rem;
-  border-width: 0;
-  border-radius: 0;
-} */
+  .navbar-brand img {
+    height: 26px;
+  }
 
-.form-control-dark {
-  color: #fff;
-  background-color: rgba(255, 255, 255, .1);
-  border-color: rgba(255, 255, 255, .1);
-}
+  .btn-logout span {
+    display: none;
+  }
 
-.form-control-dark:focus {
-  border-color: transparent;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+  .btn-logout {
+    padding: 0.625rem 0.75rem;
+  }
 }

@@ -1,0 +1,61 @@
+/* Intranet Layout */
+:host {
+  display: block;
+}
+
+.intranet-layout {
+  display: flex;
+  min-height: calc(100vh - 3.5rem);
+  margin-top: 3.5rem;
+  background: #f8fafb;
+}
+
+.intranet-main {
+  flex: 1;
+  margin-left: 280px;
+  overflow-y: auto;
+  background: #f8fafb;
+}
+
+/* Scrollbar styling */
+.intranet-main::-webkit-scrollbar {
+  width: 8px;
+}
+
+.intranet-main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.intranet-main::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+.intranet-main::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* Responsive */
+@media (max-width: 767.98px) {
+  .intranet-layout {
+    flex-direction: column;
+    margin-top: 3.5rem;
+  }
+
+  .intranet-main {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .intranet-layout {
+    margin-top: 3.5rem;
+  }
+
+  .intranet-main {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+

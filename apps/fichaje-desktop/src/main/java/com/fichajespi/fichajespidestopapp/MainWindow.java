@@ -42,12 +42,12 @@ public class MainWindow extends javax.swing.JFrame {
     jLabelNumero = new javax.swing.JLabel();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-    setTitle("FichajesPi");
+    setTitle("Fichaje");
     setBackground(new java.awt.Color(255, 51, 102));
     setLocation(new java.awt.Point(0, 0));
     setLocationByPlatform(true);
     setMinimumSize(new java.awt.Dimension(480, 320));
-    setName("FichajesPi"); // NOI18N
+    setName("Fichaje"); // NOI18N
     setUndecorated(true);
     setResizable(false);
 
@@ -61,7 +61,7 @@ public class MainWindow extends javax.swing.JFrame {
     jLabel1.setFont(new java.awt.Font("SansSerif", 0, 35)); // NOI18N
     jLabel1.setForeground(new java.awt.Color(255, 255, 255));
     jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-    jLabel1.setText("FichajesPi");
+    jLabel1.setText("Fichaje");
     jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
       public void mouseClicked(java.awt.event.MouseEvent evt) {
         jLabel1MouseClicked(evt);

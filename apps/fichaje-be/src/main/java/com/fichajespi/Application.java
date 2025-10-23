@@ -71,7 +71,7 @@ public class Application {
 			rolesAdmin.add("user");
 			
 			UsuarioDto adminDto = new UsuarioDto().builder()
-					.nombreEmpleado("AdminFichajesPi")
+					.nombreEmpleado("AdminFichaje")
 					.numero(adminCredential)
 					.password(adminCredential)
 					.email("fichajespi@fichajespi.com")

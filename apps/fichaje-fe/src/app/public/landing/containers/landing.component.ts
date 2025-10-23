@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginUsuario } from 'src/app/core/auth/model/login-usuario';
 import { AuthService } from 'src/app/core/auth/service/auth.service';
@@ -11,38 +12,52 @@ import { TokenService } from 'src/app/core/auth/service/token.service';
 })
 export class LandingComponent implements OnInit {
 
-  loginUsuario: LoginUsuario | null = null
-  numero: string = ''
-  password: string = ''
-  errMsg: string = ''
+  loginForm: FormGroup;
+  errMsg: string = '';
+  isLoading: boolean = false;
 
   constructor(
+    private formBuilder: FormBuilder,
     private tokenService: TokenService,
     private authService: AuthService,
     private router: Router
-  ) { }
+  ) {
+    this.loginForm = this.formBuilder.group({
+      numero: ['', [Validators.required]],
+      password: ['', [Validators.required]]
+    });
+  }
 
   ngOnInit(): void {
   }
 
   onLogin(): void {
-    this.loginUsuario = new LoginUsuario(this.numero, this.password)
-    this.authService.login(this.loginUsuario).subscribe(
+    if (!this.loginForm.valid) {
+      return;
+    }
+
+    this.isLoading = true;
+    this.errMsg = '';
+
+    const loginUsuario = new LoginUsuario(
+      this.loginForm.get('numero')?.value,
+      this.loginForm.get('password')?.value
+    );
+
+    this.authService.login(loginUsuario).subscribe(
       data => {
-        this.tokenService.setToken(data.token)
-        this.router.navigate(['/intranet'])
+        this.isLoading = false;
+        this.tokenService.setToken(data.token);
+        this.router.navigate(['/intranet']);
       },
       err => {
-        this.errMsg = err.error.error
-        this.clear();
+        this.isLoading = false;
+        this.errMsg = err.error?.error || 'Error al iniciar sesión. Intenta nuevamente.';
       }
-    )
+    );
   }
 
-  private clear(): void {
-    this.numero = '';
-    this.password = '';
+  clearError(): void {
+    this.errMsg = '';
   }
-
-
 }

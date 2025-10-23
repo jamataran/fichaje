@@ -87,7 +87,7 @@ public class UsuarioDtoConverter {
 		}
 		usuario.setRoles(roles);
 
-		StringBuilder body = new StringBuilder("Sus credenciales de acceso a FichajesPi son:\n\n");
+		StringBuilder body = new StringBuilder("Sus credenciales de acceso a Fichaje son:\n\n");
 		body.append(String.format("Número de empleado: %s \n", usuario.getNumero()));
 		body.append(String.format("Contraseña: %s \n\n", password));
 		body.append("Puede cambiar su contraseña desde la aplicación.");
@@ -95,7 +95,7 @@ public class UsuarioDtoConverter {
 		if (!isAdmin)
 			emailService.sendEmail(
 					usuario.getEmail(),
-					"Usuario creado en FichajesPi",
+					"Usuario creado en Fichaje",
 					body.toString());
 
 		return usuario;

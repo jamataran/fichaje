@@ -2,7 +2,7 @@
   "name": "fichajespi-monorepo",
   "version": "1.0.0",
   "private": true,
-  "description": "Monorepo para FichajesPi: backend Spring Boot, frontend Angular y app de escritorio.",
+  "description": "Monorepo para Fichaje: backend Spring Boot, frontend Angular y app de escritorio.",
   "packageManager": "pnpm@10.18.3",
   "engines": {
     "node": ">=16",

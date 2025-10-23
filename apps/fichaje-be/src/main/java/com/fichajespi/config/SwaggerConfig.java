@@ -37,9 +37,9 @@ public class SwaggerConfig {
 
 	public ApiInfo apiInfo() {
 		return new ApiInfoBuilder()
-				.title("API FichajesPi")
+				.title("API Fichaje")
 				.description(
-						"API para gestionar usuarios, fichajes, permisos, vacaciones en la aplicación FichajesPi")
+						"API para gestionar usuarios, fichajes, permisos, vacaciones en la aplicación Fichaje")
 				.version("1.0")
 				.contact(new Contact("Alejandro Ferrín", "http://www.github.com", ""))
 				.build();

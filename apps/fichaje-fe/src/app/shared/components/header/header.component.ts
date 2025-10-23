@@ -12,6 +12,7 @@ export class HeaderComponent implements OnInit {
   isLogged = false;
   isAdmin = false;
   nombre = '';
+  showMobileMenu = false;
 
   constructor(
     private tokenService: TokenService,
@@ -24,10 +25,13 @@ export class HeaderComponent implements OnInit {
     this.nombre = this.tokenService.getNombre();
   }
 
-  onLogOut() {
-    this.tokenService.logOut()
-    this.router.navigate(['/'])
-    window.location.reload()
+  onLogOut(): void {
+    this.tokenService.logOut();
+    this.router.navigate(['/']);
+    window.location.reload();
   }
 
+  toggleMobileMenu(): void {
+    this.showMobileMenu = !this.showMobileMenu;
+  }
 }
