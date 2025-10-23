@@ -23,7 +23,7 @@ import org.fichaje.dto.entity.FichajeDto;
 import org.fichaje.dto.entity.FichajeDtoReqRes;
 import org.fichaje.provider.db.entity.Fichaje;
 import org.fichaje.provider.db.entity.RrhhDto;
-import org.fichaje.config.security.service.GetInfoFromToken;
+import org.fichaje.service.SecurityService;
 import org.fichaje.service.FichajeService;
 import org.fichaje.provider.db.specifications.FichajeSpecifications;
 
@@ -40,7 +40,7 @@ public class FichajeController
 	@Autowired
 	FichajeSpecifications specifications;
 	@Autowired
-	GetInfoFromToken getInfoFromToken;
+    SecurityService securityService;
 
 	@PostMapping("/now")
 	public ResponseEntity<?> nuevoFichajeNow(
@@ -62,7 +62,7 @@ public class FichajeController
 			@RequestParam(defaultValue = "true") boolean asc,
 			@RequestHeader("authorization") String token) {
 
-		RrhhDto tokenUser = getInfoFromToken.rrhhInfo(token);
+		RrhhDto tokenUser = securityService.rrhhInfo(token);
 		if (tokenUser.isRrhh()) {
 			dto.setNumeroUsuario(tokenUser.getNumber());
 		}
@@ -110,7 +110,7 @@ public class FichajeController
 			@RequestBody FichajeDto dto,
 			@RequestHeader("authorization") String token) {
 
-		RrhhDto tokenUser = getInfoFromToken.rrhhInfo(token);
+		RrhhDto tokenUser = securityService.rrhhInfo(token);
 		if (tokenUser.isRrhh()) {
 			dto.setNumeroUsuario(tokenUser.getNumber());
 		}

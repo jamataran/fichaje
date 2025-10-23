@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.fichaje.provider.db.entity.Rol;
 import org.fichaje.config.security.enums.RolNombre;
 import org.fichaje.provider.db.repository.RolRepository;
-import org.fichaje.service.common.CommonServiceImpl;
 
 @Service
 @Transactional

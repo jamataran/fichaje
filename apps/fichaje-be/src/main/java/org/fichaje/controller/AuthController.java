@@ -2,6 +2,7 @@ package org.fichaje.controller;
 
 import javax.validation.Valid;
 
+import org.fichaje.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,19 +27,26 @@ import org.fichaje.service.UsuarioService;
 
 @RestController
 @RequestMapping("/auth")
-//@CrossOrigin(origins ="http://localhost:4200")
 public class AuthController {
 
-	@Autowired
-	AuthenticationManager authenticationManager;
-	@Autowired
-	UsuarioService usuarioService;
-	@Autowired
-	JwtProvider jwtProvider;
-	@Autowired
-	UsuarioDtoConverter dtoConverter;
+	private final AuthenticationManager authenticationManager;
+	private final UsuarioService usuarioService;
+	private final JwtProvider jwtProvider;
+	private final UsuarioDtoConverter dtoConverter;
+    private final SecurityService securityService;
 
-	@PostMapping("/nuevo")
+    public AuthController(AuthenticationManager authenticationManager,
+                          UsuarioService usuarioService,
+                          JwtProvider jwtProvider,
+                          UsuarioDtoConverter dtoConverter, SecurityService securityService) {
+        this.authenticationManager = authenticationManager;
+        this.usuarioService = usuarioService;
+        this.jwtProvider = jwtProvider;
+        this.dtoConverter = dtoConverter;
+        this.securityService = securityService;
+    }
+
+    @PostMapping("/nuevo")
 	public ResponseEntity<?> nuevo(
 			@Valid @RequestBody UsuarioDto nuevoUsuario,
 			BindingResult bindingResult) {

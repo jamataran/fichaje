@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.fichaje.provider.db.entity.Usuario;
 import org.fichaje.provider.db.entity.Vacaciones;
 import org.fichaje.provider.db.repository.VacacionesRepository;
-import org.fichaje.service.common.CommonServiceImpl;
 
 @Service
 @Transactional

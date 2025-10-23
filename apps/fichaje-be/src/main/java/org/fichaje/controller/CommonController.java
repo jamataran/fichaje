@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import org.fichaje.service.common.CommonService;
+import org.fichaje.service.CommonService;
 
 import io.swagger.annotations.ApiOperation;
 

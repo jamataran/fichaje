@@ -1,4 +1,4 @@
-package org.fichaje.service.common;
+package org.fichaje.service;
 
 import java.util.List;
 import java.util.Optional;

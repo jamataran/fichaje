@@ -29,7 +29,7 @@ import org.fichaje.provider.db.entity.Permiso;
 import org.fichaje.provider.db.entity.enums.EstadosPeticion;
 import org.fichaje.provider.mail.EmailService;
 import org.fichaje.provider.db.entity.RrhhDto;
-import org.fichaje.config.security.service.GetInfoFromToken;
+import org.fichaje.service.SecurityService;
 import org.fichaje.service.PermisoService;
 import org.fichaje.provider.db.specifications.PermisoSpecifications;
 
@@ -48,7 +48,7 @@ public class PermisosController
 	@Autowired
 	PermisoSpecifications specifications;
 	@Autowired
-	GetInfoFromToken getInfoFromToken;
+    SecurityService securityService;
 
 	@PostMapping("/create")
 	public ResponseEntity<?> newPermiso(@RequestBody PermisoDto dto) {
@@ -135,7 +135,7 @@ public class PermisosController
 			@RequestParam(defaultValue = "true") boolean asc,
 			@RequestHeader("authorization") String token) {
 
-		RrhhDto tokenUser = getInfoFromToken.rrhhInfo(token);
+		RrhhDto tokenUser = securityService.rrhhInfo(token);
 		if (tokenUser.isRrhh()) {
 			dto.setUsuarioNumero(tokenUser.getNumber());
 		}
@@ -206,7 +206,7 @@ public class PermisosController
 			@RequestBody PermisoDtoFilter dto,
 			@RequestHeader("authorization") String token) {
 
-		RrhhDto tokenUser = getInfoFromToken.rrhhInfo(token);
+		RrhhDto tokenUser = securityService.rrhhInfo(token);
 		if (tokenUser.isRrhh()) {
 			dto.setUsuarioNumero(tokenUser.getNumber());
 		}

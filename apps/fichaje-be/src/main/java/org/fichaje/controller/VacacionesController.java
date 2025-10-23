@@ -26,7 +26,7 @@ import org.fichaje.provider.db.entity.Vacaciones;
 import org.fichaje.provider.db.entity.enums.EstadosPeticion;
 import org.fichaje.provider.mail.EmailService;
 import org.fichaje.provider.db.entity.RrhhDto;
-import org.fichaje.config.security.service.GetInfoFromToken;
+import org.fichaje.service.SecurityService;
 import org.fichaje.service.VacacionesService;
 import org.fichaje.provider.db.specifications.VacacionesSpecifications;
 
@@ -45,7 +45,7 @@ public class VacacionesController
 	@Autowired
 	VacacionesSpecifications specifications;
 	@Autowired
-	GetInfoFromToken getInfoFromToken;
+    SecurityService securityService;
 
 	@PostMapping("/create")
 	public ResponseEntity<?> newVacaciones(@RequestBody VacacionesDto dto) {
@@ -137,7 +137,7 @@ public class VacacionesController
 			@RequestParam(defaultValue = "true") boolean asc,
 			@RequestHeader("authorization") String token) {
 
-		RrhhDto tokenUser = getInfoFromToken.rrhhInfo(token);
+		RrhhDto tokenUser = securityService.rrhhInfo(token);
 		if (tokenUser.isRrhh()) {
 			dto.setUsuarioNumero(tokenUser.getNumber());
 		}
@@ -201,7 +201,7 @@ public class VacacionesController
 			@RequestBody VacacionesDtoFilter dto,
 			@RequestHeader("authorization") String token) {
 
-		RrhhDto tokenUser = getInfoFromToken.rrhhInfo(token);
+		RrhhDto tokenUser = securityService.rrhhInfo(token);
 		if (tokenUser.isRrhh()) {
 			dto.setUsuarioNumero(tokenUser.getNumber());
 		}

@@ -13,7 +13,6 @@ import org.fichaje.dto.interfaces.IUsuarioDtoEstadistica;
 import org.fichaje.provider.db.entity.Permiso;
 import org.fichaje.provider.db.entity.Usuario;
 import org.fichaje.provider.db.repository.PermisoRepository;
-import org.fichaje.service.common.CommonServiceImpl;
 
 @Service
 @Transactional

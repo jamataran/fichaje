@@ -13,7 +13,6 @@ import org.fichaje.dto.interfaces.ITopIncidencias;
 import org.fichaje.dto.interfaces.IUsuarioDtoEstadistica;
 import org.fichaje.provider.db.entity.Incidencia;
 import org.fichaje.provider.db.repository.IncidenciaRepository;
-import org.fichaje.service.common.CommonServiceImpl;
 
 @Service
 @Transactional
