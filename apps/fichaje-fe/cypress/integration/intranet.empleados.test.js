@@ -1,4 +1,3 @@
-
 describe('The intranet/empleados Page', () => {
 
   beforeEach(() => {
@@ -7,7 +6,7 @@ describe('The intranet/empleados Page', () => {
 
   it('should go to empleados/list and filter by empleado nombre', function () {
     cy.visit('/intranet/empleados/list')
-    cy.get('input[id=nombre]').type('AdminFichajesPi{enter}')
+    cy.get('input[id=nombre]').type('AdminFichaje{enter}')
     cy.get('tbody').children().should('have.length', 1);
   })
 

@@ -1,4 +1,4 @@
-# 📋 Configuración del Monorepo FichajesPi
+# 📋 Configuración del Monorepo Fichaje
 
 ## ✅ Estado Actual
 
@@ -124,7 +124,7 @@ pnpm dev:db
 1. **Run** → **Edit Configurations**
 2. Click en **+** → **Spring Boot**
 3. Configura:
-   - **Name**: `FichajesPi Dev`
+   - **Name**: `Fichaje Dev`
    - **Main class**: Busca y selecciona `com.example.fichaje.FichajeBeApplication` (o la clase principal)
    - **Environment variables**: `SPRING_PROFILES_ACTIVE=dev`
    - **Use classpath of module**: `fichaje-be`

@@ -1,14 +1,9 @@
 <app-header></app-header>
 
-<div class="container-fluid">
-  <div class="row">
+<div class="intranet-layout">
+  <app-menu></app-menu>
 
-    <app-menu></app-menu>
-
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pt-2">
-
-      <router-outlet></router-outlet>
-
-    </main>
-  </div>
+  <main class="intranet-main">
+    <router-outlet></router-outlet>
+  </main>
 </div>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.2.4" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
-  <class id="1" language="java" name="com.fichajespi.controller.DiaController" project="fichajesPi.2021" 
+  <class id="1" language="java" name="controller.org.fichaje.DiaController" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/controller/DiaController.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1076" y="334"/>    
@@ -11,7 +11,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="com.fichajespi.controller.common.CommonController" project="fichajesPi.2021" 
+  <class id="2" language="java" name="controller.org.fichaje.CommonController" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/controller/common/CommonController.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1064" y="112"/>    
@@ -21,7 +21,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="com.fichajespi.dto.converter.DiaDtoConverter" project="fichajesPi.2021" 
+  <class id="3" language="java" name="converter.org.fichaje.DiaDtoConverter" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/dto/converter/DiaDtoConverter.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="615" y="561"/>    
@@ -31,7 +31,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <interface id="4" language="java" name="com.fichajespi.service.common.CommonService" project="fichajesPi.2021" 
+  <interface id="4" language="java" name="common.service.org.fichaje.CommonService" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/service/common/CommonService.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1615" y="186"/>    
@@ -41,7 +41,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <class id="5" language="java" name="com.fichajespi.service.common.CommonServiceImpl" project="fichajesPi.2021" 
+  <class id="5" language="java" name="common.service.org.fichaje.CommonServiceImpl" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/service/common/CommonServiceImpl.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1632" y="541"/>    
@@ -51,7 +51,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="com.fichajespi.service.DiaLaborableService" project="fichajesPi.2021" 
+  <class id="6" language="java" name="service.org.fichaje.DiaLaborableService" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/service/DiaLaborableService.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1677" y="922"/>    
@@ -72,7 +72,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <interface id="8" language="java" name="com.fichajespi.repository.DiaLaborableRepository" project="fichajesPi.2021" 
+  <interface id="8" language="java" name="repository.db.provider.org.fichaje.DiaLaborableRepository" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/repository/DiaLaborableRepository.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1625" y="1115"/>    
@@ -82,7 +82,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </interface>  
-  <class id="9" language="java" name="com.fichajespi.service.CalendarioService" project="fichajesPi.2021" 
+  <class id="9" language="java" name="service.org.fichaje.CalendarioService" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/service/CalendarioService.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1091" y="572"/>    

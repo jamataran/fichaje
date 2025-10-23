@@ -67,7 +67,7 @@ public class RequestSender {
 				.newBuilder()
 				.POST(HttpRequest.BodyPublishers.ofString(json))
 				.uri(URI.create(uri))
-				.setHeader("User-Agent", "FichajesPi Desktop App") // add request header
+				.setHeader("User-Agent", "Fichaje Desktop App") // add request header
 				.header("Content-Type", "application/json")
 				.build();
 

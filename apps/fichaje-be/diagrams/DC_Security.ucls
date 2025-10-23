@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.2.4" icons="true" automaticImage="PNG" always-add-relationships="false" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
-  <class id="1" language="java" name="com.fichajespi.security.MainSecurity" project="fichajesPi.2021" 
+  <class id="1" language="java" name="security.config.org.fichaje.MainSecurity" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/security/MainSecurity.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="2044" y="962"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
@@ -10,7 +10,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="com.fichajespi.security.controller.AuthController" project="fichajesPi.2021" 
+  <class id="2" language="java" name="controller.org.fichaje.AuthController" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/security/controller/AuthController.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="847" y="696"/>    
@@ -20,7 +20,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="com.fichajespi.security.jwt.JwtEntryPoint" project="fichajesPi.2021" 
+  <class id="3" language="java" name="com.fichajespi.config.jwt.security.JwtEntryPoint" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/security/jwt/JwtEntryPoint.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1289" y="1012"/>    
@@ -30,7 +30,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="com.fichajespi.security.jwt.JwtProvider" project="fichajesPi.2021" 
+  <class id="4" language="java" name="com.fichajespi.config.jwt.security.JwtProvider" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/security/jwt/JwtProvider.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1393" y="741"/>    
@@ -40,7 +40,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="com.fichajespi.security.jwt.JwtTokenFilter" project="fichajesPi.2021" 
+  <class id="5" language="java" name="com.fichajespi.config.jwt.security.JwtTokenFilter" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/security/jwt/JwtTokenFilter.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1897" y="493"/>    
@@ -50,7 +50,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="6" language="java" name="com.fichajespi.security.service.GetInfoFromToken" project="fichajesPi.2021" 
+  <class id="6" language="java" name="com.fichajespi.config.service.security.GetInfoFromToken" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/security/service/GetInfoFromToken.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1384" y="444"/>    
@@ -60,7 +60,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="7" language="java" name="com.fichajespi.security.service.UserDetailsServiceImpl" project="fichajesPi.2021" 
+  <class id="7" language="java" name="com.fichajespi.config.service.security.UserDetailsServiceImpl" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/security/service/UserDetailsServiceImpl.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1910" y="147"/>    
@@ -70,7 +70,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="8" language="java" name="com.fichajespi.dto.converter.UsuarioDtoConverter" project="fichajesPi.2021" 
+  <class id="8" language="java" name="converter.org.fichaje.UsuarioDtoConverter" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/dto/converter/UsuarioDtoConverter.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="667" y="327"/>    
@@ -80,7 +80,7 @@
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <class id="9" language="java" name="com.fichajespi.service.UsuarioService" project="fichajesPi.2021" 
+  <class id="9" language="java" name="service.org.fichaje.UsuarioService" project="fichajesPi.2021"
     file="/fichajesPi.2021/src/main/java/com/fichajespi/service/UsuarioService.java" binary="false" 
     corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="1194" y="147"/>    

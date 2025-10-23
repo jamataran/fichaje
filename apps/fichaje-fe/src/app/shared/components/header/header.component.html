@@ -1,16 +1,44 @@
-<header class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow bg-pink-gradient">
-  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 py-1" href="#">
-    <img src="../../assets/images/fp_logo_texto.svg" alt="" height="30">
-  </a>
-  <div class="d-flex w-100 px-4 py-2 justify-content-between align-items-center">
-    <div class="text-light small fw-bold">{{nombre}}</div>
-    <button class="btn btn-outline-light btn-sm btn-margin-top" (click)="onLogOut()">Cerrar sesión</button>
-  </div>
-  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
-    data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="navbar-nav">
+<header>
+  <nav class="navbar">
+    <!-- Logo and Brand -->
+    <a class="navbar-brand" routerLink="/intranet/home">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 120 120" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="grad" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stop-color="#0ea5e9"/>
+            <stop offset="100%" stop-color="#22c55e"/>
+          </linearGradient>
+        </defs>
+        <rect width="120" height="120" rx="16" fill="url(#grad)"/>
+        <g fill="#fff" transform="translate(20 20)">
+          <circle cx="20" cy="20" r="10" opacity="0.9"/>
+          <rect x="8" y="40" width="64" height="12" rx="6" opacity="0.9"/>
+          <rect x="8" y="60" width="44" height="12" rx="6" opacity="0.9"/>
+        </g>
+      </svg>
+      <span>Fichaje</span>
+    </a>
 
-  </div>
+    <!-- Mobile Toggle -->
+    <button class="navbar-toggler" (click)="toggleMobileMenu()" id="mobileToggle">
+      <i class="bi" [ngClass]="showMobileMenu ? 'bi-x-lg' : 'bi-list'"></i>
+    </button>
+
+    <!-- Navbar Content -->
+    <div class="navbar-content" [ngClass]="{ 'show': showMobileMenu }">
+      <!-- User Info -->
+      <div class="navbar-user">
+        <div class="user-info">
+          <p class="user-name">{{ nombre }}</p>
+          <p class="user-role">{{ isAdmin ? 'Administrador' : 'Usuario' }}</p>
+        </div>
+
+        <!-- Logout Button -->
+        <button class="btn-logout" (click)="onLogOut()">
+          <i class="bi bi-box-arrow-right"></i>
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
+    </div>
+  </nav>
 </header>

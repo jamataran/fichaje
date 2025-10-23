@@ -1,38 +1,94 @@
-<div class="landing-waves d-flex flex-column justify-content-center">
-  <div class="container col-xl-10 col-xxl-8 mx-auto">
-    <div class="row align-items-center g-lg-5">
-      <div class="col-lg-7 mx-auto text-center">
-        <img src="../../assets/images/fp_logo_texto-2.svg" alt="" width="600">
-        <p class="fs-4 text-dark">Plataforma de fichajes pensada para funcionar sobre RaspberryPi para
-          continuar <b>inicia
-            sesión</b> como
-          usuario o como responsable de rrhh.</p>
-      </div>
+<div class="login-container">
+  <!-- Left side: Logo and Brand -->
+  <div class="login-brand">
+    <div class="brand-content">
+      <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" class="brand-logo">
+        <defs>
+          <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#ffffff"/>
+          </linearGradient>
+        </defs>
+        <rect width="120" height="120" rx="16" fill="url(#g)"/>
+        <g fill="#0ea5e9" transform="translate(20 20)">
+          <circle cx="20" cy="20" r="10" opacity="0.9"/>
+          <rect x="8" y="40" width="64" height="12" rx="6" opacity="0.9"/>
+          <rect x="8" y="60" width="44" height="12" rx="6" opacity="0.9"/>
+        </g>
+      </svg>
+      <h1 class="brand-title">Fichaje</h1>
+      <p class="brand-subtitle">Sistema de Gestión de Fichajes</p>
     </div>
-    <div class="row align-items-center g-lg-5 mt-3">
-      <div class="col-md-10 mx-auto col-lg-5">
-        <form #f="ngForm" (ngSubmit)="onLogin()" novalidate>
-          <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="floatingInput" placeholder="Número de empleado" required
-              [(ngModel)]="numero" name="numero">
-            <label for="floatingInput">Número empleado</label>
-          </div>
-          <div class="form-floating mb-3">
-            <input type="password" class="form-control" id="floatingPassword" placeholder="Password" required
-              [(ngModel)]="password" name="password">
-            <label for="floatingPassword">Password</label>
-          </div>
-          <button class="w-100 btn btn-lg bg-pink text-white" type="submit" [disabled]="!f.valid">Iniciar
-            Sesión</button>
+  </div>
 
-        </form>
-
-        <div *ngIf="f.submitted && errMsg!=''" class="alert alert-danger my-3 text-center">{{errMsg}} </div>
-
+  <!-- Right side: Login Form -->
+  <div class="login-form-wrapper">
+    <div class="login-form-container">
+      <div class="form-header">
+        <h2>Bienvenido</h2>
+        <p>Ingresa tus credenciales para continuar</p>
       </div>
 
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
+        <!-- Número de empleado -->
+        <div class="form-group">
+          <label for="numero" class="form-label">
+            <i class="bi bi-person-circle"></i>
+            Número de empleado
+          </label>
+          <input
+            type="text"
+            id="numero"
+            class="form-control login-input"
+            placeholder="Ej: 001"
+            formControlName="numero"
+            required>
+          <small class="form-text error" *ngIf="loginForm.get('numero')?.invalid && loginForm.get('numero')?.touched">
+            Por favor ingresa tu número de empleado
+          </small>
+        </div>
 
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password" class="form-label">
+            <i class="bi bi-lock-fill"></i>
+            Contraseña
+          </label>
+          <input
+            type="password"
+            id="password"
+            class="form-control login-input"
+            placeholder="••••••••"
+            formControlName="password"
+            required>
+          <small class="form-text error" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            Por favor ingresa tu contraseña
+          </small>
+        </div>
 
+        <!-- Error message -->
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="errMsg">
+          <i class="bi bi-exclamation-circle-fill"></i>
+          {{ errMsg }}
+          <button type="button" class="btn-close" (click)="clearError()"></button>
+        </div>
+
+        <!-- Submit button -->
+        <button
+          type="submit"
+          class="btn btn-login w-100"
+          [disabled]="!loginForm.valid">
+          <span *ngIf="!isLoading">Iniciar Sesión</span>
+          <span *ngIf="isLoading">
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Verificando...
+          </span>
+        </button>
+      </form>
+
+      <div class="form-footer">
+        <p class="text-muted">¿Problemas para acceder? Contacta a tu administrador</p>
+      </div>
     </div>
   </div>
 </div>
