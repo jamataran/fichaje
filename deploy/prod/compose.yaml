@@ -7,7 +7,7 @@ version: '3.9'
 
 services:
   db:
-    container_name: fichajespi_db
+    container_name: fichaje_db
     image: mysql:8.0
     ports:
       - "3306:3306"
@@ -29,7 +29,7 @@ services:
       - fichajes-network
 
   backend:
-    container_name: fichajespi_back
+    container_name: fichaje_be
     image: ${BACKEND_IMAGE:-ghcr.io/jamataran/fichaje-backend:latest}
     environment:
       TZ: ${TZ:-Europe/Madrid}
@@ -52,7 +52,7 @@ services:
       - fichajes-network
 
   frontend:
-    container_name: fichajespi_front
+    container_name: fichaje_fe
     image: ${FRONTEND_IMAGE:-ghcr.io/jamataran/fichaje-frontend:latest}
     ports:
       - "80:80"
@@ -63,7 +63,7 @@ services:
       - fichajes-network
 
   phpmyadmin:
-    container_name: fichajespi_dbadmin
+    container_name: fichaje_dbadmin
     image: phpmyadmin:latest
     ports:
       - "81:80"
