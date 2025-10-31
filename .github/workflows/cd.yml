@@ -132,10 +132,8 @@ jobs:
 
       - name: Build Angular app for GitHub Pages (base-href en raíz)
         working-directory: apps/fichaje-fe
-        env:
-          apiURL: https://demo.api.fichaje.org
         run: |
-          npm run build -- --configuration production --base-href "/"
+          npm run build -- --configuration demo --base-href "/"
 
       - name: Add SPA fallback (404.html) and CNAME
         run: |
