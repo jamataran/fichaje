@@ -9,6 +9,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -60,11 +62,27 @@ public class FichajeController
 			@RequestParam(defaultValue = "20") int size,
 			@RequestParam(defaultValue = "id") String order,
 			@RequestParam(defaultValue = "true") boolean asc,
-			@RequestHeader("authorization") String token) {
+			@RequestHeader(value = "authorization", required = false) String token) {
 
-		RrhhDto tokenUser = securityService.rrhhInfo(token);
-		if (tokenUser.isRrhh()) {
-			dto.setNumeroUsuario(tokenUser.getNumber());
+		// Obtener usuario autenticado desde Spring Security (funciona con JWT o API Key)
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentUserNumber = authentication.getName();
+		
+		// Si se proporciona token JWT, usar la lógica original
+		if (token != null && !token.isEmpty()) {
+			RrhhDto tokenUser = securityService.rrhhInfo(token);
+			if (!tokenUser.isRrhh()) {
+				dto.setNumeroUsuario(tokenUser.getNumber());
+			}
+		} else {
+			// Si no hay token JWT (usando API Key), verificar roles desde Authentication
+			boolean isRrhh = authentication.getAuthorities().stream()
+					.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_RRHH"));
+			
+			// Si NO es RRHH, solo puede ver sus propios fichajes
+			if (!isRrhh) {
+				dto.setNumeroUsuario(currentUserNumber);
+			}
 		}
 
 		Specification<Fichaje> spec = Specification
@@ -108,11 +126,27 @@ public class FichajeController
 	@PostMapping("/listFiltered")
 	public ResponseEntity<List<Fichaje>> filteredList(
 			@RequestBody FichajeDto dto,
-			@RequestHeader("authorization") String token) {
+			@RequestHeader(value = "authorization", required = false) String token) {
 
-		RrhhDto tokenUser = securityService.rrhhInfo(token);
-		if (tokenUser.isRrhh()) {
-			dto.setNumeroUsuario(tokenUser.getNumber());
+		// Obtener usuario autenticado desde Spring Security (funciona con JWT o API Key)
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentUserNumber = authentication.getName();
+		
+		// Si se proporciona token JWT, usar la lógica original
+		if (token != null && !token.isEmpty()) {
+			RrhhDto tokenUser = securityService.rrhhInfo(token);
+			if (!tokenUser.isRrhh()) {
+				dto.setNumeroUsuario(tokenUser.getNumber());
+			}
+		} else {
+			// Si no hay token JWT (usando API Key), verificar roles desde Authentication
+			boolean isRrhh = authentication.getAuthorities().stream()
+					.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_RRHH"));
+			
+			// Si NO es RRHH, solo puede ver sus propios fichajes
+			if (!isRrhh) {
+				dto.setNumeroUsuario(currentUserNumber);
+			}
 		}
 
 		Specification<Fichaje> spec = Specification
