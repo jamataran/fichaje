@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import org.fichaje.config.security.jwt.JwtEntryPoint;
 import org.fichaje.config.security.jwt.JwtTokenFilter;
+import org.fichaje.config.security.apikey.ApiKeyAuthenticationFilter;
 import org.fichaje.config.security.service.UserDetailsServiceImpl;
 
 @Configuration
@@ -36,6 +37,11 @@ public class MainSecurity extends WebSecurityConfigurerAdapter {
 	@Bean
 	public JwtTokenFilter jwtTokenFilter() {
 		return new JwtTokenFilter();
+	}
+
+	@Bean
+	public ApiKeyAuthenticationFilter apiKeyAuthenticationFilter() {
+		return new ApiKeyAuthenticationFilter();
 	}
 
 	@Bean
@@ -98,6 +104,7 @@ public class MainSecurity extends WebSecurityConfigurerAdapter {
 				.antMatchers("/vacaciones/**").hasRole(RRHH)
 				.antMatchers("/auth/nuevo").hasRole(RRHH)
 				.antMatchers("/auth/login").permitAll()
+				.antMatchers("/apikey/**").hasRole(RRHH)
 				.antMatchers("/test/**").permitAll()
 				//.antMatchers("/**").permitAll() // Usar para testear la api sin login
 				.anyRequest().authenticated()
@@ -107,6 +114,9 @@ public class MainSecurity extends WebSecurityConfigurerAdapter {
 				.sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+		// El filtro de API Key se ejecuta primero, antes del JWT
+		http.addFilterBefore(apiKeyAuthenticationFilter(),
+				UsernamePasswordAuthenticationFilter.class);
 		http.addFilterBefore(jwtTokenFilter(),
 				UsernamePasswordAuthenticationFilter.class);
 	}
