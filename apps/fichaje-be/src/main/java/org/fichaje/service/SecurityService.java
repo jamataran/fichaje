@@ -25,17 +25,17 @@ public class SecurityService {
 
         token = token.replace("Bearer ", "");
 
-        boolean response = true;  // Por defecto SÍ es RRHH (lógica original)
+        boolean response = false;  // Por defecto NO es RRHH
         String numeroUsuario = "";
 
         if (jwtProvider.validateToken(token)) {
             numeroUsuario = jwtProvider.getSubjectFromToken(token);
             Usuario usuario = usuarioService.findByNumero(numeroUsuario).orElse(null);
             if (usuario != null) {
-                for (Rol rol : usuario.getRoles()) {
-                    if (rol.getRolNombre() == RolNombre.ROLE_RRHH)
-                        response = false;  // Si tiene rol RRHH, marcar como false (lógica original del proyecto)
-                }
+                // Verificar si el usuario tiene el rol RRHH
+                // Si tiene RRHH, response = true
+                response = usuario.getRoles().stream()
+                    .anyMatch(rol -> rol.getRolNombre() == RolNombre.ROLE_RRHH);
             }
         }
 

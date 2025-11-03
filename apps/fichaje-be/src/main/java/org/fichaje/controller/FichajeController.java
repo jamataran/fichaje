@@ -71,11 +71,9 @@ public class FichajeController
 		// Si se proporciona token JWT, usar la lógica de rrhhInfo
 		if (token != null && !token.isEmpty()) {
 			RrhhDto tokenUser = securityService.rrhhInfo(token);
-			// NOTA: rrhhInfo() tiene lógica invertida del proyecto original:
-			// - Devuelve false cuando el usuario ES RRHH
-			// - Devuelve true cuando el usuario NO es RRHH
-			// Por tanto, si isRrhh()=true significa que NO es RRHH y debe filtrar
-			if (tokenUser.isRrhh()) {
+			// rrhhInfo() devuelve true cuando el usuario ES RRHH
+			// Si NO es RRHH, debe filtrar por su número de usuario
+			if (!tokenUser.isRrhh()) {
 				dto.setNumeroUsuario(tokenUser.getNumber());
 			}
 		} else {
@@ -139,11 +137,9 @@ public class FichajeController
 		// Si se proporciona token JWT, usar la lógica de rrhhInfo
 		if (token != null && !token.isEmpty()) {
 			RrhhDto tokenUser = securityService.rrhhInfo(token);
-			// NOTA: rrhhInfo() tiene lógica invertida del proyecto original:
-			// - Devuelve false cuando el usuario ES RRHH
-			// - Devuelve true cuando el usuario NO es RRHH
-			// Por tanto, si isRrhh()=true significa que NO es RRHH y debe filtrar
-			if (tokenUser.isRrhh()) {
+			// rrhhInfo() devuelve true cuando el usuario ES RRHH
+			// Si NO es RRHH, debe filtrar por su número de usuario
+			if (!tokenUser.isRrhh()) {
 				dto.setNumeroUsuario(tokenUser.getNumber());
 			}
 		} else {

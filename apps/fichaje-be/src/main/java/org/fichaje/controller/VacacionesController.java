@@ -131,7 +131,8 @@ public class VacacionesController
 			@RequestHeader("authorization") String token) {
 
 		RrhhDto tokenUser = securityService.rrhhInfo(token);
-		if (tokenUser.isRrhh()) {
+		// Si NO es RRHH, filtrar por número de usuario
+		if (!tokenUser.isRrhh()) {
 			dto.setUsuarioNumero(tokenUser.getNumber());
 		}
 
@@ -195,7 +196,8 @@ public class VacacionesController
 			@RequestHeader("authorization") String token) {
 
 		RrhhDto tokenUser = securityService.rrhhInfo(token);
-		if (tokenUser.isRrhh()) {
+		// Si NO es RRHH, filtrar por número de usuario
+		if (!tokenUser.isRrhh()) {
 			dto.setUsuarioNumero(tokenUser.getNumber());
 		}
 
