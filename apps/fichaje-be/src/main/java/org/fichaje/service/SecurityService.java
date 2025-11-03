@@ -25,7 +25,7 @@ public class SecurityService {
 
         token = token.replace("Bearer ", "");
 
-        boolean response = true;
+        boolean response = true;  // Por defecto SÍ es RRHH (lógica original)
         String numeroUsuario = "";
 
         if (jwtProvider.validateToken(token)) {
@@ -34,7 +34,7 @@ public class SecurityService {
             if (usuario != null) {
                 for (Rol rol : usuario.getRoles()) {
                     if (rol.getRolNombre() == RolNombre.ROLE_RRHH)
-                        response = false;
+                        response = false;  // Si tiene rol RRHH, marcar como false (lógica original del proyecto)
                 }
             }
         }
