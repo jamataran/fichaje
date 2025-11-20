@@ -6,7 +6,6 @@ import { MenuComponent } from './components/menu/menu.component';
 import { RouterModule } from '@angular/router';
 import { PaginationComponent } from './components/pagination/pagination.component';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { InputFilterTextComponent } from './components/input-filter-text/input-filter-text.component';
 import { InputFilterRangeComponent } from './components/input-filter-range/input-filter-range.component';
 import { ThSortComponent } from './components/th-sort/th-sort.component';
@@ -20,6 +19,7 @@ import { BotonVolverComponent } from './components/boton-volver/boton-volver.com
 import { ChartComponent } from './components/chart/chart.component';
 import { ChartModule } from 'primeng/chart';
 import { StaticsTableComponent } from './components/statics-table/statics-table.component';
+import { GeolocationComponent } from './components/geolocation/geolocation.component';
 
 
 
@@ -39,7 +39,8 @@ import { StaticsTableComponent } from './components/statics-table/statics-table.
     BotonGuardarComponent,
     BotonVolverComponent,
     ChartComponent,
-    StaticsTableComponent
+    StaticsTableComponent,
+    GeolocationComponent
   ],
   imports: [
     CommonModule,
@@ -65,7 +66,8 @@ import { StaticsTableComponent } from './components/statics-table/statics-table.
     BotonGuardarComponent,
     BotonVolverComponent,
     ChartComponent,
-    StaticsTableComponent
+    StaticsTableComponent,
+    GeolocationComponent
   ],
   providers: [
   ]

@@ -1,0 +1,45 @@
+<div class="geolocation-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando ubicación...</span>
+    </div>
+    <p class="mt-3 text-muted">Obteniendo tu ubicación...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-state">
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      <strong>Ubicación no disponible</strong><br>
+      {{ error }}
+      <button type="button" class="btn-close" aria-label="Close"></button>
+    </div>
+  </div>
+
+  <!-- Map Container -->
+  <div *ngIf="!isLoading && !error && coordinates" class="map-wrapper">
+    <div #mapContainer class="map-container" role="region" aria-label="Mapa de ubicación"></div>
+
+    <div class="location-info" aria-label="Información de ubicación">
+      <div class="info-badge">
+        <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+        <div class="info-text">
+          <span class="info-label">Latitud / Longitud</span>
+          <span class="info-value">
+            {{ coordinates!.latitude.toFixed(6) }}<br>
+            {{ coordinates!.longitude.toFixed(6) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="info-badge">
+        <i class="bi bi-bullseye" aria-hidden="true"></i>
+        <div class="info-text">
+          <span class="info-label">Precisión</span>
+          <span class="info-value">±{{ accuracy }}m</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
