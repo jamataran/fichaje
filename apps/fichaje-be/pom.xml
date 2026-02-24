@@ -98,6 +98,11 @@
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>2.9.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>4.27.0</version>
+		</dependency>
 
 	</dependencies>
 
@@ -134,6 +139,17 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<configuration>
+					<url>jdbc:mysql://localhost:3306/pruebas</url>
+					<username>app</username>
+					<password>app1234</password>
+					<changeLogFile>src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>
+					<outputChangeLogFile>src/main/resources/db/changelog/changes/001-initial-schema.xml</outputChangeLogFile>
 				</configuration>
 			</plugin>
 		</plugins>
