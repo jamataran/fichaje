@@ -1,0 +1,22 @@
+meta {
+    name: Now
+    type: http
+    seq: 1
+}
+
+post {
+    url: {{baseUrl}}/fichaje/now
+    body: json
+    auth: none
+}
+
+body:json {
+    {
+      "hora": "09:00:00",
+      "dia": "26-02-2026",
+      "numeroUsuario": "fichajesPi000",
+      "nombreUsuario": "AdminFichaje",
+      "tipo": "ENTRADA",
+      "origen": "WEB"
+    }
+}

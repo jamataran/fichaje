@@ -1,0 +1,29 @@
+meta {
+    name: Edit User
+    type: http
+    seq: 3
+}
+
+put {
+    url: {{baseUrl}}/usuario/:id
+    body: json
+    auth: inherit
+}
+
+params:path{
+    id: 3
+}
+
+body:json {
+    {
+        "nombreEmpleado": "AdminFichaje",
+        "email": "fichajespi@fichajespi.com",
+        "numero": "fichajesPi000",
+        "dni": "zzz",
+        "working": false,
+        "enVacaciones": false,
+        "deBaja": false,
+        "diasVacaciones": 0,
+        "horasGeneradas": 0
+    }
+}
