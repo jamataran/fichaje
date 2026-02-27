@@ -22,7 +22,7 @@ import org.fichaje.provider.db.entity.DiaLaborable;
 import org.fichaje.service.CalendarioService;
 import org.fichaje.service.DiaLaborableService;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/calendario")
@@ -37,7 +37,7 @@ public class CalendarioController
 	@Autowired
 	DiaLaborableService diaService;
 
-	@ApiOperation("Crea un nuevo calendario")
+	@Operation(summary = "Crea un nuevo calendario")
 	@PostMapping("/create")
 	public ResponseEntity<?> newCalendario(
 			@RequestBody CalendarioDto calendarioDto) {
@@ -55,7 +55,7 @@ public class CalendarioController
 //				.body(service.save(dtoConverter.transform(calendarioDto)));
 	}
 
-	@ApiOperation("Devuelve una lista de DTO de calendarios")
+	@Operation(summary = "Devuelve una lista de DTO de calendarios")
 	@GetMapping("/list/dto")
 	public ResponseEntity<List<CalendarioDto>> listDto() {
 		return ResponseEntity
@@ -66,7 +66,7 @@ public class CalendarioController
 
 	}
 
-	@ApiOperation("Edita un calendario")
+	@Operation(summary = "Edita un calendario")
 	@PutMapping("/{id}")
 	public ResponseEntity<?> editCalendario(@RequestBody Calendario editar,
 			@PathVariable Long id) {

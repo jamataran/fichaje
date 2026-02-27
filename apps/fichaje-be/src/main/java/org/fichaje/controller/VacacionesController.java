@@ -31,7 +31,7 @@ import org.fichaje.service.VacacionesService;
 import org.fichaje.service.NotificationService;
 import org.fichaje.provider.db.specifications.VacacionesSpecifications;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/vacaciones")
@@ -120,7 +120,7 @@ public class VacacionesController
 		});
 	}
 
-	@ApiOperation("Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
+	@Operation(summary = "Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
 	@PostMapping("/pagesFiltered")
 	public ResponseEntity<Page<Vacaciones>> pageDtoSpec(
 			@RequestBody VacacionesDtoFilter dto,
@@ -189,7 +189,7 @@ public class VacacionesController
 
 	}
 
-	@ApiOperation("Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
+	@Operation(summary = "Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
 	@PostMapping("/listFiltered")
 	public ResponseEntity<List<Vacaciones>> filteredList(
 			@RequestBody VacacionesDtoFilter dto,

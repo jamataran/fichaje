@@ -1,6 +1,6 @@
 package org.fichaje.controller;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.fichaje.service.SecurityService;
 import org.springframework.http.HttpStatus;

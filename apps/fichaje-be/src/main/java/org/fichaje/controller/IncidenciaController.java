@@ -28,7 +28,7 @@ import org.fichaje.provider.db.entity.Incidencia;
 import org.fichaje.service.IncidenciaService;
 import org.fichaje.provider.db.specifications.IncidenciaSpecifications;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/incidencia")
@@ -43,7 +43,7 @@ public class IncidenciaController
 	@Autowired
 	IncidenciaDtoConverter dtoConverter;
 
-//	@ApiOperation("Obtiene una lista de objetos dado un id de usuario")
+//	@Operation(summary = "Obtiene una lista de objetos dado un id de usuario")
 //	@GetMapping("/usuario/{id}")
 //	public ResponseEntity<?> getByUsuarioId(@PathVariable Long id) {
 //		List<Incidencia> result = service.findByUser(id);
@@ -53,7 +53,7 @@ public class IncidenciaController
 //			return ResponseEntity.ok(result);
 //	}
 
-	@ApiOperation("Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
+	@Operation(summary = "Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
 	@PostMapping("/pagesFiltered")
 	public ResponseEntity<Page<Incidencia>> pageDtoSpec(
 			@RequestBody IncidenciaDtoFilter dto,
@@ -109,7 +109,7 @@ public class IncidenciaController
 
 	}
 
-	@ApiOperation("Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
+	@Operation(summary = "Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
 	@PostMapping("/listFiltered")
 	public ResponseEntity<List<Incidencia>> filteredList(@RequestBody IncidenciaDtoFilter dto) {
 
@@ -164,21 +164,21 @@ public class IncidenciaController
 		});
 	}
 
-	@ApiOperation("Obtiene el número de incidencias de los últimos 12 meses")
+	@Operation(summary = "Obtiene el número de incidencias de los últimos 12 meses")
 	@GetMapping("/count")
 	public ResponseEntity<?> countLast12Months() {
 		ChartDataDto result = service.numberOfIncidenciasLast12Months();
 		return ResponseEntity.ok(result);
 	}
 
-	@ApiOperation("Obtiene el número de incidencias por usuario de los últimos 12 meses")
+	@Operation(summary = "Obtiene el número de incidencias por usuario de los últimos 12 meses")
 	@GetMapping("/count/users")
 	public ResponseEntity<?> countUsersLast12Months() {
 		List<IUsuarioDtoEstadistica> result = service.numberOfIncidenciasPerUserLast12Months();
 		return ResponseEntity.ok(result);
 	}
 
-	@ApiOperation("Obtiene el número de incidencias agrupadas por resumen de los últimos 12 meses")
+	@Operation(summary = "Obtiene el número de incidencias agrupadas por resumen de los últimos 12 meses")
 	@GetMapping("/count/top")
 	public ResponseEntity<?> topIncidenciasLast12Months() {
 		List<ITopIncidencias> result = service.topIncidenciasLast12Months();

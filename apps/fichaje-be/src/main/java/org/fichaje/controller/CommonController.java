@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import org.fichaje.service.CommonService;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 public class CommonController<E, S extends CommonService<E>> {
 
@@ -16,7 +16,7 @@ public class CommonController<E, S extends CommonService<E>> {
 	protected S service;
 
 //
-//	@ApiOperation("Devuelve una lista con paginación de los objetos")
+//	@Operation(summary = "Devuelve una lista con paginación de los objetos")
 //	@GetMapping("/pages")
 //	public ResponseEntity<Page<E>> pages(
 //			@RequestParam(defaultValue = "0") int page,
@@ -34,7 +34,7 @@ public class CommonController<E, S extends CommonService<E>> {
 //
 //	}
 
-	@ApiOperation("Obtiene el objeto con el id indicado")
+	@Operation(summary = "Obtiene el objeto con el id indicado")
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getById(@PathVariable Long id) {
 		E result = service.findById(id).orElse(null);
@@ -44,7 +44,7 @@ public class CommonController<E, S extends CommonService<E>> {
 			return ResponseEntity.ok(result);
 	}
 
-	@ApiOperation("Borra el objeto con el id indicado")
+	@Operation(summary = "Borra el objeto con el id indicado")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
 		service.delete(id);
