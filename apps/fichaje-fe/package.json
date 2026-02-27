@@ -28,13 +28,13 @@
     "json-unpacker": "^1.1.4",
     "leaflet": "^1.9.4",
     "ngx-spec": "^2.1.4",
-    "primeng": "^14.0.0",
+    "primeng": "^15.4.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.1.0",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "@angular-builders/custom-webpack": "^14.0.0",
+    "@angular-builders/custom-webpack": "^15.0.0",
     "@angular-devkit/build-angular": "^15.2.11",
     "@angular-devkit/core": "^15.2.11",
     "@angular/cli": "^15.2.11",
