@@ -29,7 +29,7 @@ import org.fichaje.service.SecurityService;
 import org.fichaje.service.FichajeService;
 import org.fichaje.provider.db.specifications.FichajeSpecifications;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/fichaje")
@@ -54,7 +54,7 @@ public class FichajeController
 
 	}
 
-	@ApiOperation("Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
+	@Operation(summary = "Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
 	@PostMapping("/pagesFiltered")
 	public ResponseEntity<Page<Fichaje>> pageDtoSpec(
 			@RequestBody FichajeDto dto,
@@ -124,7 +124,7 @@ public class FichajeController
 				.body(entities);
 	}
 
-	@ApiOperation("Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
+	@Operation(summary = "Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
 	@PostMapping("/listFiltered")
 	public ResponseEntity<List<Fichaje>> filteredList(
 			@RequestBody FichajeDto dto,

@@ -2,7 +2,7 @@ package org.fichaje.service;
 
 import java.util.*;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.fichaje.dto.entity.UsuarioDTO;

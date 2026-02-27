@@ -27,7 +27,7 @@ import org.fichaje.config.security.jwt.JwtProvider;
 import org.fichaje.service.UsuarioService;
 import org.fichaje.provider.db.specifications.UsuarioSpecifications;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/usuario")
@@ -42,7 +42,7 @@ public class UsuarioController
 	@Autowired
 	UsuarioSpecifications specifications;
 
-	@ApiOperation("Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
+	@Operation(summary = "Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
 	@PostMapping("/pagesFiltered")
 	public ResponseEntity<Page<UsuarioDTO>> pageDtoSpec(
 			@RequestBody UsuarioDtoFilter dto,
@@ -104,7 +104,7 @@ public class UsuarioController
 
 	}
 
-	@ApiOperation("Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
+	@Operation(summary = "Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
 	@PostMapping("/listFiltered")
 	public ResponseEntity<List<Usuario>> filteredList(@RequestBody UsuarioDtoFilter dto) {
 
@@ -201,7 +201,7 @@ public class UsuarioController
 		return ResponseEntity.ok().build();
 	}
 
-	@ApiOperation("Usuario obtiene la información de su usario")
+	@Operation(summary = "Usuario obtiene la información de su usario")
 	@GetMapping("/miusuario")
 	public ResponseEntity<?> getYourUser(@RequestHeader("authorization") String token) {
 		token = token.replace("Bearer ", "");

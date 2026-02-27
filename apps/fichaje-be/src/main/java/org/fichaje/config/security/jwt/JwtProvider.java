@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,8 +17,7 @@ import org.fichaje.provider.db.entity.UsuarioPrincipal;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.security.SecurityException;
 import io.jsonwebtoken.UnsupportedJwtException;
 
 @Component
@@ -37,24 +37,24 @@ public class JwtProvider {
 				.collect(Collectors.toList());
 
 		return Jwts.builder()
-				.setSubject(usuarioPrincipal.getUsername())
+				.subject(usuarioPrincipal.getUsername())
 				.claim("roles", roles)
 				.claim("nombre", sanitizeString(usuarioPrincipal.getNombre()))
 				.claim("id", usuarioPrincipal.getId())
-				.setIssuedAt(new Date())
-				.setExpiration(new Date(new Date().getTime() + expiration))
-				.signWith(SignatureAlgorithm.HS512, secret.getBytes())
+				.issuedAt(new Date())
+				.expiration(new Date(new Date().getTime() + expiration))
+				.signWith(Keys.hmacShaKeyFor(secret.getBytes()))
 				.compact();
 	}
 
 	public String getSubjectFromToken(String token) {
-		return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody()
+		return Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes())).build().parseClaimsJws(token).getBody()
 				.getSubject();
 	}
 
 	public boolean validateToken(String token) {
 		try {
-			Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token);
+			Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes())).build().parseClaimsJws(token);
 			return true;
 		} catch (MalformedJwtException e) {
 			logger.error("token mal formado");
@@ -64,7 +64,7 @@ public class JwtProvider {
 			logger.error("token expirado");
 		} catch (IllegalArgumentException e) {
 			logger.error("token vacío");
-		} catch (SignatureException e) {
+		} catch (SecurityException e) {
 			logger.error("fail en la firma");
 		}
 		return false;

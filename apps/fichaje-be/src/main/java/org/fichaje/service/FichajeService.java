@@ -3,7 +3,7 @@ package org.fichaje.service;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
