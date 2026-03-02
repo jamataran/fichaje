@@ -11,14 +11,14 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^16.2.12",
-    "@angular/common": "^16.2.12",
-    "@angular/compiler": "^16.2.12",
-    "@angular/core": "^16.2.12",
-    "@angular/forms": "^16.2.12",
-    "@angular/platform-browser": "^16.2.12",
-    "@angular/platform-browser-dynamic": "^16.2.12",
-    "@angular/router": "^16.2.12",
+    "@angular/animations": "^17.3.12",
+    "@angular/common": "^17.3.12",
+    "@angular/compiler": "^17.3.12",
+    "@angular/core": "^17.3.12",
+    "@angular/forms": "^17.3.12",
+    "@angular/platform-browser": "^17.3.12",
+    "@angular/platform-browser-dynamic": "^17.3.12",
+    "@angular/router": "^17.3.12",
     "@types/leaflet": "^1.9.8",
     "angular-csv-ext": "^1.0.5",
     "bootstrap": "^5.0.0-beta3",
@@ -27,17 +27,17 @@
     "json-unpacker": "^1.1.4",
     "leaflet": "^1.9.4",
     "ngx-spec": "^2.1.4",
-    "primeng": "^16.9.1",
+    "primeng": "^17.18.15",
     "rxjs": "~6.6.0",
     "tslib": "^2.1.0",
-    "zone.js": "~0.13.3"
+    "zone.js": "~0.14.10"
   },
   "devDependencies": {
-    "@angular-builders/custom-webpack": "^16.0.1",
-    "@angular-devkit/build-angular": "^16.2.16",
-    "@angular-devkit/core": "^16.2.16",
-    "@angular/cli": "^16.2.16",
-    "@angular/compiler-cli": "^16.2.12",
+    "@angular-builders/custom-webpack": "^17.0.2",
+    "@angular-devkit/build-angular": "^17.3.17",
+    "@angular-devkit/core": "^17.3.17",
+    "@angular/cli": "^17.3.17",
+    "@angular/compiler-cli": "^17.3.12",
     "@types/d3-selection": "^3.0.1",
     "@types/jasmine": "~3.6.0",
     "@types/jquery": "^3.5.6",
@@ -48,7 +48,7 @@
     "karma-coverage": "~2.0.3",
     "karma-jasmine": "~5.0.0",
     "karma-jasmine-html-reporter": "^2.0.0",
-    "typescript": "~5.1.6",
-    "primeicons": "^6.0.0"
+    "primeicons": "^6.0.0",
+    "typescript": "~5.4.5"
   }
 }
