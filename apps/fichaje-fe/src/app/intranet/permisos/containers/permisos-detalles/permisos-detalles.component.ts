@@ -42,11 +42,8 @@ export class PermisosDetallesComponent implements OnInit {
 
   onDelete(): void {
     const id = this.activatedRoute.snapshot.params.id
-    Popup.dangerConfirmBox('¿Desea eliminar el permiso?', 'Esta operación no se puede deshacer', 'SI', 'NO').openConfirmBox$().subscribe(resp => {
-      // IConfirmBoxPublicResponse
-      if (resp.Success) {
-        this.delete(id)
-      }
+    Popup.dangerConfirmBox('¿Desea eliminar el permiso?', 'Esta operación no se puede deshacer', 'SI', 'NO', () => {
+      this.delete(id)
     });
   }
 
