@@ -10,26 +10,20 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { PopupBridgeService } from './shared/helper/popup-bridge.service';
 
 import { interceptorProvider } from './core/auth/interceptor/interceptor.service';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 
-@NgModule({
-  declarations: [
-    AppComponent,
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    ToastModule,
-    ConfirmDialogModule,
-  ],
-  providers: [
-    interceptorProvider,
-    MessageService,
-    ConfirmationService,
-    PopupBridgeService
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        ToastModule,
+        ConfirmDialogModule], providers: [
+        interceptorProvider,
+        MessageService,
+        ConfirmationService,
+        PopupBridgeService,
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }

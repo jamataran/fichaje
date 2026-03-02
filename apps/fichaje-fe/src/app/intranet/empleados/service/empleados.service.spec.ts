@@ -1,11 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
 import { EmpleadosService } from './empleados.service';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { EmpleadoDto } from '../model/empleadoDto';
 import { Pagination } from 'src/app/shared/components/pagination/model/pagination.model';
 import { EMPLEADOS, EMPLEADO_DETALLE } from 'src/mock/mock.empleados';
 import { Empleado } from '../model/empleado';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 
 
@@ -16,13 +17,13 @@ describe('EmpleadosService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        HttpClientTestingModule
-      ],
-      providers: [
-        EmpleadosService
-      ]
-    });
+    imports: [],
+    providers: [
+        EmpleadosService,
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+});
 
     service = TestBed.inject(EmpleadosService),
       httpTestingController = TestBed.inject(HttpTestingController);
