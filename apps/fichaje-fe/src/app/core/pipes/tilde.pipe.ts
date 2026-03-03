@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from "@angular/core";
 
 @Pipe({
-  name: 'sin-tilde'
+    name: 'sin-tilde',
+    standalone: false
 })
 export class TildePipe implements PipeTransform {
 

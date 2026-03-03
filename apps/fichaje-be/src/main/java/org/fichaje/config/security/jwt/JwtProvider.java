@@ -1,5 +1,6 @@
 package org.fichaje.config.security.jwt;
 
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,18 +44,18 @@ public class JwtProvider {
 				.claim("id", usuarioPrincipal.getId())
 				.issuedAt(new Date())
 				.expiration(new Date(new Date().getTime() + expiration))
-				.signWith(Keys.hmacShaKeyFor(secret.getBytes()))
+				.signWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret)))
 				.compact();
 	}
 
 	public String getSubjectFromToken(String token) {
-		return Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes())).build().parseClaimsJws(token).getBody()
+		return Jwts.parser().verifyWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret))).build().parseClaimsJws(token).getBody()
 				.getSubject();
 	}
 
 	public boolean validateToken(String token) {
 		try {
-			Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes())).build().parseClaimsJws(token);
+			Jwts.parser().verifyWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret))).build().parseClaimsJws(token);
 			return true;
 		} catch (MalformedJwtException e) {
 			logger.error("token mal formado");

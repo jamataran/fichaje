@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'calendarFilter'
+    name: 'calendarFilter',
+    standalone: false
 })
 export class CalendarFilterPipe implements PipeTransform {
 

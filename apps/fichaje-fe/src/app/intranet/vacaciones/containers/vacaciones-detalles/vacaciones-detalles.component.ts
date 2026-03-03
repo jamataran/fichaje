@@ -6,9 +6,10 @@ import { VacacionesService } from '../../service/vacaciones.service';
 import { Popup } from 'src/app/shared/helper/popup';
 
 @Component({
-  selector: 'app-vacaciones-detalles',
-  templateUrl: './vacaciones-detalles.component.html',
-  styleUrls: ['./vacaciones-detalles.component.css']
+    selector: 'app-vacaciones-detalles',
+    templateUrl: './vacaciones-detalles.component.html',
+    styleUrls: ['./vacaciones-detalles.component.css'],
+    standalone: false
 })
 export class VacacionesDetallesComponent implements OnInit {
 

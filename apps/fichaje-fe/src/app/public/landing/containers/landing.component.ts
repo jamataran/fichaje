@@ -6,9 +6,10 @@ import { AuthService } from 'src/app/core/auth/service/auth.service';
 import { TokenService } from 'src/app/core/auth/service/token.service';
 
 @Component({
-  selector: 'app-landing',
-  templateUrl: './landing.component.html',
-  styleUrls: ['./landing.component.css']
+    selector: 'app-landing',
+    templateUrl: './landing.component.html',
+    styleUrls: ['./landing.component.css'],
+    standalone: false
 })
 export class LandingComponent implements OnInit {
 

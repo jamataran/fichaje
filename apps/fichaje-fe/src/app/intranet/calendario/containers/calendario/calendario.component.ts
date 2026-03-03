@@ -6,9 +6,10 @@ import { DiaDto } from '../../model/diaDto';
 import { Popup } from 'src/app/shared/helper/popup';
 
 @Component({
-  selector: 'app-calendario',
-  templateUrl: './calendario.component.html',
-  styleUrls: ['./calendario.component.css'],
+    selector: 'app-calendario',
+    templateUrl: './calendario.component.html',
+    styleUrls: ['./calendario.component.css'],
+    standalone: false
 })
 export class CalendarioComponent {
 

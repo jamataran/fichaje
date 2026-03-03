@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { IncidenciaService } from '../../service/incidencia.service';
 
 @Component({
-  selector: 'app-incidencias-statistics',
-  templateUrl: './incidencias-statistics.component.html',
-  styleUrls: ['./incidencias-statistics.component.css']
+    selector: 'app-incidencias-statistics',
+    templateUrl: './incidencias-statistics.component.html',
+    styleUrls: ['./incidencias-statistics.component.css'],
+    standalone: false
 })
 export class IncidenciasStatisticsComponent implements OnInit {
 

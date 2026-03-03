@@ -7,9 +7,10 @@ import { Popup } from 'src/app/shared/helper/popup';
 
 
 @Component({
-  selector: 'app-editar-calendario',
-  templateUrl: './editar-calendario.component.html',
-  styleUrls: ['./editar-calendario.component.css']
+    selector: 'app-editar-calendario',
+    templateUrl: './editar-calendario.component.html',
+    styleUrls: ['./editar-calendario.component.css'],
+    standalone: false
 })
 export class EditarCalendarioComponent implements OnInit {
 

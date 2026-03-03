@@ -6,9 +6,10 @@ import { Popup } from 'src/app/shared/helper/popup';
 import { Password } from '../../models/password';
 
 @Component({
-  selector: 'app-cuenta',
-  templateUrl: './cuenta.component.html',
-  styleUrls: ['./cuenta.component.css']
+    selector: 'app-cuenta',
+    templateUrl: './cuenta.component.html',
+    styleUrls: ['./cuenta.component.css'],
+    standalone: false
 })
 export class CuentaComponent implements OnInit {
 

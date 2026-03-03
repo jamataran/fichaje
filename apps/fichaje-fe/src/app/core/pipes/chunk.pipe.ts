@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from "@angular/core";
 
 @Pipe({
-  name: 'chunk'
+    name: 'chunk',
+    standalone: false
 })
 export class ChunkPipe implements PipeTransform {
 

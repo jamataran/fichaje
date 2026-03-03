@@ -6,9 +6,10 @@ import { PermisoService } from '../../service/permiso.service';
 import { Popup } from 'src/app/shared/helper/popup';
 
 @Component({
-  selector: 'app-permisos-detalles',
-  templateUrl: './permisos-detalles.component.html',
-  styleUrls: ['./permisos-detalles.component.css']
+    selector: 'app-permisos-detalles',
+    templateUrl: './permisos-detalles.component.html',
+    styleUrls: ['./permisos-detalles.component.css'],
+    standalone: false
 })
 export class PermisosDetallesComponent implements OnInit {
 

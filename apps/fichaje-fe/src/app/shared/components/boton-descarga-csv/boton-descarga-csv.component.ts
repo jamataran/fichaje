@@ -6,9 +6,10 @@ import { AngularCsv } from 'angular-csv-ext/dist/Angular-csv';
 import { unpack } from 'json-unpacker';
 
 @Component({
-  selector: 'app-boton-descarga-csv',
-  templateUrl: './boton-descarga-csv.component.html',
-  styleUrls: ['./boton-descarga-csv.component.css']
+    selector: 'app-boton-descarga-csv',
+    templateUrl: './boton-descarga-csv.component.html',
+    styleUrls: ['./boton-descarga-csv.component.css'],
+    standalone: false
 })
 export class BotonDescargaCsvComponent implements OnInit {
 

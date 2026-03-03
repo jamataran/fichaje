@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-input-filter-text',
-  templateUrl: './input-filter-text.component.html',
-  styleUrls: ['./input-filter-text.component.css']
+    selector: 'app-input-filter-text',
+    templateUrl: './input-filter-text.component.html',
+    styleUrls: ['./input-filter-text.component.css'],
+    standalone: false
 })
 export class InputFilterTextComponent implements OnInit {
 

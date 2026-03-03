@@ -6,9 +6,10 @@ import { IncidenciaService } from '../../service/incidencia.service';
 import { Popup } from 'src/app/shared/helper/popup';
 
 @Component({
-  selector: 'app-incidencias-detalles',
-  templateUrl: './incidencias-detalles.component.html',
-  styleUrls: ['./incidencias-detalles.component.css']
+    selector: 'app-incidencias-detalles',
+    templateUrl: './incidencias-detalles.component.html',
+    styleUrls: ['./incidencias-detalles.component.css'],
+    standalone: false
 })
 export class IncidenciasDetallesComponent implements OnInit {
 

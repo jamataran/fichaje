@@ -6,9 +6,10 @@ import { PermisoDto } from '../../model/permisoDto';
 import { PermisoService } from '../../service/permiso.service';
 
 @Component({
-  selector: 'app-permisos-lista',
-  templateUrl: './permisos-lista.component.html',
-  styleUrls: ['./permisos-lista.component.css']
+    selector: 'app-permisos-lista',
+    templateUrl: './permisos-lista.component.html',
+    styleUrls: ['./permisos-lista.component.css'],
+    standalone: false
 })
 export class PermisosListaComponent implements OnInit {
 
