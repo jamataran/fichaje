@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 
 @Component({
-  selector: 'app-th-sort',
-  templateUrl: './th-sort.component.html',
-  styleUrls: ['./th-sort.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-th-sort',
+    templateUrl: './th-sort.component.html',
+    styleUrls: ['./th-sort.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ThSortComponent implements OnInit {
 

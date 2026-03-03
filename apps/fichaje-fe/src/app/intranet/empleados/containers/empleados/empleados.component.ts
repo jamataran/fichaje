@@ -6,9 +6,10 @@ import { TokenService } from 'src/app/core/auth/service/token.service';
 
 
 @Component({
-  selector: 'app-empleados',
-  templateUrl: './empleados.component.html',
-  styleUrls: ['./empleados.component.css']
+    selector: 'app-empleados',
+    templateUrl: './empleados.component.html',
+    styleUrls: ['./empleados.component.css'],
+    standalone: false
 })
 export class EmpleadosComponent implements OnInit {
 

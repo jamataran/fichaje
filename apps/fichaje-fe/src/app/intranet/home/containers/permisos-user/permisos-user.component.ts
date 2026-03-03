@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-permisos-user',
-  templateUrl: './permisos-user.component.html',
-  styleUrls: ['./permisos-user.component.css']
+    selector: 'app-permisos-user',
+    templateUrl: './permisos-user.component.html',
+    styleUrls: ['./permisos-user.component.css'],
+    standalone: false
 })
 export class PermisosUserComponent implements OnInit {
 

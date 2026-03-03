@@ -7,9 +7,10 @@ import { Router } from '@angular/router';
 import { EmpleadosService } from 'src/app/intranet/empleados/service/empleados.service';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.css'],
+    standalone: false
 })
 export class HomeComponent implements OnInit {
 

@@ -5,9 +5,10 @@ import { AuthService } from 'src/app/core/auth/service/auth.service';
 import { Popup } from 'src/app/shared/helper/popup';
 
 @Component({
-  selector: 'app-register-form',
-  templateUrl: './register-form.component.html',
-  styleUrls: ['./register-form.component.css']
+    selector: 'app-register-form',
+    templateUrl: './register-form.component.html',
+    styleUrls: ['./register-form.component.css'],
+    standalone: false
 })
 export class RegisterFormComponent implements OnInit {
 

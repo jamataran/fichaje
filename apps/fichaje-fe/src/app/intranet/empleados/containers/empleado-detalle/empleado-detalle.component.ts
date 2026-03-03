@@ -5,9 +5,10 @@ import { EmpleadosService } from '../../service/empleados.service';
 import { Popup } from 'src/app/shared/helper/popup';
 
 @Component({
-  selector: 'app-empleado-detalle',
-  templateUrl: './empleado-detalle.component.html',
-  styleUrls: ['./empleado-detalle.component.css']
+    selector: 'app-empleado-detalle',
+    templateUrl: './empleado-detalle.component.html',
+    styleUrls: ['./empleado-detalle.component.css'],
+    standalone: false
 })
 export class EmpleadoDetalleComponent implements OnInit {
 

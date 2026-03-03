@@ -3,9 +3,10 @@ import * as L from 'leaflet';
 import { Subject } from 'rxjs';
 
 @Component({
-  selector: 'app-geolocation',
-  templateUrl: './geolocation.component.html',
-  styleUrls: ['./geolocation.component.css']
+    selector: 'app-geolocation',
+    templateUrl: './geolocation.component.html',
+    styleUrls: ['./geolocation.component.css'],
+    standalone: false
 })
 export class GeolocationComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;

@@ -9,9 +9,10 @@ import { AngularCsv } from 'angular-csv-ext/dist/Angular-csv';
 import { unpack } from 'json-unpacker';
 
 @Component({
-  selector: 'app-fichajes',
-  templateUrl: './fichajes.component.html',
-  styleUrls: ['./fichajes.component.css']
+    selector: 'app-fichajes',
+    templateUrl: './fichajes.component.html',
+    styleUrls: ['./fichajes.component.css'],
+    standalone: false
 })
 export class FichajesComponent implements OnInit {
 

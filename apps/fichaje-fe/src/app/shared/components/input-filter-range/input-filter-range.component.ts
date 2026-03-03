@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-input-filter-range',
-  templateUrl: './input-filter-range.component.html',
-  styleUrls: ['./input-filter-range.component.css']
+    selector: 'app-input-filter-range',
+    templateUrl: './input-filter-range.component.html',
+    styleUrls: ['./input-filter-range.component.css'],
+    standalone: false
 })
 export class InputFilterRangeComponent implements OnInit {
 

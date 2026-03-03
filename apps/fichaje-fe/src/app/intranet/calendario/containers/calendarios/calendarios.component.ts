@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CalendarioService } from '../../service/calendario.service';
 
 @Component({
-  selector: 'app-calendarios',
-  templateUrl: './calendarios.component.html',
-  styleUrls: ['./calendarios.component.css']
+    selector: 'app-calendarios',
+    templateUrl: './calendarios.component.html',
+    styleUrls: ['./calendarios.component.css'],
+    standalone: false
 })
 export class CalendariosComponent implements OnInit {
 
