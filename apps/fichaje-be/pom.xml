@@ -143,17 +143,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.liquibase</groupId>
-				<artifactId>liquibase-maven-plugin</artifactId>
-				<configuration>
-					<url>jdbc:mysql://localhost:3306/pruebas</url>
-					<username>app</username>
-					<password>app1234</password>
-					<changeLogFile>src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>
-					<outputChangeLogFile>src/main/resources/db/changelog/changes/001-initial-schema.xml</outputChangeLogFile>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
