@@ -146,7 +146,6 @@
 				<artifactId>liquibase-maven-plugin</artifactId>
 				<configuration>
 					<propertyFile>src/main/resources/application.properties</propertyFile>
-					<outputChangeLogFile>src/main/resources/db/changelog/changes/20260303-initial-schema.xml.xml</outputChangeLogFile>
 				</configuration>
 			</plugin>
 		</plugins>
