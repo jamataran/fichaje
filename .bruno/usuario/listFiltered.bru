@@ -1,0 +1,23 @@
+meta {
+    name: List Filtered
+    type: http
+    seq: 2
+}
+
+post {
+    url: {{baseUrl}}/usuario/listFiltered
+    body: json
+    auth: inherit
+}
+
+body:json {
+    {
+        "nombreEmpleado": "AdminFichaje",
+        "email": "fichajespi@fichajespi.com",
+        "numero": "fichajesPi000",
+        "dni": "zzz",
+        "working": false,
+        "enVacaciones": false,
+        "deBaja": false
+    }
+}
