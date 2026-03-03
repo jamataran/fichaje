@@ -1,6 +1,12 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
-    <changeSet author="Daviid (generated)" id="1772010459034-1">
+
+    <!-- CAMBIO 1: ENGINE=InnoDB en todas las tablas via <modifySql>.
+         Spring Boot generaba MyISAM (no soporta FK ni transacciones).
+         CAMBIO 2: BIT(1) uniforme en todas las columnas booleanas.
+         Spring Boot usaba tinyint(1) en calendarios.active, permisos.aprobado y vacaciones.aprobado. -->
+
+    <changeSet author="Daviid (generated)" id="1771931772806-1">
         <createTable tableName="api_keys">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -28,13 +34,19 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <!-- CAMBIO 1: InnoDB en lugar de MyISAM -->
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"/>
+        </modifySql>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-2">
+
+    <changeSet author="Daviid (generated)" id="1771931772806-2">
         <createTable tableName="calendarios">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column defaultValueBoolean="false" name="active" type="TINYINT(1)"/>
+            <!-- CAMBIO 2: BIT(1) en lugar de tinyint(1) para consistencia con pruebas -->
+            <column defaultValueBoolean="false" name="active" type="BIT(1)"/>
             <column name="minutos_mas_entrada" type="INT">
                 <constraints nullable="false"/>
             </column>
@@ -46,8 +58,13 @@
                 <constraints unique="true"/>
             </column>
         </createTable>
+        <!-- CAMBIO 1: InnoDB en lugar de MyISAM -->
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"/>
+        </modifySql>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-3">
+
+    <changeSet author="Daviid (generated)" id="1771931772806-3">
         <createTable tableName="dias_laborables">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -59,8 +76,13 @@
             <column name="hora_inicio" type="time"/>
             <column name="calendario_id" type="BIGINT"/>
         </createTable>
+        <!-- CAMBIO 1: InnoDB en lugar de MyISAM -->
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"/>
+        </modifySql>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-4">
+
+    <changeSet author="Daviid (generated)" id="1771931772806-4">
         <createTable tableName="fichajes">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -71,23 +93,27 @@
             <column name="tipo" type="VARCHAR(255)"/>
             <column name="usuario_id" type="BIGINT"/>
         </createTable>
+        <!-- CAMBIO 1: InnoDB en lugar de MyISAM -->
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"/>
+        </modifySql>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-5">
+
+    <!-- hibernate_sequence: existe en ambas BDs (fichajespi y pruebas), se mantiene -->
+    <changeSet author="Daviid (generated)" id="1771931772806-5">
         <createTable tableName="hibernate_sequence">
             <column name="next_val" type="BIGINT"/>
         </createTable>
-    </changeSet>
-    <changeSet author="Daviid (generated)" id="hibernate-sequence-insert">
-        <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM hibernate_sequence
-            </sqlCheck>
-        </preConditions>
         <insert tableName="hibernate_sequence">
             <column name="next_val" valueNumeric="1"/>
         </insert>
+        <!-- CAMBIO 1: InnoDB en lugar de MyISAM -->
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"/>
+        </modifySql>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-6">
+
+    <changeSet author="Daviid (generated)" id="1771931772806-6">
         <createTable tableName="incidencias">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -95,17 +121,23 @@
             <column name="descripcion" type="VARCHAR(255)"/>
             <column name="dia" type="date"/>
             <column name="explicacion" type="VARCHAR(255)"/>
-            <column defaultValueBoolean="false" name="resuelta" type="TINYINT(1)"/>
+            <column defaultValueBoolean="false" name="resuelta" type="BIT(1)"/>
             <column name="resumen" type="VARCHAR(255)"/>
             <column name="usuario_id" type="BIGINT"/>
         </createTable>
+        <!-- CAMBIO 1: InnoDB en lugar de MyISAM -->
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"/>
+        </modifySql>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-7">
+
+    <changeSet author="Daviid (generated)" id="1771931772806-7">
         <createTable tableName="permisos">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column defaultValueBoolean="false" name="aprobado" type="TINYINT(1)"/>
+            <!-- CAMBIO 2: BIT(1) en lugar de tinyint(1) para consistencia con pruebas -->
+            <column defaultValueBoolean="false" name="aprobado" type="BIT(1)"/>
             <column name="descripcion" type="VARCHAR(255)"/>
             <column name="dia" type="date"/>
             <column name="estado" type="VARCHAR(255)"/>
@@ -113,16 +145,26 @@
             <column name="hora_inicio" type="time"/>
             <column name="usuario_id" type="BIGINT"/>
         </createTable>
+        <!-- CAMBIO 1: InnoDB en lugar de MyISAM -->
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"/>
+        </modifySql>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-8">
+
+    <changeSet author="Daviid (generated)" id="1771931772806-8">
         <createTable tableName="roles">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="rol_nombre" type="VARCHAR(255)"/>
         </createTable>
+        <!-- CAMBIO 1: InnoDB en lugar de MyISAM -->
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"/>
+        </modifySql>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-9">
+
+    <changeSet author="Daviid (generated)" id="1771931772806-9">
         <createTable tableName="usuario_rol">
             <column name="usuario_id" type="BIGINT">
                 <constraints nullable="false"/>
@@ -131,8 +173,13 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <!-- CAMBIO 1: InnoDB en lugar de MyISAM -->
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"/>
+        </modifySql>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-10">
+
+    <changeSet author="Daviid (generated)" id="1771931772806-10">
         <createTable tableName="usuarios">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -150,58 +197,70 @@
             <column name="ultimo_fichaje" type="VARCHAR(255)"/>
             <column name="working" type="BIT(1)"/>
         </createTable>
+        <!-- CAMBIO 1: InnoDB en lugar de MyISAM -->
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"/>
+        </modifySql>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-11">
+
+    <changeSet author="Daviid (generated)" id="1771931772806-11">
         <createTable tableName="vacaciones">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column defaultValueBoolean="false" name="aprobado" type="TINYINT(1)"/>
+            <!-- CAMBIO 2: BIT(1) en lugar de tinyint(1) para consistencia con pruebas -->
+            <column defaultValueBoolean="false" name="aprobado" type="BIT(1)"/>
             <column name="consumidas" type="BIT(1)"/>
             <column name="estado" type="VARCHAR(255)"/>
             <column name="fin" type="date"/>
             <column name="inicio" type="date"/>
             <column name="usuario_id" type="BIGINT"/>
         </createTable>
+        <!-- CAMBIO 1: InnoDB en lugar de MyISAM -->
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"/>
+        </modifySql>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-12">
+
+    <changeSet author="Daviid (generated)" id="1771931772806-12">
         <createIndex indexName="FK1xhwr2n8xtp36kclfc15x4foy" tableName="api_keys">
             <column name="usuario_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-13">
+    <changeSet author="Daviid (generated)" id="1771931772806-13">
         <createIndex indexName="FK2yelidlr1aixx1ttoql00koc0" tableName="incidencias">
             <column name="usuario_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-14">
+    <changeSet author="Daviid (generated)" id="1771931772806-14">
         <createIndex indexName="FK4r7lbt3jqkjr4p016n5i4taee" tableName="dias_laborables">
             <column name="calendario_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-15">
+    <changeSet author="Daviid (generated)" id="1771931772806-15">
         <createIndex indexName="FK916t5rftwwa68d0mcdrij3aj0" tableName="vacaciones">
             <column name="usuario_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-16">
+    <changeSet author="Daviid (generated)" id="1771931772806-16">
         <createIndex indexName="FKe3kd49gu3mhj2ty5kl44qsytp" tableName="usuario_rol">
             <column name="rol_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-17">
+    <changeSet author="Daviid (generated)" id="1771931772806-17">
         <createIndex indexName="FKktsemf1f6awjww4da0ocv4n32" tableName="usuario_rol">
             <column name="usuario_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-18">
+    <changeSet author="Daviid (generated)" id="1771931772806-18">
         <createIndex indexName="FKl9cf7wtlcex9a0r11ll672l7y" tableName="permisos">
             <column name="usuario_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Daviid (generated)" id="1772010459034-19">
+    <changeSet author="Daviid (generated)" id="1771931772806-19">
         <createIndex indexName="FKslqvgdm6c5cpah6og36heklt3" tableName="fichajes">
             <column name="usuario_id"/>
         </createIndex>
     </changeSet>
+
 </databaseChangeLog>

@@ -7,4 +7,5 @@
 
     <include file="db/changelog/changes/001-initial-schema.xml"/>
 
+
 </databaseChangeLog>
