@@ -1,4 +1,8 @@
 packages:
-  - 'apps/*'
-  - 'packages/*'
+  - apps/*
+  - packages/*
 
+onlyBuiltDependencies:
+  - '@angular/cli'
+  - core-js
+  - esbuild
