@@ -49,4 +49,9 @@ public class Calendario {
 	@JsonIgnoreProperties(value = { "calendario" })
 	@OneToMany(mappedBy = "calendario", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<DiaLaborable> dias;
+
+	@JsonIgnoreProperties(value = { "calendarios" })
+	@ManyToOne
+	@JoinColumn(name = "empresa_id")
+	private Empresa empresa;
 }

@@ -103,4 +103,96 @@
             <dropForeignKeyConstraint baseTableName="api_keys" constraintName="fk_apikey_empresa"/>
         </rollback>
     </changeSet>
+
+    <changeSet author="Daviid" id="20260305-multi-empresa-9">
+        <addColumn tableName="fichajes">
+            <column name="empresa_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <rollback>
+            <dropColumn tableName="fichajes" columnName="empresa_id"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="Daviid" id="20260305-multi-empresa-10">
+        <addForeignKeyConstraint
+                baseTableName="fichajes"
+                baseColumnNames="empresa_id"
+                constraintName="fk_fichajes_empresa"
+                referencedTableName="empresa"
+                referencedColumnNames="id"/>
+        <rollback>
+            <dropForeignKeyConstraint baseTableName="fichajes" constraintName="fk_fichajes_empresa"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="Daviid" id="20260305-multi-empresa-11">
+        <addColumn tableName="vacaciones">
+            <column name="empresa_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <rollback>
+            <dropColumn tableName="vacaciones" columnName="empresa_id"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="Daviid" id="20260305-multi-empresa-12">
+        <addForeignKeyConstraint
+                baseTableName="vacaciones"
+                baseColumnNames="empresa_id"
+                constraintName="fk_vacaciones_empresa"
+                referencedTableName="empresa"
+                referencedColumnNames="id"/>
+        <rollback>
+            <dropForeignKeyConstraint baseTableName="vacaciones" constraintName="fk_vacaciones_empresa"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="Daviid" id="20260305-multi-empresa-13">
+        <addColumn tableName="incidencias">
+            <column name="empresa_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <rollback>
+            <dropColumn tableName="incidencias" columnName="empresa_id"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="Daviid" id="20260305-multi-empresa-14">
+        <addForeignKeyConstraint
+                baseTableName="incidencias"
+                baseColumnNames="empresa_id"
+                constraintName="fk_incidencias_empresa"
+                referencedTableName="empresa"
+                referencedColumnNames="id"/>
+        <rollback>
+            <dropForeignKeyConstraint baseTableName="incidencias" constraintName="fk_incidencias_empresa"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="Daviid" id="20260305-multi-empresa-15">
+        <addColumn tableName="permisos">
+            <column name="empresa_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <rollback>
+            <dropColumn tableName="permisos" columnName="empresa_id"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="Daviid" id="20260305-multi-empresa-16">
+        <addForeignKeyConstraint
+                baseTableName="permisos"
+                baseColumnNames="empresa_id"
+                constraintName="fk_permisos_empresa"
+                referencedTableName="empresa"
+                referencedColumnNames="id"/>
+        <rollback>
+            <dropForeignKeyConstraint baseTableName="permisos" constraintName="fk_permisos_empresa"/>
+        </rollback>
+    </changeSet>
 </databaseChangeLog>

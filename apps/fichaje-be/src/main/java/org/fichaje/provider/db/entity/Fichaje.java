@@ -57,4 +57,8 @@ public class Fichaje {
 
 	@NotNull
 	private String origen;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "empresa_id", nullable = false)
+	private Empresa empresa;
 }

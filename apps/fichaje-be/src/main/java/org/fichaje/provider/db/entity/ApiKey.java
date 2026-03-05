@@ -63,6 +63,11 @@ public class ApiKey {
     @Column(length = 100)
     private String createdBy; // Usuario que creó la API Key
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "empresa_id", nullable = false)
+    private Empresa empresa; // Empresa asociado a la API Key
+
     /**
      * Verifica si la API Key está activa y no ha expirado
      */

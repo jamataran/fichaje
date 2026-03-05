@@ -105,6 +105,12 @@ public class Usuario {
 	@OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Vacaciones> vacaciones;
 
+	@JsonIgnore
+	@NotNull
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "usuario_empresa", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "empresa_id"))
+	private List<Empresa> empresas;
+
 //	@ManyToOne
 //	@JoinColumn(name = "calendario_id")
 //	private Calendario calendario;

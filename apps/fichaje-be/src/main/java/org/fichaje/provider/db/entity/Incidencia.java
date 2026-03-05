@@ -56,4 +56,8 @@ public class Incidencia {
 	@JoinColumn(name = "usuario_id")
 	private Usuario usuario;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "empresa_id", nullable = false)
+	private Empresa empresa;
+
 }
