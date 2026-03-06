@@ -1,0 +1,31 @@
+meta {
+  name: Pages Filtered
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/fichaje/pagesFiltered
+  body: json
+  auth: inherit
+}
+
+params:query {
+  page: 0
+  size: 20
+  order: id
+  asc: true
+}
+
+body:json {
+    {
+      "horaDesde": "08:00",
+      "horaHasta": "17:00",
+      "diaDesde": "2026-01-01",
+      "diaHasta": "2026-02-26",
+      "numeroUsuario": "fichajesPi000",
+      "nombreUsuario": "AdminFichaje",
+      "tipo": "ENTRADA",
+      "origen": "WEB"
+    }
+}

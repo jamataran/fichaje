@@ -1,0 +1,23 @@
+meta {
+    name: Edit Fichaje
+    type: http
+    seq: 4
+}
+
+put {
+    url: {{baseUrl}}/fichaje/:id
+    body: json
+    auth: inherit
+}
+
+params:path {
+    id: 4
+}
+
+body:json {
+    {
+        "hora": "08:00",
+        "dia": "2026-02-26",
+        "tipo": "ENTRADA"
+    }
+}
