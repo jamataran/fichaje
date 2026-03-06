@@ -2,7 +2,7 @@ package org.fichaje.dto.entity;
 
 import java.util.List;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class CalendarioDto {
 
 	private long id;
-	@ApiModelProperty(value = "Nombre del calendario", dataType = "String", example = "calendario_2021", position = 1)
+	@Schema(description = "Nombre del calendario", example = "calendario_2021")
 	private String nombre;
 	private int year;
 	// private boolean active;

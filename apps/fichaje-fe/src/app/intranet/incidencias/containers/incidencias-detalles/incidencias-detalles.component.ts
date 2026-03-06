@@ -6,9 +6,10 @@ import { IncidenciaService } from '../../service/incidencia.service';
 import { Popup } from 'src/app/shared/helper/popup';
 
 @Component({
-  selector: 'app-incidencias-detalles',
-  templateUrl: './incidencias-detalles.component.html',
-  styleUrls: ['./incidencias-detalles.component.css']
+    selector: 'app-incidencias-detalles',
+    templateUrl: './incidencias-detalles.component.html',
+    styleUrls: ['./incidencias-detalles.component.css'],
+    standalone: false
 })
 export class IncidenciasDetallesComponent implements OnInit {
 
@@ -48,11 +49,8 @@ export class IncidenciasDetallesComponent implements OnInit {
 
   onDelete(): void {
     const id = this.activatedRoute.snapshot.params.id
-    Popup.dangerConfirmBox('¿Desea eliminar la incidencia?', 'Esta operación no se puede deshacer', 'SI', 'NO').openConfirmBox$().subscribe(resp => {
-      // IConfirmBoxPublicResponse
-      if (resp.Success) {
-        this.delete(id)
-      }
+    Popup.dangerConfirmBox('¿Desea eliminar la incidencia?', 'Esta operación no se puede deshacer', 'SI', 'NO', () => {
+      this.delete(id)
     });
   }
 

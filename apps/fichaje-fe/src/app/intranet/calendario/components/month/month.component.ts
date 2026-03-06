@@ -55,9 +55,10 @@ export class ChunkPipe implements PipeTransform {
 } */
 
 @Component({
-  selector: 'app-month',
-  templateUrl: './month.component.html',
-  styleUrls: ['./month.component.css']
+    selector: 'app-month',
+    templateUrl: './month.component.html',
+    styleUrls: ['./month.component.css'],
+    standalone: false
 })
 
 export class MonthComponent implements OnInit, OnChanges {

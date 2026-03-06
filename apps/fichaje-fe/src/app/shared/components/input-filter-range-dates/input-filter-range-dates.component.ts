@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-input-filter-range-dates',
-  templateUrl: './input-filter-range-dates.component.html',
-  styleUrls: ['./input-filter-range-dates.component.css']
+    selector: 'app-input-filter-range-dates',
+    templateUrl: './input-filter-range-dates.component.html',
+    styleUrls: ['./input-filter-range-dates.component.css'],
+    standalone: false
 })
 export class InputFilterRangeDatesComponent implements OnInit {
 

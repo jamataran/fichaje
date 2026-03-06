@@ -34,7 +34,7 @@ import org.fichaje.service.PermisoService;
 import org.fichaje.service.NotificationService;
 import org.fichaje.provider.db.specifications.PermisoSpecifications;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/permiso")
@@ -128,7 +128,7 @@ public class PermisosController
 		});
 	}
 
-	@ApiOperation("Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
+	@Operation(summary = "Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
 	@PostMapping("/pagesFiltered")
 	public ResponseEntity<Page<Permiso>> pageDtoSpec(
 			@RequestBody PermisoDtoFilter dto,
@@ -204,7 +204,7 @@ public class PermisosController
 
 	}
 
-	@ApiOperation("Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
+	@Operation(summary = "Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
 	@PostMapping("/listFiltered")
 	public ResponseEntity<List<Permiso>> filteredList(
 			@RequestBody PermisoDtoFilter dto,
@@ -266,14 +266,14 @@ public class PermisosController
 
 	}
 
-	@ApiOperation("Obtiene el número de permisos de los últimos 12 meses")
+	@Operation(summary = "Obtiene el número de permisos de los últimos 12 meses")
 	@GetMapping("/count")
 	public ResponseEntity<?> countLast12Months() {
 		ChartDataDto result = service.numberOfPermisosLast12Months();
 		return ResponseEntity.ok(result);
 	}
 
-	@ApiOperation("Obtiene el número de permisos por usuario de los últimos 12 meses")
+	@Operation(summary = "Obtiene el número de permisos por usuario de los últimos 12 meses")
 	@GetMapping("/count/users")
 	public ResponseEntity<?> countUsersLast12Months() {
 		List<IUsuarioDtoEstadistica> result = service.numberOfPermisosPerUserLast12Months();

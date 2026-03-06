@@ -6,9 +6,10 @@ import { VacacionesDto } from '../../models/vacacionesDto';
 import { VacacionesService } from '../../service/vacaciones.service';
 
 @Component({
-  selector: 'app-vacaciones-lista',
-  templateUrl: './vacaciones-lista.component.html',
-  styleUrls: ['./vacaciones-lista.component.css']
+    selector: 'app-vacaciones-lista',
+    templateUrl: './vacaciones-lista.component.html',
+    styleUrls: ['./vacaciones-lista.component.css'],
+    standalone: false
 })
 export class VacacionesListaComponent implements OnInit {
 

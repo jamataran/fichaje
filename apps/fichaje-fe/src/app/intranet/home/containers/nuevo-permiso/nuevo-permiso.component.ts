@@ -6,9 +6,10 @@ import { Popup } from 'src/app/shared/helper/popup';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-nuevo-permiso',
-  templateUrl: './nuevo-permiso.component.html',
-  styleUrls: ['./nuevo-permiso.component.css']
+    selector: 'app-nuevo-permiso',
+    templateUrl: './nuevo-permiso.component.html',
+    styleUrls: ['./nuevo-permiso.component.css'],
+    standalone: false
 })
 export class NuevoPermisoComponent implements OnInit {
 

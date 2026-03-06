@@ -7,9 +7,10 @@ import { FichajeService } from '../../service/fichaje.service';
 import { Popup } from 'src/app/shared/helper/popup';
 
 @Component({
-  selector: 'app-fichajes-detalle',
-  templateUrl: './fichajes-detalle.component.html',
-  styleUrls: ['./fichajes-detalle.component.css']
+    selector: 'app-fichajes-detalle',
+    templateUrl: './fichajes-detalle.component.html',
+    styleUrls: ['./fichajes-detalle.component.css'],
+    standalone: false
 })
 export class FichajesDetalleComponent implements OnInit {
 
@@ -52,11 +53,8 @@ export class FichajesDetalleComponent implements OnInit {
 
   onDelete(): void {
     const id = this.activatedRoute.snapshot.params.id
-    Popup.dangerConfirmBox('¿Desea eliminar el fichaje?', 'Esta operación no se puede deshacer', 'SI', 'NO').openConfirmBox$().subscribe(resp => {
-      // IConfirmBoxPublicResponse
-      if (resp.Success) {
-        this.delete(id)
-      }
+    Popup.dangerConfirmBox('¿Desea eliminar el fichaje?', 'Esta operación no se puede deshacer', 'SI', 'NO', () => {
+      this.delete(id)
     });
   }
 

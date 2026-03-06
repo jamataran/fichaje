@@ -5,9 +5,10 @@ import { DiaService } from '../../service/dia.service';
 import { Popup } from 'src/app/shared/helper/popup';
 
 @Component({
-  selector: 'app-nuevo-dia',
-  templateUrl: './nuevo-dia.component.html',
-  styleUrls: ['./nuevo-dia.component.css']
+    selector: 'app-nuevo-dia',
+    templateUrl: './nuevo-dia.component.html',
+    styleUrls: ['./nuevo-dia.component.css'],
+    standalone: false
 })
 export class NuevoDiaComponent implements OnInit {
 

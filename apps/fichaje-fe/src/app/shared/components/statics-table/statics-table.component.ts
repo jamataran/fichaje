@@ -2,9 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ChartDataService } from '../../interfaces/ChartDataService';
 
 @Component({
-  selector: 'app-statics-table',
-  templateUrl: './statics-table.component.html',
-  styleUrls: ['./statics-table.component.css']
+    selector: 'app-statics-table',
+    templateUrl: './statics-table.component.html',
+    styleUrls: ['./statics-table.component.css'],
+    standalone: false
 })
 export class StaticsTableComponent implements OnInit {
 

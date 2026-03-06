@@ -6,9 +6,10 @@ import { FichajeDto } from '../../model/fichajeDto';
 import { FichajeService } from '../../service/fichaje.service';
 
 @Component({
-  selector: 'app-fichajes-lista',
-  templateUrl: './fichajes-lista.component.html',
-  styleUrls: ['./fichajes-lista.component.css']
+    selector: 'app-fichajes-lista',
+    templateUrl: './fichajes-lista.component.html',
+    styleUrls: ['./fichajes-lista.component.css'],
+    standalone: false
 })
 export class FichajesListaComponent implements OnInit {
 

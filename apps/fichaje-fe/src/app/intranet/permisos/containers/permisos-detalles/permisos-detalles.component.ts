@@ -6,9 +6,10 @@ import { PermisoService } from '../../service/permiso.service';
 import { Popup } from 'src/app/shared/helper/popup';
 
 @Component({
-  selector: 'app-permisos-detalles',
-  templateUrl: './permisos-detalles.component.html',
-  styleUrls: ['./permisos-detalles.component.css']
+    selector: 'app-permisos-detalles',
+    templateUrl: './permisos-detalles.component.html',
+    styleUrls: ['./permisos-detalles.component.css'],
+    standalone: false
 })
 export class PermisosDetallesComponent implements OnInit {
 
@@ -42,11 +43,8 @@ export class PermisosDetallesComponent implements OnInit {
 
   onDelete(): void {
     const id = this.activatedRoute.snapshot.params.id
-    Popup.dangerConfirmBox('¿Desea eliminar el permiso?', 'Esta operación no se puede deshacer', 'SI', 'NO').openConfirmBox$().subscribe(resp => {
-      // IConfirmBoxPublicResponse
-      if (resp.Success) {
-        this.delete(id)
-      }
+    Popup.dangerConfirmBox('¿Desea eliminar el permiso?', 'Esta operación no se puede deshacer', 'SI', 'NO', () => {
+      this.delete(id)
     });
   }
 

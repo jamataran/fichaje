@@ -6,9 +6,10 @@ import { VacacionesService } from '../../service/vacaciones.service';
 import { Popup } from 'src/app/shared/helper/popup';
 
 @Component({
-  selector: 'app-vacaciones-detalles',
-  templateUrl: './vacaciones-detalles.component.html',
-  styleUrls: ['./vacaciones-detalles.component.css']
+    selector: 'app-vacaciones-detalles',
+    templateUrl: './vacaciones-detalles.component.html',
+    styleUrls: ['./vacaciones-detalles.component.css'],
+    standalone: false
 })
 export class VacacionesDetallesComponent implements OnInit {
 
@@ -42,11 +43,8 @@ export class VacacionesDetallesComponent implements OnInit {
 
   onDelete(): void {
     const id = this.activatedRoute.snapshot.params.id
-    Popup.dangerConfirmBox('¿Desea eliminar las vacaciones?', 'Esta operación no se puede deshacer', 'SI', 'NO').openConfirmBox$().subscribe(resp => {
-      // IConfirmBoxPublicResponse
-      if (resp.Success) {
-        this.delete(id)
-      }
+    Popup.dangerConfirmBox('¿Desea eliminar las vacaciones?', 'Esta operación no se puede deshacer', 'SI', 'NO', () => {
+      this.delete(id)
     });
   }
 
