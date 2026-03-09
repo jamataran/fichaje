@@ -10,6 +10,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotNull;
@@ -49,4 +51,9 @@ public class Calendario {
 	@JsonIgnoreProperties(value = { "calendario" })
 	@OneToMany(mappedBy = "calendario", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<DiaLaborable> dias;
+
+	@JsonIgnoreProperties(value = { "calendarios" })
+	@ManyToOne
+	@JoinColumn(name = "empresa_id")
+	private Empresa empresa;
 }
