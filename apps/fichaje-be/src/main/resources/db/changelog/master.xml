@@ -6,6 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
     <include file="/db/changelog/changes/20260303-initial-schema.xml"/>
+    <include file="/db/changelog/changes/20260310-add-autoincrement-ids.xml"/>
     <include file="/db/changelog/changes/20260305-multi_empresa_schema.xml"/>
 
 </databaseChangeLog>
