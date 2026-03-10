@@ -1,0 +1,25 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet id="20260310-add-autoincrement-to-all-ids" author="Daviid">
+        <sql>ALTER TABLE calendarios MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT;</sql>
+        <sql>ALTER TABLE dias_laborables MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT;</sql>
+        <sql>ALTER TABLE fichajes MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT;</sql>
+        <sql>ALTER TABLE incidencias MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT;</sql>
+        <sql>ALTER TABLE permisos MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT;</sql>
+        <sql>ALTER TABLE roles MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT;</sql>
+        <sql>ALTER TABLE usuarios MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT;</sql>
+        <sql>ALTER TABLE vacaciones MODIFY COLUMN id BIGINT NOT NULL AUTO_INCREMENT;</sql>
+
+        <rollback>
+            <sql>ALTER TABLE calendarios MODIFY COLUMN id BIGINT NOT NULL;</sql>
+            <sql>ALTER TABLE dias_laborables MODIFY COLUMN id BIGINT NOT NULL;</sql>
+            <sql>ALTER TABLE fichajes MODIFY COLUMN id BIGINT NOT NULL;</sql>
+            <sql>ALTER TABLE incidencias MODIFY COLUMN id BIGINT NOT NULL;</sql>
+            <sql>ALTER TABLE permisos MODIFY COLUMN id BIGINT NOT NULL;</sql>
+            <sql>ALTER TABLE roles MODIFY COLUMN id BIGINT NOT NULL;</sql>
+            <sql>ALTER TABLE usuarios MODIFY COLUMN id BIGINT NOT NULL;</sql>
+            <sql>ALTER TABLE vacaciones MODIFY COLUMN id BIGINT NOT NULL;</sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
