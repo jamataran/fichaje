@@ -18,7 +18,7 @@ import java.util.List;
 public class Empresa {
 
 	@Id
-	@GeneratedValue()
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotNull
