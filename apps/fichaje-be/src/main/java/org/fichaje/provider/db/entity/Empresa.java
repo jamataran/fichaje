@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -37,7 +39,6 @@ public class Empresa {
 	private List<Calendario> calendarios;
 
 	@JsonIgnore
-	@NotNull
 	@ManyToMany(mappedBy = "empresas")
-	private List<Usuario> usuarios;
+	private List<Usuario> usuarios = new ArrayList<>();
 }

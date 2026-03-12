@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class EmpresaDto {
 
-	private long id;
+	private Long id;
 	private String nombre;
 	private String cif;
 	private boolean activa;

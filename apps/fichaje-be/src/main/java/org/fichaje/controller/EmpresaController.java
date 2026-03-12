@@ -65,4 +65,18 @@ public class EmpresaController
 		});
 	}
 
+	@Override
+	@Operation(summary = "Elimina una empresa")
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> delete(@PathVariable Long id) {
+		return service.findById(id).map(c -> {
+			service.delete(id);
+			// return ResponseEntity.ok(new Mensaje("Empresa eliminada"));
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(new Mensaje("Empresa eliminada"));
+		}).orElseGet(() -> {
+			return ResponseEntity.notFound().build();
+		});
+	}
+
 }
