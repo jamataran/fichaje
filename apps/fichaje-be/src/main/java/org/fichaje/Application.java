@@ -38,22 +38,31 @@ public class Application {
 		 * Crear los roles si es la primera vez que se ejecuta la app y la tabla no
 		 * tiene datos
 		 */
-		List<Rol> roles = rolService.list();
-		if (roles.size() == 0) {
-			Rol rolUser = new Rol();
-			Rol rolRrhh = new Rol();
-//			Rol rolAdmin = new Rol();
-			rolUser.setRolNombre(RolNombre.ROLE_USER);
-			rolRrhh.setRolNombre(RolNombre.ROLE_RRHH);
-//			rolAdmin.setRolNombre(RolNombre.ROLE_ADMIN);
-			rolService.save(rolUser);
-			rolService.save(rolRrhh);
-//			rolService.save(rolAdmin);
-			System.out.println("Roles creados");
+		if (rolService.findByRolNombre(RolNombre.ROLE_SUPER_ADMIN).isEmpty()) {
+			Rol rolSuperAdmin = new Rol();
+			rolSuperAdmin.setRolNombre(RolNombre.ROLE_SUPER_ADMIN);
+			rolService.save(rolSuperAdmin);
+			System.out.println("Rol SUPER_ADMIN creado");
 		} else {
-			System.out.println("Roles ya existen");
+			System.out.println("Rol SUPER_ADMIN ya existe");
+		}
+		if (rolService.findByRolNombre(RolNombre.ROLE_USER).isEmpty()) {
+			Rol rolUser = new Rol();
+			rolUser.setRolNombre(RolNombre.ROLE_USER);
+			rolService.save(rolUser);
+			System.out.println("Rol USER creado");
+		} else {
+			System.out.println("Rol USER ya existe");
 		}
 
+		if (rolService.findByRolNombre(RolNombre.ROLE_RRHH).isEmpty()) {
+			Rol rolRrhh = new Rol();
+			rolRrhh.setRolNombre(RolNombre.ROLE_RRHH);
+			rolService.save(rolRrhh);
+			System.out.println("Rol RRHH creado");
+		} else {
+			System.out.println("Rol RRHH ya existe");
+		}
 		
 //		Creamos el usuario admin si no existe para poder tener un usuario con privilegios
 		String adminCredential = "fichajesPi000";
@@ -64,7 +73,7 @@ public class Application {
 			
 			List<String> rolesAdmin = new ArrayList<>();
 //			rolesAdmin.add("admin");
-			rolesAdmin.add("rrhh");
+			rolesAdmin.add("super_admin");
 
 			UsuarioDTO adminDto = new UsuarioDTO().builder()
 					.nombreEmpleado("AdminFichaje")
