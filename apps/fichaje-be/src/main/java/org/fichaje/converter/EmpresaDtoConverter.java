@@ -1,6 +1,6 @@
 package org.fichaje.converter;
 
-import org.fichaje.dto.entity.EmpresaDto;
+import org.fichaje.dto.entity.EmpresaDTO;
 import org.fichaje.provider.db.entity.Empresa;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +10,7 @@ public class EmpresaDtoConverter {
 //	@Autowired
 //	private DiaDtoToDia service;
 
-	public Empresa transform(EmpresaDto dto) {
+	public Empresa transform(EmpresaDTO dto) {
 		Empresa e = new Empresa();
 		e.setNombre(dto.getNombre());
 		e.setCif(dto.getCif());
@@ -22,8 +22,8 @@ public class EmpresaDtoConverter {
 		return e;
 	}
 
-	public EmpresaDto inverseTransform(Empresa e) {
-		EmpresaDto dto = new EmpresaDto();
+	public EmpresaDTO inverseTransform(Empresa e) {
+		EmpresaDTO dto = new EmpresaDTO();
 		dto.setId(e.getId());
 		dto.setNombre(e.getNombre());
 		dto.setCif(e.getCif());

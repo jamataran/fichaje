@@ -5,6 +5,9 @@ import org.fichaje.provider.db.repository.EmpresaRepository;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import java.util.Optional;
 
 @Service
@@ -16,8 +19,7 @@ public class EmpresaService
 		return repository.findByCif(cif);
 	}
 
-	public Optional<Empresa> findByActiva(Boolean activa) {
-		return repository.findByActiva(activa);
-	}
+	public Optional<Empresa> findByActiva(Boolean activa) { return repository.findByActiva(activa); }
 
+	public Page<Empresa> findAll(Pageable pageable) { return repository.findAll(pageable); }
 }
