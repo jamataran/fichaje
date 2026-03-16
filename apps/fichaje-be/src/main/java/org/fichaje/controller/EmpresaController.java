@@ -1,6 +1,7 @@
 package org.fichaje.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.fichaje.dto.entity.EmpresaDTO;
 import org.fichaje.provider.db.entity.Empresa;
 import org.fichaje.service.EmpresaService;
@@ -20,7 +21,7 @@ public class EmpresaController
     @Operation(summary = "Crea una nueva empresa")
     @PostMapping
     public ResponseEntity<EmpresaDTO> newEmpresa(
-            @RequestBody EmpresaDTO empresaDto) {
+            @Valid @RequestBody EmpresaDTO empresaDto) {
         EmpresaDTO empresaGuardada = service.save(empresaDto);
 
         URI location = ServletUriComponentsBuilder
@@ -40,7 +41,7 @@ public class EmpresaController
 
     @Operation(summary = "Edita una empresa")
     @PutMapping("/{id}")
-    public ResponseEntity<?> editEmpresa(@RequestBody EmpresaDTO empresa, @PathVariable Long id) {
+    public ResponseEntity<?> editEmpresa(@Valid @RequestBody EmpresaDTO empresa, @PathVariable Long id) {
 
         return ResponseEntity.ok(service.update(empresa, id));
     }

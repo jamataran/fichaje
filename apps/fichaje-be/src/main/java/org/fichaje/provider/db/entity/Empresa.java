@@ -23,12 +23,10 @@ public class Empresa {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotNull
 	@Column()
 	private String nombre;
 
-	@NotNull
-	@Column(unique = true)
+	@Column(unique = true, nullable = false)
 	private String cif;
 
 	@Column(columnDefinition = "boolean default false")

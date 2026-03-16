@@ -37,7 +37,6 @@ public class EmpresaService
     public EmpresaDTO update(EmpresaDTO empresaDTO, Long id) {
         return repository.findById(id).map(
                 c -> {
-                    c.setId(empresaDTO.getId());
                     c.setNombre(empresaDTO.getNombre());
                     c.setCif(empresaDTO.getCif());
                     c.setActiva(empresaDTO.isActiva());
