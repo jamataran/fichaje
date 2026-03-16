@@ -2,6 +2,7 @@ package org.fichaje.service;
 
 import org.fichaje.converter.EmpresaDtoConverter;
 import org.fichaje.dto.entity.EmpresaDTO;
+import org.fichaje.exception.EmpresaNotFoundException;
 import org.fichaje.provider.db.entity.Empresa;
 import org.fichaje.provider.db.repository.EmpresaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +44,11 @@ public class EmpresaService
 
                     Empresa updatedEmpresa = repository.save(c);
                     return dtoConverter.inverseTransform(updatedEmpresa);
-                }).orElseThrow(() -> new RuntimeException("Empresa no encontrada con id: " + id));
+                }).orElseThrow(() -> new EmpresaNotFoundException(id));
     }
 
     public void delete(Long id) {
-        repository.findById(id).orElseThrow(() -> new RuntimeException("Empresa no encontrada con id: " + id));
+        repository.findById(id).orElseThrow(() -> new EmpresaNotFoundException(id));
         repository.deleteById(id);
     }
 }
