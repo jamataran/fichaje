@@ -5,7 +5,6 @@ import org.fichaje.dto.entity.EmpresaDTO;
 import org.fichaje.provider.db.entity.Empresa;
 import org.fichaje.provider.db.repository.EmpresaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -25,14 +24,6 @@ public class EmpresaService
 
     @Autowired
     EmpresaRepository repository;
-
-    public Optional<Empresa> findByCif(String cif) {
-        return repository.findByCif(cif);
-    }
-
-    public Optional<Empresa> findByActiva(Boolean activa) {
-        return repository.findByActiva(activa);
-    }
 
     public Page<EmpresaDTO> findAll(Pageable pageable) {
         return repository.findAll(pageable).map(dtoConverter::inverseTransform);
