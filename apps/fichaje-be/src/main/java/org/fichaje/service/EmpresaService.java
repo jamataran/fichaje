@@ -12,8 +12,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 
-import java.util.Optional;
-
 @Service
 @Transactional
 public class EmpresaService
