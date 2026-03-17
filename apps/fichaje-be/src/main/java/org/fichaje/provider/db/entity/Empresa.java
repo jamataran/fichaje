@@ -1,18 +1,16 @@
 package org.fichaje.provider.db.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -23,7 +21,7 @@ public class Empresa {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column()
+	@Column(nullable = false)
 	private String nombre;
 
 	@Column(unique = true, nullable = false)
@@ -32,11 +30,9 @@ public class Empresa {
 	@Column(columnDefinition = "boolean default false")
 	private boolean activa;
 
-	@JsonIgnoreProperties(value = { "empresa" })
 	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Calendario> calendarios;
+	private List<Calendario> calendarios = new ArrayList<>();
 
-	@JsonIgnore
 	@ManyToMany(mappedBy = "empresas")
 	private List<Usuario> usuarios = new ArrayList<>();
 }

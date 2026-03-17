@@ -1,6 +1,6 @@
 package org.fichaje.dto.entity;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,14 +13,13 @@ public class EmpresaDTO {
 
 	private Long id;
 
-	@NotNull
+	@NotBlank(message = "El nombre de la empresa es obligatorio")
 	private String nombre;
 
-	@NotNull
-	@Pattern(regexp = "^[ABCDEFGHJKLMNPQRSUVW]{1}[0-9]{7}[0-9A-J]{1}$",
-			message = "El CIF no tiene un formato válido")
+	@NotBlank(message = "El CIF es obligatorio")
+	@Pattern(regexp = "^[ABCDEFGHJKLMNPQRSUVW][0-9]{7}[0-9A-J]$",
+			message = "El formato inicial del CIF es incorrecto")
 	private String cif;
 
 	private boolean activa;
-
 }
