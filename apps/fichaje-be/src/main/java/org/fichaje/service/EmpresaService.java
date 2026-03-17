@@ -2,7 +2,6 @@ package org.fichaje.service;
 
 import org.fichaje.converter.EmpresaDtoConverter;
 import org.fichaje.dto.entity.EmpresaDTO;
-import org.fichaje.exception.EmpresaNotFoundException;
 import org.fichaje.provider.db.entity.Empresa;
 import org.fichaje.provider.db.repository.EmpresaRepository;
 
@@ -12,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class EmpresaService {
@@ -48,7 +49,7 @@ public class EmpresaService {
     }
 
     @Transactional
-    public EmpresaDTO update(EmpresaDTO empresaDTO, Long id) {
+    public Optional<EmpresaDTO> update(EmpresaDTO empresaDTO, Long id) {
         log.info("Actualizando datos de la empresa con ID: {}", id);
 
         validarCif(empresaDTO.getCif());
@@ -61,22 +62,21 @@ public class EmpresaService {
             Empresa updatedEmpresa = repository.save(empresaExistente);
             log.info("Empresa con ID: {} actualizada correctamente", id);
             return dtoConverter.todtoConverter(updatedEmpresa);
-        }).orElseThrow(() -> {
-            log.error("Fallo al actualizar: No se encontró la empresa con ID: {}", id);
-            return new EmpresaNotFoundException(id);
         });
     }
 
     @Transactional
-    public void delete(Long id) {
+    public boolean delete(Long id) {
         log.info("Solicitud para eliminar la empresa con ID: {}", id);
-        Empresa empresa = repository.findById(id).orElseThrow(() -> {
-            log.error("Fallo al eliminar: No se encontró la empresa con ID: {}", id);
-            return new EmpresaNotFoundException(id);
-        });
 
-        repository.delete(empresa);
+        if (!repository.existsById(id)) {
+            log.warn("Fallo al eliminar: No se encontró la empresa con ID: {}", id);
+            return false;
+        }
+
+        repository.deleteById(id);
         log.info("Empresa con ID: {} eliminada físicamente de la base de datos", id);
+        return true;
     }
 
     private void validarCif(String cif) {

@@ -45,13 +45,18 @@ public class EmpresaController {
     @Operation(summary = "Edita una empresa existente")
     @PutMapping("/{id}")
     public ResponseEntity<EmpresaDTO> editEmpresa(@PathVariable Long id, @Valid @RequestBody EmpresaDTO empresa) {
-        return ResponseEntity.ok(service.update(empresa, id));
+        return ResponseEntity.of(service.update(empresa, id));
     }
 
     @Operation(summary = "Elimina una empresa")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ResponseEntity.noContent().build();
+        boolean borrado = service.delete(id);
+
+        if (borrado) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
