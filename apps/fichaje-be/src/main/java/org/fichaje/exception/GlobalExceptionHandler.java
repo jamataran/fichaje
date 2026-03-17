@@ -41,6 +41,6 @@ public class GlobalExceptionHandler {
 
         error.put("error_db", "No se puede guardar: Ya existe un registro con ese CIF en el sistema.");
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error); // Código 409: Conflicto
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 }
