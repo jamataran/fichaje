@@ -1,0 +1,14 @@
+meta {
+    name: Delete Empresa
+    type: http
+    seq: 4
+}
+
+delete {
+    url: {{baseUrl}}/empresas/:id
+    auth: inherit
+}
+
+params:path {
+    id: 1
+}

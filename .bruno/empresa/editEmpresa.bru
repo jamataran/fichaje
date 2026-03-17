@@ -1,0 +1,24 @@
+meta {
+    name: Edit Empresa
+    type: http
+    seq: 3
+}
+
+put {
+    url: {{baseUrl}}/empresas/:id
+    body: json
+    auth: inherit
+}
+
+params:path {
+    id: 1
+}
+
+body:json {
+    {
+        "id": 1,
+        "nombre": "Tech Solutions S.L. - Updated",
+        "cif": "A12345678Z",
+        "activa": true
+    }
+}
