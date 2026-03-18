@@ -59,4 +59,16 @@ public class EmpresaController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @Operation(summary = "Activa una empresa")
+    @PatchMapping("/{id}/activar")
+    public ResponseEntity<?> activarEmpresa(@PathVariable Long id) {
+        boolean activada = service.activar(id);
+
+        if (activada) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

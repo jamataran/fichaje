@@ -67,15 +67,39 @@ public class EmpresaService {
 
     @Transactional
     public boolean delete(Long id) {
-        log.info("Solicitud para eliminar la empresa con ID: {}", id);
+        log.info("Solicitud para desactivar la empresa con ID: {}", id);
 
-        if (!repository.existsById(id)) {
-            log.warn("Fallo al eliminar: No se encontró la empresa con ID: {}", id);
+        Optional<Empresa> empresa = repository.findById(id);
+
+        if (empresa.isEmpty()) {
+            log.warn("Fallo al desactivar: No se encontró la empresa con ID: {}", id);
             return false;
         }
 
-        repository.deleteById(id);
-        log.info("Empresa con ID: {} eliminada físicamente de la base de datos", id);
+        Empresa empresaExistente = empresa.get();
+        empresaExistente.setActiva(false);
+        repository.save(empresaExistente);
+
+        log.info("Empresa con ID: {} desactivada correctamente", id);
+        return true;
+    }
+
+    @Transactional
+    public boolean activar(Long id) {
+        log.info("Solicitud para activar la empresa con ID: {}", id);
+
+        Optional<Empresa> empresa = repository.findById(id);
+
+        if (empresa.isEmpty()) {
+            log.warn("Fallo al activar: No se encontró la empresa con ID: {}", id);
+            return false;
+        }
+
+        Empresa empresaExistente = empresa.get();
+        empresaExistente.setActiva(true);
+        repository.save(empresaExistente);
+
+        log.info("Empresa con ID: {} activada correctamente", id);
         return true;
     }
 
