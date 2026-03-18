@@ -2,7 +2,7 @@ package org.fichaje.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.ProblemDetail;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,33 +15,42 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errores = new HashMap<>();
+    public ProblemDetail handleValidationExceptions(MethodArgumentNotValidException ex) {
+        ProblemDetail problem = ProblemDetail
+                .forStatusAndDetail(HttpStatus.BAD_REQUEST, "La petición contiene campos inválidos");
 
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String nombreCampo = ((FieldError) error).getField();
-            String mensajeError = error.getDefaultMessage();
-            errores.put(nombreCampo, mensajeError);
+        Map<String, String> errores = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String campo = ((FieldError) error).getField();
+            String mensaje = error.getDefaultMessage();
+            errores.put(campo, mensaje);
         });
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
+        problem.setProperty("errores", errores);
+        return problem;
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
-        Map<String, String> error = new HashMap<>();
-
-        error.put("error_validacion", ex.getMessage());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    public ProblemDetail handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ProblemDetail
+                .forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Map<String, String>> handleDataIntegrity(DataIntegrityViolationException ex) {
-        Map<String, String> error = new HashMap<>();
+    public ProblemDetail handleDataIntegrity(DataIntegrityViolationException ex) {
+        return ProblemDetail
+                .forStatusAndDetail(HttpStatus.CONFLICT, "Ya existe un registro con ese CIF en el sistema.");
+    }
 
-        error.put("error_db", "No se puede guardar: Ya existe un registro con ese CIF en el sistema.");
+    @ExceptionHandler(BusinessException.class)
+    public ProblemDetail handleBusinessException(BusinessException ex) {
+        return ProblemDetail
+                .forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+    }
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    @ExceptionHandler(EmpresaNotFoundException.class)
+    public ProblemDetail handleEmpresaNotFoundException(EmpresaNotFoundException ex) {
+        return ProblemDetail
+                .forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 }

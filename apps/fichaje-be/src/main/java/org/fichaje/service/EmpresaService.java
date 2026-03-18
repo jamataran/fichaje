@@ -2,6 +2,8 @@ package org.fichaje.service;
 
 import org.fichaje.converter.EmpresaDtoConverter;
 import org.fichaje.dto.entity.EmpresaDTO;
+import org.fichaje.exception.BusinessException;
+import org.fichaje.exception.EmpresaNotFoundException;
 import org.fichaje.provider.db.entity.Empresa;
 import org.fichaje.provider.db.repository.EmpresaRepository;
 
@@ -50,11 +52,13 @@ public class EmpresaService {
 
     @Transactional
     public Optional<EmpresaDTO> update(EmpresaDTO empresaDTO, Long id) {
+        Empresa empresaExistente = repository.findById(id).orElseThrow(() -> new EmpresaNotFoundException(id));
+
         log.info("Actualizando datos de la empresa con ID: {}", id);
 
         validarCif(empresaDTO.getCif());
 
-        return repository.findById(id).map(empresaExistente -> {
+        return repository.findById(id).map(empresa -> {
             empresaExistente.setNombre(empresaDTO.getNombre());
             empresaExistente.setCif(empresaDTO.getCif());
             empresaExistente.setActiva(empresaDTO.isActiva());
@@ -66,41 +70,33 @@ public class EmpresaService {
     }
 
     @Transactional
-    public boolean delete(Long id) {
+    public void delete(Long id) {
         log.info("Solicitud para desactivar la empresa con ID: {}", id);
 
-        Optional<Empresa> empresa = repository.findById(id);
+        Empresa empresaExistente = repository.findById(id).orElseThrow(() -> new EmpresaNotFoundException(id));
 
-        if (empresa.isEmpty()) {
-            log.warn("Fallo al desactivar: No se encontró la empresa con ID: {}", id);
-            return false;
+        if (!empresaExistente.isActiva()) {
+            throw new BusinessException("La empresa con id " + id + " ya está desactivada");
         }
 
-        Empresa empresaExistente = empresa.get();
         empresaExistente.setActiva(false);
         repository.save(empresaExistente);
-
         log.info("Empresa con ID: {} desactivada correctamente", id);
-        return true;
     }
 
     @Transactional
-    public boolean activar(Long id) {
+    public void activar(Long id) {
         log.info("Solicitud para activar la empresa con ID: {}", id);
 
-        Optional<Empresa> empresa = repository.findById(id);
+        Empresa empresaExistente = repository.findById(id).orElseThrow(() -> new EmpresaNotFoundException(id));
 
-        if (empresa.isEmpty()) {
-            log.warn("Fallo al activar: No se encontró la empresa con ID: {}", id);
-            return false;
+        if (empresaExistente.isActiva()) {
+            throw new BusinessException("La empresa con id " + id + " ya está activa");
         }
 
-        Empresa empresaExistente = empresa.get();
         empresaExistente.setActiva(true);
         repository.save(empresaExistente);
-
         log.info("Empresa con ID: {} activada correctamente", id);
-        return true;
     }
 
     private void validarCif(String cif) {

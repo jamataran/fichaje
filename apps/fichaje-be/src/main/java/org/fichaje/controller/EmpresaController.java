@@ -50,25 +50,15 @@ public class EmpresaController {
 
     @Operation(summary = "Elimina una empresa")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        boolean borrado = service.delete(id);
-
-        if (borrado) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Activa una empresa")
     @PatchMapping("/{id}/activar")
     public ResponseEntity<?> activarEmpresa(@PathVariable Long id) {
-        boolean activada = service.activar(id);
-
-        if (activada) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        service.activar(id);
+        return ResponseEntity.ok().build();
     }
 }
