@@ -61,4 +61,7 @@ public class Empresa {
 
 	@ManyToMany(mappedBy = "empresas")
 	private List<Usuario> usuarios = new ArrayList<>();
+
+	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<EmpresaParametro> parametros = new ArrayList<>();
 }

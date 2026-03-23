@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -51,4 +54,6 @@ public class EmpresaDTO {
 	@DecimalMin(value = "-180.0", message = "La longitud mínima es -180")
 	@DecimalMax(value = "180.0", message = "La longitud máxima es 180")
 	private Double longitud;
+
+	private List<EmpresaParametroDTO> parametros = new ArrayList<>();
 }
