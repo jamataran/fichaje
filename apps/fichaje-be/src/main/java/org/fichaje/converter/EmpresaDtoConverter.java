@@ -8,20 +8,36 @@ import org.springframework.stereotype.Component;
 public class EmpresaDtoConverter {
 
 	public Empresa transform(EmpresaDTO dto) {
-		Empresa e = new Empresa();
-		e.setNombre(dto.getNombre());
-		e.setCif(dto.getCif());
-		e.setActiva(dto.isActiva());
-		return e;
+		return Empresa.builder()
+				.nombre(dto.getNombre())
+				.razonSocial(dto.getRazonSocial())
+				.cif(dto.getCif())
+				.activa(dto.isActiva())
+				.email(dto.getEmail())
+				.telefono(dto.getTelefono())
+				.direccion(dto.getDireccion())
+				.codigoPostal(dto.getCodigoPostal())
+				.localidad(dto.getLocalidad())
+				.provincia(dto.getProvincia())
+				.pais(dto.getPais())
+				.build();
 	}
 
 	public EmpresaDTO todtoConverter(Empresa e) {
-		EmpresaDTO dto = new EmpresaDTO();
-		dto.setId(e.getId());
-		dto.setNombre(e.getNombre());
-		dto.setCif(e.getCif());
-		dto.setActiva(e.isActiva());
-		return dto;
+		return EmpresaDTO.builder()
+				.id(e.getId())
+				.nombre(e.getNombre())
+				.razonSocial(e.getRazonSocial())
+				.cif(e.getCif())
+				.activa(e.isActiva())
+				.email(e.getEmail())
+				.telefono(e.getTelefono())
+				.direccion(e.getDireccion())
+				.codigoPostal(e.getCodigoPostal())
+				.localidad(e.getLocalidad())
+				.provincia(e.getProvincia())
+				.pais(e.getPais())
+				.build();
 	}
 
 }

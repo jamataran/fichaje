@@ -60,8 +60,16 @@ public class EmpresaService {
 
         return repository.findById(id).map(empresa -> {
             empresaExistente.setNombre(empresaDTO.getNombre());
+            empresaExistente.setRazonSocial(empresaDTO.getRazonSocial());
             empresaExistente.setCif(empresaDTO.getCif());
             empresaExistente.setActiva(empresaDTO.isActiva());
+            empresaExistente.setEmail(empresaDTO.getEmail());
+            empresaExistente.setTelefono(empresaDTO.getTelefono());
+            empresaExistente.setDireccion(empresaDTO.getDireccion());
+            empresaExistente.setCodigoPostal(empresaDTO.getCodigoPostal());
+            empresaExistente.setLocalidad(empresaDTO.getLocalidad());
+            empresaExistente.setProvincia(empresaDTO.getProvincia());
+            empresaExistente.setPais(empresaDTO.getPais());
 
             Empresa updatedEmpresa = repository.save(empresaExistente);
             log.info("Empresa con ID: {} actualizada correctamente", id);

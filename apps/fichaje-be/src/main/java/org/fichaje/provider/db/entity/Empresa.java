@@ -22,11 +22,35 @@ public class Empresa {
 	@Column(nullable = false)
 	private String nombre;
 
-	@Column(unique = true, nullable = false)
+	@Column(name = "razon_social")
+	private String razonSocial;
+
+	@Column(unique = true, nullable = false, length = 20)
 	private String cif;
 
 	@Column(columnDefinition = "boolean default false")
 	private boolean activa;
+
+	@Column(length = 255)
+	private String email;
+
+	@Column(length = 20)
+	private String telefono;
+
+	@Column(length = 255)
+	private String direccion;
+
+	@Column(name = "codigo_postal", length = 10)
+	private String codigoPostal;
+
+	@Column(length = 100)
+	private String localidad;
+
+	@Column(length = 100)
+	private String provincia;
+
+	@Column(length = 100, columnDefinition = "VARCHAR(100) DEFAULT 'España'")
+	private String pais;
 
 	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Calendario> calendarios = new ArrayList<>();
