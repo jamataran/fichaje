@@ -9,5 +9,6 @@
     <include file="/db/changelog/changes/20260310-add-autoincrement-ids.xml"/>
     <include file="/db/changelog/changes/20260305-multi_empresa_schema.xml"/>
     <include file="/db/changelog/changes/20260323-add-contact-information.xml"/>
+    <include file="/db/changelog/changes/20260323-add-geolocation.xml"/>
 
 </databaseChangeLog>

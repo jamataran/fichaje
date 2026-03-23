@@ -20,6 +20,8 @@ public class EmpresaDtoConverter {
 				.localidad(dto.getLocalidad())
 				.provincia(dto.getProvincia())
 				.pais(dto.getPais())
+				.latitud(dto.getLatitud())
+				.longitud(dto.getLongitud())
 				.build();
 	}
 
@@ -37,6 +39,8 @@ public class EmpresaDtoConverter {
 				.localidad(e.getLocalidad())
 				.provincia(e.getProvincia())
 				.pais(e.getPais())
+				.latitud(e.getLatitud())
+				.longitud(e.getLongitud())
 				.build();
 	}
 

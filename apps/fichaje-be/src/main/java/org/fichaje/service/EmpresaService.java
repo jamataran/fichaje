@@ -70,6 +70,8 @@ public class EmpresaService {
             empresaExistente.setLocalidad(empresaDTO.getLocalidad());
             empresaExistente.setProvincia(empresaDTO.getProvincia());
             empresaExistente.setPais(empresaDTO.getPais());
+            empresaExistente.setLatitud(empresaDTO.getLatitud());
+            empresaExistente.setLongitud(empresaDTO.getLongitud());
 
             Empresa updatedEmpresa = repository.save(empresaExistente);
             log.info("Empresa con ID: {} actualizada correctamente", id);

@@ -52,6 +52,10 @@ public class Empresa {
 	@Column(length = 100, columnDefinition = "VARCHAR(100) DEFAULT 'España'")
 	private String pais;
 
+	private Double latitud;
+
+	private Double longitud;
+
 	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Calendario> calendarios = new ArrayList<>();
 
