@@ -7,6 +7,10 @@ import org.fichaje.exception.EmpresaNotFoundException;
 import org.fichaje.provider.db.entity.Empresa;
 import org.fichaje.provider.db.repository.EmpresaRepository;
 
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -20,6 +24,7 @@ import java.util.Optional;
 public class EmpresaService {
 
     private static final Logger log = LoggerFactory.getLogger(EmpresaService.class);
+    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
     private final EmpresaDtoConverter dtoConverter;
     private final EmpresaRepository repository;
@@ -70,8 +75,7 @@ public class EmpresaService {
             empresaExistente.setLocalidad(empresaDTO.getLocalidad());
             empresaExistente.setProvincia(empresaDTO.getProvincia());
             empresaExistente.setPais(empresaDTO.getPais());
-            empresaExistente.setLatitud(empresaDTO.getLatitud());
-            empresaExistente.setLongitud(empresaDTO.getLongitud());
+            empresaExistente.setUbicacion(toPoint(empresaDTO.getLatitud(), empresaDTO.getLongitud()));
 
             Empresa updatedEmpresa = repository.save(empresaExistente);
             log.info("Empresa con ID: {} actualizada correctamente", id);
@@ -114,5 +118,10 @@ public class EmpresaService {
             log.warn("Validación fallida: Se intentó registrar un CIF con formato inválido ({})", cif);
             throw new IllegalArgumentException("El CIF proporcionado tiene un formato inválido.");
         }
+    }
+
+    private Point toPoint(Double latitud, Double longitud) {
+        if (latitud == null || longitud == null) return null;
+        return GEOMETRY_FACTORY.createPoint(new Coordinate(longitud, latitud));
     }
 }
