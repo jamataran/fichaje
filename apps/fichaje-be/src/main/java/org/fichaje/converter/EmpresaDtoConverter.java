@@ -1,11 +1,22 @@
 package org.fichaje.converter;
 
 import org.fichaje.dto.entity.EmpresaDTO;
+import org.fichaje.dto.entity.EmpresaParametroDTO;
 import org.fichaje.provider.db.entity.Empresa;
+import org.fichaje.provider.db.entity.EmpresaParametro;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class EmpresaDtoConverter {
+
+	private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
 	public Empresa transform(EmpresaDTO dto) {
 		return Empresa.builder()
@@ -20,8 +31,8 @@ public class EmpresaDtoConverter {
 				.localidad(dto.getLocalidad())
 				.provincia(dto.getProvincia())
 				.pais(dto.getPais())
-				.latitud(dto.getLatitud())
-				.longitud(dto.getLongitud())
+				.ubicacion(toPoint(dto.getLatitud(), dto.getLongitud()))
+				.parametros(toParametroEntityList(dto.getParametros()))
 				.build();
 	}
 
@@ -39,9 +50,37 @@ public class EmpresaDtoConverter {
 				.localidad(e.getLocalidad())
 				.provincia(e.getProvincia())
 				.pais(e.getPais())
-				.latitud(e.getLatitud())
-				.longitud(e.getLongitud())
+				.latitud(e.getUbicacion() != null ? e.getUbicacion().getY() : null)
+				.longitud(e.getUbicacion() != null ? e.getUbicacion().getX() : null)
+				.parametros(toParametroDtoList(e.getParametros()))
 				.build();
+	}
+
+	private Point toPoint(Double latitud, Double longitud) {
+		if (latitud == null || longitud == null) return null;
+		return GEOMETRY_FACTORY.createPoint(new Coordinate(longitud, latitud));
+	}
+
+	private List<EmpresaParametroDTO> toParametroDtoList(List<EmpresaParametro> parametros) {
+		if (parametros == null) return new ArrayList<>();
+		return parametros.stream()
+				.map(p -> EmpresaParametroDTO.builder()
+						.id(p.getId())
+						.empresaId(p.getEmpresa().getId())
+						.clave(p.getClave())
+						.valor(p.getValor())
+						.build())
+				.toList();
+	}
+
+	private List<EmpresaParametro> toParametroEntityList(List<EmpresaParametroDTO> parametros) {
+		if (parametros == null) return new ArrayList<>();
+		return parametros.stream()
+				.map(p -> EmpresaParametro.builder()
+						.clave(p.getClave())
+						.valor(p.getValor())
+						.build())
+				.toList();
 	}
 
 }

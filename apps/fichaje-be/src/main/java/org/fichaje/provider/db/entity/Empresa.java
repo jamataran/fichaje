@@ -2,6 +2,7 @@ package org.fichaje.provider.db.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.locationtech.jts.geom.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,16 +53,15 @@ public class Empresa {
 	@Column(length = 100, columnDefinition = "VARCHAR(100) DEFAULT 'España'")
 	private String pais;
 
-	private Double latitud;
-
-	private Double longitud;
+	@Column(columnDefinition = "POINT")
+	private Point ubicacion;
 
 	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Calendario> calendarios = new ArrayList<>();
+	private List<Calendario> calendarios;
 
 	@ManyToMany(mappedBy = "empresas")
-	private List<Usuario> usuarios = new ArrayList<>();
+	private List<Usuario> usuarios;
 
 	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<EmpresaParametro> parametros = new ArrayList<>();
+	private List<EmpresaParametro> parametros;
 }

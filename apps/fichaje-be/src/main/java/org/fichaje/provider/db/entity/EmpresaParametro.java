@@ -2,10 +2,6 @@ package org.fichaje.provider.db.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.fichaje.provider.db.entity.enums.EmpresaParametroClave;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -22,11 +18,10 @@ public class EmpresaParametro {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "empresa_id", nullable = false)
-	Empresa empresa;
+	private Empresa empresa;
 
-	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 100)
-	private EmpresaParametroClave clave;
+	private String clave;
 
 	@Column(nullable = false, length = 255)
 	private String valor;
