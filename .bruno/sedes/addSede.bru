@@ -1,31 +1,32 @@
 meta {
-    name: Create Empresa
+    name: Add Sede
     type: http
-    seq: 1
+    seq: 2
 }
 
 post {
-    url: {{baseUrl}}/empresas
+    url: {{baseUrl}}/sedes/empresa/:empresaId
     body: json
     auth: inherit
 }
 
+params:path {
+    empresaId: 1
+}
+
 body:json {
     {
-        "nombre": "Tech Solutions S.L.",
-        "razonSocial": "Tech Solutions Sociedad Limitada",
-        "cif": "A58818501",
-        "activa": true,
-        "email": "contact@techsolutions.es",
-        "telefono": "912345678",
+        "nombre": "Sede Central Madrid",
         "direccion": "Calle Principal 123",
         "codigoPostal": "28001",
         "localidad": "Madrid",
         "provincia": "Madrid",
         "pais": "España",
+        "activa": true,
         "ubicacion": {
             "type": "Point",
             "coordinates": [40.4168, -3.7038]
         }
     }
 }
+

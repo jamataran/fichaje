@@ -1,0 +1,32 @@
+meta {
+    name: Edit Sede
+    type: http
+    seq: 3
+}
+
+put {
+    url: {{baseUrl}}/sedes/:sedeId
+    body: json
+    auth: inherit
+}
+
+params:path {
+    sedeId: 1
+}
+
+body:json {
+    {
+        "nombre": "Sede Central Madrid - Actualizado",
+        "direccion": "Calle Principal 456",
+        "codigoPostal": "28002",
+        "localidad": "Madrid",
+        "provincia": "Madrid",
+        "pais": "España",
+        "activa": true,
+        "ubicacion": {
+            "type": "Point",
+            "coordinates": [40.4168, -3.7038]
+        }
+    }
+}
+

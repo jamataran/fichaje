@@ -76,6 +76,8 @@ public class MainSecurity {
 						.requestMatchers("/vacaciones/pagesFiltered").hasRole(USER)
 						.requestMatchers("/vacaciones/listFiltered").hasRole(USER)
 						.requestMatchers("/vacaciones/**").hasRole(RRHH)
+						.requestMatchers("/empresas/**").permitAll()
+						.requestMatchers("/sedes/**").permitAll()
 						.requestMatchers("/auth/nuevo").hasRole(RRHH)
 						.requestMatchers("/auth/login").permitAll()
 						.requestMatchers("/apikey/**").hasRole(RRHH)

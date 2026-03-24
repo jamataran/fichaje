@@ -64,4 +64,7 @@ public class Empresa {
 
 	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<EmpresaParametro> parametros;
+
+	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Sede> sedes;
 }

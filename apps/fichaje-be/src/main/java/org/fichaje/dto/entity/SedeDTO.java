@@ -6,35 +6,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmpresaDTO {
+public class SedeDTO {
 
 	private Long id;
 
-	@NotBlank(message = "El nombre de la empresa es obligatorio")
+	private Long empresaId;
+
+	@NotBlank(message = "El nombre de la sede es obligatorio")
 	private String nombre;
-
-	private String razonSocial;
-
-	@NotBlank(message = "El CIF es obligatorio")
-	@Pattern(regexp = "^[ABCDEFGHJKLMNPQRSUVW][0-9]{7}[0-9A-J]$",
-			message = "El formato inicial del CIF es incorrecto")
-	private String cif;
-
-	private boolean activa;
-
-	@Email(message = "El formato del email no es válido")
-	private String email;
-
-	@Pattern(regexp = "^[+]?[0-9\\s()]{6,20}$",
-			message = "El formato del teléfono no es válido")
-	private String telefono;
 
 	private String direccion;
 
@@ -55,7 +40,7 @@ public class EmpresaDTO {
 	@DecimalMax(value = "180.0", message = "La longitud máxima es 180")
 	private Double longitud;
 
-	private List<EmpresaParametroDTO> parametros = new ArrayList<>();
+	private boolean activa;
 
-	private List<SedeDTO> sedes = new ArrayList<>();
+	private List<SedeParametroDTO> parametros;
 }

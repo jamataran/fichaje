@@ -2,8 +2,10 @@ package org.fichaje.converter;
 
 import org.fichaje.dto.entity.EmpresaDTO;
 import org.fichaje.dto.entity.EmpresaParametroDTO;
+import org.fichaje.dto.entity.SedeDTO;
 import org.fichaje.provider.db.entity.Empresa;
 import org.fichaje.provider.db.entity.EmpresaParametro;
+import org.fichaje.provider.db.entity.Sede;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -33,6 +35,7 @@ public class EmpresaDtoConverter {
 				.pais(dto.getPais())
 				.ubicacion(toPoint(dto.getLatitud(), dto.getLongitud()))
 				.parametros(toParametroEntityList(dto.getParametros()))
+				.sedes(toSedeEntityList(dto.getSedes()))
 				.build();
 	}
 
@@ -53,6 +56,7 @@ public class EmpresaDtoConverter {
 				.latitud(e.getUbicacion() != null ? e.getUbicacion().getY() : null)
 				.longitud(e.getUbicacion() != null ? e.getUbicacion().getX() : null)
 				.parametros(toParametroDtoList(e.getParametros()))
+				.sedes(toSedeDtoList(e.getSedes()))
 				.build();
 	}
 
@@ -79,6 +83,41 @@ public class EmpresaDtoConverter {
 				.map(p -> EmpresaParametro.builder()
 						.clave(p.getClave())
 						.valor(p.getValor())
+						.build())
+				.toList();
+	}
+
+	private List<SedeDTO> toSedeDtoList(List<Sede> sedes) {
+		if (sedes == null) return new ArrayList<>();
+		return sedes.stream()
+				.map(s -> SedeDTO.builder()
+						.id(s.getId())
+						.empresaId(s.getEmpresa().getId())
+						.nombre(s.getNombre())
+						.direccion(s.getDireccion())
+						.codigoPostal(s.getCodigoPostal())
+						.localidad(s.getLocalidad())
+						.provincia(s.getProvincia())
+						.pais(s.getPais())
+						.latitud(s.getUbicacion() != null ? s.getUbicacion().getY() : null)
+						.longitud(s.getUbicacion() != null ? s.getUbicacion().getX() : null)
+						.activa(s.isActiva())
+						.build())
+				.toList();
+	}
+
+	private List<Sede> toSedeEntityList(List<SedeDTO> sedes) {
+		if (sedes == null) return new ArrayList<>();
+		return sedes.stream()
+				.map(s -> Sede.builder()
+						.nombre(s.getNombre())
+						.direccion(s.getDireccion())
+						.codigoPostal(s.getCodigoPostal())
+						.localidad(s.getLocalidad())
+						.provincia(s.getProvincia())
+						.pais(s.getPais())
+						.ubicacion(toPoint(s.getLatitud(), s.getLongitud()))
+						.activa(s.isActiva())
 						.build())
 				.toList();
 	}

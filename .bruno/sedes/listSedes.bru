@@ -1,0 +1,15 @@
+meta {
+    name: List Sedes
+    type: http
+    seq: 1
+}
+
+get {
+    url: {{baseUrl}}/sedes/empresa/:empresaId
+    auth: inherit
+}
+
+params:path {
+    empresaId: 1
+}
+
