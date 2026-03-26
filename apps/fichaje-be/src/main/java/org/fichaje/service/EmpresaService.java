@@ -1,12 +1,16 @@
 package org.fichaje.service;
 
+import jakarta.persistence.EntityManager;
 import org.fichaje.converter.EmpresaDtoConverter;
+import org.fichaje.dto.entity.EmpresaCreateDTO;
 import org.fichaje.dto.entity.EmpresaDTO;
 import org.fichaje.exception.BusinessException;
 import org.fichaje.exception.EmpresaNotFoundException;
 import org.fichaje.provider.db.entity.Empresa;
+import org.fichaje.provider.db.entity.Sede;
 import org.fichaje.provider.db.repository.EmpresaRepository;
 
+import org.fichaje.provider.db.repository.SedeRepository;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -29,11 +33,15 @@ public class EmpresaService {
     private final EmpresaDtoConverter dtoConverter;
     private final EmpresaRepository repository;
     private final CIFValidator cifValidator;
+    private final SedeRepository sedeRepository;
+    private final EntityManager entityManager;
 
-    public EmpresaService(EmpresaDtoConverter dtoConverter, EmpresaRepository repository, CIFValidator cifValidator) {
+    public EmpresaService(EmpresaDtoConverter dtoConverter, EmpresaRepository repository, CIFValidator cifValidator, SedeRepository sedeRepository, EntityManager entityManager) {
         this.dtoConverter = dtoConverter;
         this.repository = repository;
         this.cifValidator = cifValidator;
+        this.sedeRepository = sedeRepository;
+        this.entityManager = entityManager;
     }
 
     @Transactional(readOnly = true)
@@ -43,13 +51,32 @@ public class EmpresaService {
     }
 
     @Transactional
-    public EmpresaDTO save(EmpresaDTO empresaDTO) {
+    public EmpresaDTO save(EmpresaCreateDTO empresaDTO) {
         log.info("Iniciando proceso de creación para la empresa con CIF: {}", empresaDTO.getCif());
 
         validarCif(empresaDTO.getCif());
 
         Empresa empresa = dtoConverter.transform(empresaDTO);
         Empresa savedEmpresa = repository.save(empresa);
+
+        Sede sedePrincipal = Sede.builder()
+                .nombre("Sede Principal")
+                .empresa(savedEmpresa)
+                .email(empresaDTO.getEmail())
+                .telefono(empresaDTO.getTelefono())
+                .direccion(empresaDTO.getDireccion())
+                .codigoPostal(empresaDTO.getCodigoPostal())
+                .localidad(empresaDTO.getLocalidad())
+                .provincia(empresaDTO.getProvincia())
+                .pais(empresaDTO.getPais())
+                .ubicacion(toPoint(empresaDTO.getLatitud(), empresaDTO.getLongitud()))
+                .activa(true)
+                .build();
+
+        sedeRepository.save(sedePrincipal);
+        repository.flush();
+
+        entityManager.refresh(savedEmpresa);
 
         log.info("Empresa guardada con éxito con ID: {}", savedEmpresa.getId());
         return dtoConverter.todtoConverter(savedEmpresa);
@@ -68,14 +95,6 @@ public class EmpresaService {
             empresaExistente.setRazonSocial(empresaDTO.getRazonSocial());
             empresaExistente.setCif(empresaDTO.getCif());
             empresaExistente.setActiva(empresaDTO.isActiva());
-            empresaExistente.setEmail(empresaDTO.getEmail());
-            empresaExistente.setTelefono(empresaDTO.getTelefono());
-            empresaExistente.setDireccion(empresaDTO.getDireccion());
-            empresaExistente.setCodigoPostal(empresaDTO.getCodigoPostal());
-            empresaExistente.setLocalidad(empresaDTO.getLocalidad());
-            empresaExistente.setProvincia(empresaDTO.getProvincia());
-            empresaExistente.setPais(empresaDTO.getPais());
-            empresaExistente.setUbicacion(toPoint(empresaDTO.getLatitud(), empresaDTO.getLongitud()));
 
             Empresa updatedEmpresa = repository.save(empresaExistente);
             log.info("Empresa con ID: {} actualizada correctamente", id);

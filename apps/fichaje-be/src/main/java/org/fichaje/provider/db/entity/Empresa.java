@@ -2,9 +2,9 @@ package org.fichaje.provider.db.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.locationtech.jts.geom.Point;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.List;
 
 @Getter
@@ -32,30 +32,6 @@ public class Empresa {
 	@Column(columnDefinition = "boolean default false")
 	private boolean activa;
 
-	@Column(length = 255)
-	private String email;
-
-	@Column(length = 20)
-	private String telefono;
-
-	@Column(length = 255)
-	private String direccion;
-
-	@Column(name = "codigo_postal", length = 10)
-	private String codigoPostal;
-
-	@Column(length = 100)
-	private String localidad;
-
-	@Column(length = 100)
-	private String provincia;
-
-	@Column(length = 100, columnDefinition = "VARCHAR(100) DEFAULT 'España'")
-	private String pais;
-
-	@Column(columnDefinition = "POINT")
-	private Point ubicacion;
-
 	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Calendario> calendarios;
 
@@ -63,8 +39,8 @@ public class Empresa {
 	private List<Usuario> usuarios;
 
 	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<EmpresaParametro> parametros;
+	private Set<EmpresaParametro> parametros;
 
 	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Sede> sedes;
+	private Set<Sede> sedes;
 }

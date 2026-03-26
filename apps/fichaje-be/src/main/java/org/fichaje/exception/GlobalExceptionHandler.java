@@ -30,6 +30,7 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ProblemDetail handleIllegalArgumentException(IllegalArgumentException ex) {
         return ProblemDetail
@@ -38,8 +39,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ProblemDetail handleDataIntegrity(DataIntegrityViolationException ex) {
-        return ProblemDetail
-                .forStatusAndDetail(HttpStatus.CONFLICT, "Ya existe un registro con ese CIF en el sistema.");
+        String mensaje = "Ya existe un registro duplicado en el sistema";
+        String causa = ex.getMostSpecificCause().getMessage().toLowerCase();
+
+        if (causa.contains("uk_empresa_cif") || causa.contains("cif")) {
+            mensaje = "Ya existe una empresa con ese CIF en el sistema";
+        } else if (causa.contains("uk_sede_empresa_nombre") || causa.contains("sede")) {
+            mensaje = "Ya existe una sede con ese nombre en esta empresa";
+        } else if (causa.contains("uk_empresa_parametros_empresa_clave")) {
+            mensaje = "Ya existe un parámetro con esa clave en esta empresa";
+        } else if (causa.contains("uk_sede_parametros_sede_clave")) {
+            mensaje = "Ya existe un parámetro con esa clave en esta sede";
+        }
+
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, mensaje);
     }
 
     @ExceptionHandler(BusinessException.class)
@@ -50,6 +63,24 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmpresaNotFoundException.class)
     public ProblemDetail handleEmpresaNotFoundException(EmpresaNotFoundException ex) {
+        return ProblemDetail
+                .forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(SedeNotFoundException.class)
+    public ProblemDetail handleSedeNotFoundException(SedeNotFoundException ex) {
+        return ProblemDetail
+                .forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(EmpresaParametroNotFoundException.class)
+    public ProblemDetail handleEmpresaParametroNotFoundException(EmpresaParametroNotFoundException ex) {
+        return ProblemDetail
+                .forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(SedeParametroNotFoundException.class)
+    public ProblemDetail handleSedeParametroNotFoundException(SedeParametroNotFoundException ex) {
         return ProblemDetail
                 .forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     }

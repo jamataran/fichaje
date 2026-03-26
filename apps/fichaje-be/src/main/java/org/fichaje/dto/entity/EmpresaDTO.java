@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -18,8 +19,12 @@ public class EmpresaDTO {
 	private Long id;
 
 	@NotBlank(message = "El nombre de la empresa es obligatorio")
+	@Pattern(regexp = "^[\\p{L}\\s.,'&()-]+$",
+			message = "El nombre solo puede contener letras, espacios y caracteres especiales básicos")
 	private String nombre;
 
+	@Pattern(regexp = "^[\\p{L}\\s.,'&()-]+$",
+			message = "La razón social solo puede contener letras, espacios y caracteres especiales básicos")
 	private String razonSocial;
 
 	@NotBlank(message = "El CIF es obligatorio")
@@ -29,33 +34,7 @@ public class EmpresaDTO {
 
 	private boolean activa;
 
-	@Email(message = "El formato del email no es válido")
-	private String email;
+	private Set<EmpresaParametroDTO> parametros;
 
-	@Pattern(regexp = "^[+]?[0-9\\s()]{6,20}$",
-			message = "El formato del teléfono no es válido")
-	private String telefono;
-
-	private String direccion;
-
-	@Size(max = 10, message = "El código postal no puede superar los 10 caracteres")
-	private String codigoPostal;
-
-	private String localidad;
-
-	private String provincia;
-
-	private String pais;
-
-	@DecimalMin(value = "-90.0", message = "La latitud mínima es -90")
-	@DecimalMax(value = "90.0", message = "La latitud máxima es 90")
-	private Double latitud;
-
-	@DecimalMin(value = "-180.0", message = "La longitud mínima es -180")
-	@DecimalMax(value = "180.0", message = "La longitud máxima es 180")
-	private Double longitud;
-
-	private List<EmpresaParametroDTO> parametros = new ArrayList<>();
-
-	private List<SedeDTO> sedes = new ArrayList<>();
+	private Set<SedeDTO> sedes;
 }

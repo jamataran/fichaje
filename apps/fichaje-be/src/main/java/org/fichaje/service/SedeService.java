@@ -2,6 +2,7 @@ package org.fichaje.service;
 
 import org.fichaje.converter.SedeDtoConverter;
 import org.fichaje.dto.entity.SedeDTO;
+import org.fichaje.exception.BusinessException;
 import org.fichaje.exception.EmpresaNotFoundException;
 import org.fichaje.exception.SedeNotFoundException;
 import org.fichaje.provider.db.entity.Empresa;
@@ -78,6 +79,11 @@ public class SedeService {
         log.info("Activando sede con ID: {}", sedeId);
         Sede sede = repository.findById(sedeId)
                 .orElseThrow(() -> new SedeNotFoundException(sedeId));
+
+        if (sede.isActiva()) {
+            throw new BusinessException("La sede con id " + sedeId + " ya está activa");
+        }
+
         sede.setActiva(true);
         repository.save(sede);
         log.info("Sede con ID: {} activada correctamente", sedeId);
@@ -88,6 +94,11 @@ public class SedeService {
         log.info("Desactivando sede con ID: {}", sedeId);
         Sede sede = repository.findById(sedeId)
                 .orElseThrow(() -> new SedeNotFoundException(sedeId));
+
+        if (!sede.isActiva()) {
+            throw new BusinessException("La sede con id " + sedeId + " ya está desactivada");
+        }
+
         sede.setActiva(false);
         repository.save(sede);
         log.info("Sede con ID: {} desactivada correctamente", sedeId);

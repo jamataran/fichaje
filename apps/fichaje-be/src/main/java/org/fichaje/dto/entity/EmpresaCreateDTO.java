@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -14,16 +13,25 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SedeDTO {
+public class EmpresaCreateDTO {
 
 	private Long id;
 
-	private Long empresaId;
-
-	@NotBlank(message = "El nombre de la sede es obligatorio")
+	@NotBlank(message = "El nombre de la empresa es obligatorio")
 	@Pattern(regexp = "^[\\p{L}\\s.,'&()-]+$",
 			message = "El nombre solo puede contener letras, espacios y caracteres especiales básicos")
 	private String nombre;
+
+	@Pattern(regexp = "^[\\p{L}\\s.,'&()-]+$",
+			message = "La razón social solo puede contener letras, espacios y caracteres especiales básicos")
+	private String razonSocial;
+
+	@NotBlank(message = "El CIF es obligatorio")
+	@Pattern(regexp = "^[ABCDEFGHJKLMNPQRSUVW][0-9]{7}[0-9A-J]$",
+			message = "El formato inicial del CIF es incorrecto")
+	private String cif;
+
+	private boolean activa;
 
 	@NotBlank(message = "El email es obligatorio")
 	@Email(message = "El formato del email no es válido")
@@ -65,7 +73,7 @@ public class SedeDTO {
 	@DecimalMax(value = "180.0", message = "La longitud máxima es 180")
 	private Double longitud;
 
-	private boolean activa;
+	private Set<EmpresaParametroDTO> parametros;
 
-	private Set<SedeParametroDTO> parametros;
+	private Set<SedeDTO> sedes;
 }

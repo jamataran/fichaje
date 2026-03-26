@@ -2,6 +2,7 @@ package org.fichaje.service;
 
 import org.fichaje.converter.SedeParametroDtoConverter;
 import org.fichaje.dto.entity.SedeParametroDTO;
+import org.fichaje.exception.BusinessException;
 import org.fichaje.exception.SedeNotFoundException;
 import org.fichaje.exception.SedeParametroNotFoundException;
 import org.fichaje.provider.db.entity.Sede;
@@ -45,6 +46,10 @@ public class SedeParametroService {
         Sede sede = sedeRepository.findById(sedeId)
                 .orElseThrow(() -> new SedeNotFoundException(sedeId));
 
+        if (repository.existsBySedeIdAndClave(sedeId, dto.getClave())) {
+            throw new BusinessException("Ya existe un parámetro con la clave '" + dto.getClave() + "' para esta sede");
+        }
+
         SedeParametro parametro = dtoConverter.transform(dto);
         parametro.setSede(sede);
 
@@ -61,6 +66,10 @@ public class SedeParametroService {
         SedeParametro parametro = repository.findById(parametroId)
                 .orElseThrow(() -> new SedeParametroNotFoundException(parametroId));
 
+        if (!parametro.getSede().getId().equals(sedeId)) {
+            throw new BusinessException("El parámetro con id " + parametroId + " no pertenece a la sede con id " + sedeId);
+        }
+
         parametro.setClave(dto.getClave());
         parametro.setValor(dto.getValor());
 
@@ -76,6 +85,10 @@ public class SedeParametroService {
 
         SedeParametro parametro = repository.findById(parametroId)
                 .orElseThrow(() -> new SedeParametroNotFoundException(parametroId));
+
+        if (!parametro.getSede().getId().equals(sedeId)) {
+            throw new BusinessException("El parámetro con id " + parametroId + " no pertenece a la sede con id " + sedeId);
+        }
 
         repository.delete(parametro);
         log.info("Parámetro con ID: {} eliminado correctamente", parametroId);

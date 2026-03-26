@@ -2,6 +2,7 @@ package org.fichaje.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import org.fichaje.dto.entity.EmpresaCreateDTO;
 import org.fichaje.dto.entity.EmpresaDTO;
 import org.fichaje.dto.entity.EmpresaParametroDTO;
 import org.fichaje.service.EmpresaParametroService;
@@ -29,7 +30,7 @@ public class EmpresaController {
 
     @Operation(summary = "Crea una nueva empresa")
     @PostMapping
-    public ResponseEntity<EmpresaDTO> newEmpresa(@Valid @RequestBody EmpresaDTO empresaDto) {
+    public ResponseEntity<EmpresaDTO> newEmpresa(@Valid @RequestBody EmpresaCreateDTO empresaDto) {
         EmpresaDTO empresaGuardada = service.save(empresaDto);
 
         URI location = ServletUriComponentsBuilder

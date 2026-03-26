@@ -11,7 +11,10 @@ import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class SedeDtoConverter {
@@ -21,6 +24,8 @@ public class SedeDtoConverter {
 	public Sede transform(SedeDTO dto) {
 		return Sede.builder()
 				.nombre(dto.getNombre())
+				.email(dto.getEmail())
+				.telefono(dto.getTelefono())
 				.direccion(dto.getDireccion())
 				.codigoPostal(dto.getCodigoPostal())
 				.localidad(dto.getLocalidad())
@@ -37,6 +42,8 @@ public class SedeDtoConverter {
 				.id(sede.getId())
 				.empresaId(sede.getEmpresa().getId())
 				.nombre(sede.getNombre())
+				.email(sede.getEmail())
+				.telefono(sede.getTelefono())
 				.direccion(sede.getDireccion())
 				.codigoPostal(sede.getCodigoPostal())
 				.localidad(sede.getLocalidad())
@@ -54,8 +61,8 @@ public class SedeDtoConverter {
 		return GEOMETRY_FACTORY.createPoint(new Coordinate(longitud, latitud));
 	}
 
-	private List<SedeParametroDTO> toParametroDtoList(List<SedeParametro> parametros) {
-		if (parametros == null) return new ArrayList<>();
+	private Set<SedeParametroDTO> toParametroDtoList(Set<SedeParametro> parametros) {
+		if (parametros == null) return new HashSet<>();
 		return parametros.stream()
 				.map(p -> SedeParametroDTO.builder()
 						.id(p.getId())
@@ -63,16 +70,16 @@ public class SedeDtoConverter {
 						.clave(p.getClave())
 						.valor(p.getValor())
 						.build())
-				.toList();
+				.collect(Collectors.toSet());
 	}
 
-	private List<SedeParametro> toParametroEntityList(List<SedeParametroDTO> parametros) {
-		if (parametros == null) return new ArrayList<>();
+	private Set<SedeParametro> toParametroEntityList(Set<SedeParametroDTO> parametros) {
+		if (parametros == null) return new HashSet<>();
 		return parametros.stream()
 				.map(p -> SedeParametro.builder()
 						.clave(p.getClave())
 						.valor(p.getValor())
 						.build())
-				.toList();
+				.collect(Collectors.toSet());
 	}
 }

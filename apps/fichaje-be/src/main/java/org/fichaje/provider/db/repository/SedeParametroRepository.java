@@ -11,4 +11,6 @@ import java.util.List;
 public interface SedeParametroRepository extends JpaRepository<SedeParametro, Long>, JpaSpecificationExecutor<SedeParametro> {
 
 	List<SedeParametro> findBySedeId(Long sedeId);
+
+	boolean existsBySedeIdAndClave(Long sedeId, String clave);
 }

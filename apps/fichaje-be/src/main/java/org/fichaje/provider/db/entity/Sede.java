@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.locationtech.jts.geom.Point;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -26,19 +28,25 @@ public class Sede {
 	@Column(nullable = false)
 	private String nombre;
 
-	@Column(length = 255)
+	@Column(length = 255, nullable = false)
+	private String email;
+
+	@Column(length = 20)
+	private String telefono;
+
+	@Column(length = 255, nullable = false)
 	private String direccion;
 
-	@Column(name = "codigo_postal", length = 10)
+	@Column(name = "codigo_postal", length = 10, nullable = false)
 	private String codigoPostal;
 
-	@Column(length = 100)
+	@Column(length = 100, nullable = false)
 	private String localidad;
 
-	@Column(length = 100)
+	@Column(length = 100, nullable = false)
 	private String provincia;
 
-	@Column(length = 100, columnDefinition = "VARCHAR(100) DEFAULT 'España'")
+	@Column(length = 100, nullable = false, columnDefinition = "VARCHAR(100) DEFAULT 'España'")
 	private String pais;
 
 	@Column(columnDefinition = "POINT")
@@ -48,5 +56,5 @@ public class Sede {
 	private boolean activa;
 
 	@OneToMany(mappedBy = "sede", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<SedeParametro> parametros;
+	private Set<SedeParametro> parametros;
 }
