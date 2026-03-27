@@ -99,6 +99,11 @@ public class Usuario {
 	@JoinTable(name = "usuario_empresa", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "empresa_id"))
 	private List<Empresa> empresas;
 
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "usuario_sede", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "sede_id"))
+	private List<Sede> sedes;
+
 //	@ManyToOne
 //	@JoinColumn(name = "calendario_id")
 //	private Calendario calendario;

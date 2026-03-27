@@ -45,6 +45,6 @@ public class Calendario {
 
 	@JsonIgnoreProperties(value = { "calendarios" })
 	@ManyToOne
-	@JoinColumn(name = "empresa_id")
-	private Empresa empresa;
+	@JoinColumn(name = "sede_id")
+	private Sede sede;
 }

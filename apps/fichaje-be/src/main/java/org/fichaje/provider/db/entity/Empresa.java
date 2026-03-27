@@ -32,9 +32,6 @@ public class Empresa {
 	@Column(columnDefinition = "boolean default false")
 	private boolean activa;
 
-	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Calendario> calendarios;
-
 	@ManyToMany(mappedBy = "empresas")
 	private List<Usuario> usuarios;
 

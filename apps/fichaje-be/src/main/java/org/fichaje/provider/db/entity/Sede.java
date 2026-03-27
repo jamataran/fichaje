@@ -57,4 +57,7 @@ public class Sede {
 
 	@OneToMany(mappedBy = "sede", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<SedeParametro> parametros;
+
+	@OneToMany(mappedBy = "sede", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Calendario> calendarios;
 }

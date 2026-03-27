@@ -15,5 +15,7 @@
     <include file="/db/changelog/changes/20260324-sede-parameters.xml"/>
     <include file="/db/changelog/changes/20260325-empresa-refactor.xml"/>
     <include file="/db/changelog/changes/20260325-sede-refactor.xml"/>
+    <include file="/db/changelog/changes/20260326-usuario-sede.xml"/>
+    <include file="/db/changelog/changes/20260326-change-calendar.xml"/>
 
 </databaseChangeLog>
