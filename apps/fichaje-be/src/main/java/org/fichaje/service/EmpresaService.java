@@ -2,6 +2,7 @@ package org.fichaje.service;
 
 import jakarta.persistence.EntityManager;
 import org.fichaje.converter.EmpresaDtoConverter;
+import org.fichaje.converter.UsuarioDtoConverter;
 import org.fichaje.dto.entity.EmpresaCreateDTO;
 import org.fichaje.dto.entity.EmpresaDTO;
 import org.fichaje.exception.BusinessException;
@@ -31,13 +32,15 @@ public class EmpresaService {
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory(new PrecisionModel(), 4326);
 
     private final EmpresaDtoConverter dtoConverter;
+    private final UsuarioDtoConverter usuarioDtoConverter;
     private final EmpresaRepository repository;
     private final CIFValidator cifValidator;
     private final SedeRepository sedeRepository;
     private final EntityManager entityManager;
 
-    public EmpresaService(EmpresaDtoConverter dtoConverter, EmpresaRepository repository, CIFValidator cifValidator, SedeRepository sedeRepository, EntityManager entityManager) {
+    public EmpresaService(EmpresaDtoConverter dtoConverter, UsuarioDtoConverter usuarioDtoConverter, EmpresaRepository repository, CIFValidator cifValidator, SedeRepository sedeRepository, EntityManager entityManager) {
         this.dtoConverter = dtoConverter;
+        this.usuarioDtoConverter = usuarioDtoConverter;
         this.repository = repository;
         this.cifValidator = cifValidator;
         this.sedeRepository = sedeRepository;
@@ -130,6 +133,15 @@ public class EmpresaService {
         empresaExistente.setActiva(true);
         repository.save(empresaExistente);
         log.info("Empresa con ID: {} activada correctamente", id);
+    }
+
+    @Transactional(readOnly = true)
+    public java.util.List<org.fichaje.dto.entity.UsuarioDTO> findUsuariosByEmpresaId(Long empresaId) {
+        log.info("Consultando usuarios de la empresa con ID: {}", empresaId);
+        Empresa empresa = repository.findById(empresaId).orElseThrow(() -> new EmpresaNotFoundException(empresaId));
+        return empresa.getUsuarios().stream()
+                .map(usuarioDtoConverter::inverseTransform)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     private void validarCif(String cif) {

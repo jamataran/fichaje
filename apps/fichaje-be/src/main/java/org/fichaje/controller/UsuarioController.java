@@ -231,4 +231,10 @@ public class UsuarioController
 	public ResponseEntity<List<SedeDTO>> listSedes(@PathVariable Long id) {
 		return ResponseEntity.ok(service.listSedes(id));
 	}
+
+	@Operation(summary = "Lista todas las empresas de un usuario")
+	@GetMapping("/{id}/empresas")
+	public ResponseEntity<List<EmpresaDTOWithoutSedes>> listEmpresas(@PathVariable Long id) {
+		return ResponseEntity.ok(service.findEmpresasByUsuarioIdWithoutSedes(id));
+	}
 }

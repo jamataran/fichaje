@@ -15,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import org.fichaje.dto.entity.UsuarioDTO;
 
 @RestController
 @RequestMapping("/empresas")
@@ -97,5 +98,11 @@ public class EmpresaController {
     public ResponseEntity<?> deleteParametro(@PathVariable Long id, @PathVariable Long parametroId) {
         parametroService.delete(id, parametroId);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Lista todos los usuarios asignados a una empresa")
+    @GetMapping("/{id}/usuarios")
+    public ResponseEntity<List<UsuarioDTO>> listUsuarios(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findUsuariosByEmpresaId(id));
     }
 }

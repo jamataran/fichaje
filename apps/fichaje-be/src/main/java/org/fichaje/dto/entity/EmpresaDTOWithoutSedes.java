@@ -12,7 +12,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmpresaDTO {
+public class EmpresaDTOWithoutSedes {
 
 	private Long id;
 
@@ -33,6 +33,4 @@ public class EmpresaDTO {
 	private boolean activa;
 
 	private Set<EmpresaParametroDTO> parametros;
-
-	private Set<SedeDTO> sedes;
 }

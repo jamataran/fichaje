@@ -1,12 +1,17 @@
 package org.fichaje.service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.fichaje.converter.EmpresaDtoConverter;
 import org.fichaje.converter.SedeDtoConverter;
 import org.fichaje.converter.UsuarioDtoConverter;
+import org.fichaje.dto.entity.EmpresaDTO;
+import org.fichaje.dto.entity.EmpresaDTOWithoutSedes;
+import org.fichaje.dto.entity.EmpresaParametroDTO;
 import org.fichaje.dto.entity.SedeDTO;
 import org.fichaje.dto.entity.UsuarioDTO;
 import org.fichaje.exception.SedeNotFoundException;
@@ -33,14 +38,16 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
     private final SedeRepository sedeRepository;
     private final UsuarioDtoConverter usuarioDtoConverter;
     private final SedeDtoConverter sedeDtoConverter;
+    private final EmpresaDtoConverter empresaDtoConverter;
 
-    public UsuarioService(PasswordEncoder passwordEncoder, RolService rolService, EmailService emailService, SedeRepository sedeRepository, UsuarioDtoConverter usuarioDtoConverter, SedeDtoConverter sedeDtoConverter) {
+    public UsuarioService(PasswordEncoder passwordEncoder, RolService rolService, EmailService emailService, SedeRepository sedeRepository, UsuarioDtoConverter usuarioDtoConverter, SedeDtoConverter sedeDtoConverter, EmpresaDtoConverter empresaDtoConverter) {
         this.passwordEncoder = passwordEncoder;
         this.rolService = rolService;
         this.emailService = emailService;
         this.sedeRepository = sedeRepository;
         this.usuarioDtoConverter = usuarioDtoConverter;
         this.sedeDtoConverter = sedeDtoConverter;
+        this.empresaDtoConverter = empresaDtoConverter;
     }
 
     public Optional<Usuario> findByNumero(String numero) {
@@ -86,6 +93,8 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
         usuario.setDeBaja(false);
         usuario.setWorking(false);
         usuario.setAdmin(false);
+        usuario.setSedes(new ArrayList<>());
+        usuario.setEmpresas(new ArrayList<>());
 
         // Generar y establecer contraseña
         // FIXME
@@ -98,6 +107,11 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
 
         // Guardar usuario
         usuario = save(usuario);
+
+        // Asignar sede si se proporciona
+        if (usuarioDto.getSedeId() != null) {
+            addSede(usuario.getId(), usuarioDto.getSedeId());
+        }
 
         // Enviar credenciales por email
         sendCredentialsEmail(usuario, password);
@@ -233,6 +247,36 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
         return usuario.getSedes().stream()
                 .map(sedeDtoConverter::todtoConverter)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<EmpresaDTO> findEmpresasByUsuarioId(Long usuarioId) {
+        Usuario usuario = repository.findById(usuarioId)
+                .orElseThrow(() -> new UsuarioNotFoundException(usuarioId));
+        return usuario.getEmpresas().stream()
+                .map(empresaDtoConverter::todtoConverter)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<EmpresaDTOWithoutSedes> findEmpresasByUsuarioIdWithoutSedes(Long usuarioId) {
+        Usuario usuario = repository.findById(usuarioId)
+                .orElseThrow(() -> new UsuarioNotFoundException(usuarioId));
+        return usuario.getEmpresas().stream()
+                .map(empresa -> EmpresaDTOWithoutSedes.builder()
+                        .id(empresa.getId())
+                        .nombre(empresa.getNombre())
+                        .razonSocial(empresa.getRazonSocial())
+                        .cif(empresa.getCif())
+                        .activa(empresa.isActiva())
+                        .parametros(empresa.getParametros().stream()
+                                .map(p -> EmpresaParametroDTO.builder()
+                                        .clave(p.getClave())
+                                        .valor(p.getValor())
+                                        .build())
+                                .collect(java.util.stream.Collectors.toSet()))
+                        .build())
+                .collect(java.util.stream.Collectors.toList());
     }
 
 }

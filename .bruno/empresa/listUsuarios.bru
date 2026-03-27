@@ -1,0 +1,15 @@
+meta {
+    name: List Company Users
+    type: http
+    seq: 10
+}
+
+get {
+    url: {{baseUrl}}/empresas/:id/usuarios
+    auth: inherit
+}
+
+params:path {
+    id: 1
+}
+
