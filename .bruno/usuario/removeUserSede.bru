@@ -1,0 +1,16 @@
+meta {
+    name: Remove Sede from User
+    type: http
+    seq: 9
+}
+
+delete {
+    url: {{baseUrl}}/usuario/:id/sedes/:sedeId
+    auth: inherit
+}
+
+params:path {
+    id: 1
+    sedeId: 1
+}
+

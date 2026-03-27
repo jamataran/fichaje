@@ -84,4 +84,10 @@ public class GlobalExceptionHandler {
         return ProblemDetail
                 .forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
     }
+
+    @ExceptionHandler(UsuarioNotFoundException.class)
+    public ProblemDetail handleUsuarioNotFoundException(UsuarioNotFoundException ex) {
+        return ProblemDetail
+                .forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
 }

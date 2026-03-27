@@ -1,0 +1,16 @@
+meta {
+    name: Add Sede to User
+    type: http
+    seq: 8
+}
+
+post {
+    url: {{baseUrl}}/usuario/:id/sedes/:sedeId
+    auth: inherit
+}
+
+params:path {
+    id: 1
+    sedeId: 1
+}
+

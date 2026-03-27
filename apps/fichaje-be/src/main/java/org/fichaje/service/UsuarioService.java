@@ -5,7 +5,15 @@ import java.util.*;
 import jakarta.transaction.Transactional;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.fichaje.converter.SedeDtoConverter;
+import org.fichaje.converter.UsuarioDtoConverter;
+import org.fichaje.dto.entity.SedeDTO;
 import org.fichaje.dto.entity.UsuarioDTO;
+import org.fichaje.exception.SedeNotFoundException;
+import org.fichaje.exception.UsuarioNotFoundException;
+import org.fichaje.provider.db.entity.Empresa;
+import org.fichaje.provider.db.entity.Sede;
+import org.fichaje.provider.db.repository.SedeRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +30,17 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
     private final PasswordEncoder passwordEncoder;
     private final RolService rolService;
     private final EmailService emailService;
+    private final SedeRepository sedeRepository;
+    private final UsuarioDtoConverter usuarioDtoConverter;
+    private final SedeDtoConverter sedeDtoConverter;
 
-    public UsuarioService(PasswordEncoder passwordEncoder, RolService rolService, EmailService emailService) {
+    public UsuarioService(PasswordEncoder passwordEncoder, RolService rolService, EmailService emailService, SedeRepository sedeRepository, UsuarioDtoConverter usuarioDtoConverter, SedeDtoConverter sedeDtoConverter) {
         this.passwordEncoder = passwordEncoder;
         this.rolService = rolService;
         this.emailService = emailService;
+        this.sedeRepository = sedeRepository;
+        this.usuarioDtoConverter = usuarioDtoConverter;
+        this.sedeDtoConverter = sedeDtoConverter;
     }
 
     public Optional<Usuario> findByNumero(String numero) {
@@ -172,6 +186,53 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
                 usuario.getEmail(),
                 "Usuario creado en Fichaje",
                 body.toString());
+    }
+
+    public UsuarioDTO addSede(Long usuarioId, Long sedeId) {
+        Usuario usuario = repository.findById(usuarioId)
+                .orElseThrow(() -> new UsuarioNotFoundException(usuarioId));
+
+        Sede sede = sedeRepository.findById(sedeId)
+                .orElseThrow(() -> new SedeNotFoundException(sedeId));
+
+        if (!usuario.getSedes().contains(sede)) {
+            usuario.getSedes().add(sede);
+        }
+
+        Empresa empresa = sede.getEmpresa();
+        if (!usuario.getEmpresas().contains(empresa)) {
+            usuario.getEmpresas().add(empresa);
+        }
+
+        Usuario saved = save(usuario);
+        return usuarioDtoConverter.inverseTransform(saved);
+    }
+
+    public void removeSede(Long usuarioId, Long sedeId) {
+        Usuario usuario = repository.findById(usuarioId)
+                .orElseThrow(() -> new UsuarioNotFoundException(usuarioId));
+
+        Sede sede = sedeRepository.findById(sedeId)
+                .orElseThrow(() -> new SedeNotFoundException(sedeId));
+
+        usuario.getSedes().remove(sede);
+
+        boolean tieneOtraSedeEnEmpresa = usuario.getSedes().stream()
+                .anyMatch(s -> s.getEmpresa().getId().equals(sede.getEmpresa().getId()));
+
+        if (!tieneOtraSedeEnEmpresa) {
+            usuario.getEmpresas().remove(sede.getEmpresa());
+        }
+
+        save(usuario);
+    }
+
+    public List<SedeDTO> listSedes(Long usuarioId) {
+        Usuario usuario = repository.findById(usuarioId)
+                .orElseThrow(() -> new UsuarioNotFoundException(usuarioId));
+        return usuario.getSedes().stream()
+                .map(sedeDtoConverter::todtoConverter)
+                .toList();
     }
 
 }

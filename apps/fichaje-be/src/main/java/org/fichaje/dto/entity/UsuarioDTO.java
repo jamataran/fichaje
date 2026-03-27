@@ -33,4 +33,6 @@ public class UsuarioDTO {
 
 	private Boolean working;
 
+	private List<SedeDTO> sedes;
+
 }
