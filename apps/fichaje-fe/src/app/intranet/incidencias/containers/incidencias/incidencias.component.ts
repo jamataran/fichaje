@@ -62,7 +62,7 @@ export class IncidenciasComponent implements OnInit {
 
   ngOnInit(): void {
     this.dto.usuarioNumero = this.activatedRoute.snapshot.params.numero;
-    this.isAdmin = this.tokenService.isAdmin();
+    this.isAdmin = this.tokenService.isRRHH();
     this.listarElementos()
 
     /*
@@ -72,37 +72,37 @@ export class IncidenciasComponent implements OnInit {
           diaHasta: '',
           explicacion: null,
           resuelta: null,
-    
+
           usuarioEmail: '',
           usuarioNumero: '',
           usuarioNombre: '',
           usuarioDni: '',
         }
-    
+
          for (let i = 1; i <= 12; i++) {
           let year: number = new Date().getFullYear();
           let first = new Date(`${year}-${i}`);
-    
+
           let last;
           if (i == 12) {
             last = new Date(`${year + 1}-${1}`);
           } else {
             last = new Date(`${year}-${i + 1}`);
           }
-    
+
           last.setDate(last.getDate() - 1);
-    
+
           dtoChart.diaDesde = this.formatDate(first);
           dtoChart.diaHasta = this.formatDate(last);
-    
+
           this.service.getCsvData(dtoChart).subscribe(
             data => {
               this.listaMensualIncidencias[first.getMonth()+1]=data.length;
             }
           )
-    
+
         }
-    
+
         console.log(this.listaMensualIncidencias); */
 
   }

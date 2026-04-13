@@ -64,7 +64,7 @@ export class EmpleadosComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.isAdmin = this.tokenService.isAdmin();
+    this.isAdmin = this.tokenService.isRRHH();
     this.listarElementos()
   }
 

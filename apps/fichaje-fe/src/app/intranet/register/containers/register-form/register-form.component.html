@@ -72,6 +72,55 @@
         </div>
       </div>
 
+      <div class="col-12 d-flex align-items-end justify-content-end mb-3">
+        <div class="form-group w-100">
+          <label for="sede"><b><i class="bi bi-building"></i> Sede:</b></label>
+          <div class="input-group position-relative">
+            <input
+              type="text"
+              class="form-control"
+              name="sede"
+              id="sede"
+              [(ngModel)]="sedeSearchInput"
+              (keypress)="onSedeKeyPress($event)"
+              placeholder="Escribe el nombre de la sede..."
+              autocomplete="off"
+              [disabled]="isLoadingSedes">
+
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              (click)="performSedeSearch()"
+              [disabled]="isLoadingSedes"
+              title="Buscar sedes">
+              <i class="bi bi-search" *ngIf="!isLoadingSedes"></i>
+              <span class="spinner-border spinner-border-sm" *ngIf="isLoadingSedes"></span>
+            </button>
+
+            <!-- Dropdown con resultados -->
+            <div class="dropdown-menu w-100 show position-absolute"
+                 *ngIf="filteredSedes.length > 0 && sedeSearchInput.trim() !== ''"
+                 style="top: 100%; left: 0; z-index: 1000; max-height: 300px; overflow-y: auto;">
+
+              <button
+                type="button"
+                class="dropdown-item"
+                *ngFor="let sede of filteredSedes"
+                (click)="selectSede(sede)">
+                <i class="bi bi-building"></i> {{ sede.nombre }}
+              </button>
+            </div>
+
+            <!-- Mensaje cuando no hay resultados -->
+            <div class="dropdown-menu w-100 show position-absolute"
+                 *ngIf="filteredSedes.length === 0 && sedeSearchInput.trim() !== '' && !isLoadingSedes"
+                 style="top: 100%; left: 0; z-index: 1000;">
+              <span class="dropdown-item disabled">No se encontraron sedes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
 

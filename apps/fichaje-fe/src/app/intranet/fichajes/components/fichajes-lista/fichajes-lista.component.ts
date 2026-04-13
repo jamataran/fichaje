@@ -63,7 +63,7 @@ export class FichajesListaComponent implements OnInit {
 
   ngOnInit(): void {
     this.dto.numeroUsuario = this.activatedRoute.snapshot.params.numero;
-    this.isAdmin = this.tokenService.isAdmin();
+    this.isAdmin = this.tokenService.isRRHH();
     this.listarElementos()
   }
 

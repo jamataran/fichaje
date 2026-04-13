@@ -10,6 +10,7 @@ import { TokenService } from 'src/app/core/auth/service/token.service';
 export class MenuComponent implements OnInit {
 
 
+  isRRHH: boolean = false;
   isAdmin: boolean = false;
   numero:string='';
 
@@ -19,6 +20,7 @@ export class MenuComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.isRRHH = this.service.isRRHH();
     this.isAdmin = this.service.isAdmin();
     this.numero = this.service.getNumero();
   }

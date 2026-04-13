@@ -19,7 +19,7 @@ export class GuardService  {
 
     const expectedRol = route.data.expectedRol
 
-    this.realRol = this.tokenService.isAdmin() ? 'admin' : 'user'
+    this.realRol = this.tokenService.isRRHH() ? 'admin' : 'user'
 
     if (!this.tokenService.isLogged() || expectedRol.indexOf(this.realRol) === -1) {
       this.router.navigate(['/'])

@@ -74,6 +74,7 @@ public class Application {
 			List<String> rolesAdmin = new ArrayList<>();
 //			rolesAdmin.add("admin");
 			rolesAdmin.add("super_admin");
+			rolesAdmin.add("rrhh");
 
 			UsuarioDTO adminDto = new UsuarioDTO().builder()
 					.nombreEmpleado("AdminFichaje")

@@ -40,8 +40,9 @@
       </li>
     </ul>
 
-    <!-- Admin Section -->
-    <div *ngIf="isAdmin" class="mt-auto">
+    <!-- RRHH Section -->
+     @if (isAdmin) {
+    <div class="mt-auto">
       <h6 class="sidebar-heading">
         <i class="bi bi-shield-lock" style="font-size: 0.85rem;"></i>
         Administración
@@ -98,6 +99,33 @@
         </li>
       </ul>
     </div>
+    }
+
+    <!-- Super Admin Section -->
+     @if (isAdmin) {
+    <div class="mt-auto">
+      <h6 class="sidebar-heading">
+        <i class="bi bi-shield-lock" style="font-size: 0.85rem;"></i>
+        Sistema
+      </h6>
+
+      <ul class="nav">
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" routerLink="/intranet/empresas/list">
+            <i class="bi bi-people feather"></i>
+            <span>Empresas</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" routerLink="/intranet/sedes/list">
+            <i class="bi bi-exclamation-triangle feather"></i>
+            <span>Sedes</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    }
   </div>
 
 </nav>

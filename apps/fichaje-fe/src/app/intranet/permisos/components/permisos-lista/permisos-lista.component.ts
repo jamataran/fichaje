@@ -66,7 +66,7 @@ export class PermisosListaComponent implements OnInit {
 
   ngOnInit(): void {
     this.dto.usuarioNumero = this.activatedRoute.snapshot.params.numero;
-    this.isAdmin = this.tokenService.isAdmin();
+    this.isAdmin = this.tokenService.isRRHH();
     this.listarElementos()
   }
 
