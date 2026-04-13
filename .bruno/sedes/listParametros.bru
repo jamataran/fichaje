@@ -1,0 +1,15 @@
+meta {
+    name: List Parametros
+    type: http
+    seq: 6
+}
+
+get {
+    url: {{baseUrl}}/sedes/:sedeId/parametros
+    auth: inherit
+}
+
+params:path {
+    sedeId: 1
+}
+

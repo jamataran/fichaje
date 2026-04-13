@@ -10,15 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import org.fichaje.converter.UsuarioDtoConverter;
 import org.fichaje.dto.entity.UsuarioDTO;
@@ -51,40 +43,41 @@ public class UsuarioController
 			@RequestParam(defaultValue = "id") String order,
 			@RequestParam(defaultValue = "true") boolean asc) {
 
-		Specification<Usuario> spec = Specification
-				.where(dto.getNombreEmpleado() == null ? null
-						: specifications.nombreUsuarioContains(
-								dto.getNombreEmpleado()))
-				.and(dto.getEmail() == null ? null
-						: specifications.emailUsuarioContains(
-								dto.getEmail()))
-				.and(dto.getNumero() == null ? null
-						: specifications.numeroUsuarioContains(
-								dto.getNumero()))
-				.and(dto.getDni() == null ? null
-						: specifications.dniUsuarioContains(
-								dto.getDni()))
-				.and(dto.getWorking() == null ? null
-						: specifications.isWorking(
-								dto.getWorking()))
-				.and(dto.getEnVacaciones() == null ? null
-						: specifications.isEnVacaciones(
-								dto.getEnVacaciones()))
-				.and(dto.getDeBaja() == null ? null
-						: specifications.isDeBaja(
-								dto.getDeBaja()))
-				.and(dto.getDiasVacacionesDesde() == null ? null
-						: specifications.diasDesde(
-								dto.getDiasVacacionesDesde()))
-				.and(dto.getDiasVacacionesHasta() == null ? null
-						: specifications.diasHasta(
-								dto.getDiasVacacionesHasta()))
-				.and(dto.getHorasGeneradasDesde() == null ? null
-						: specifications.horasDesde(
-								dto.getHorasGeneradasDesde()))
-				.and(dto.getHorasGeneradasHasta() == null ? null
-						: specifications.horasHasta(
-								dto.getHorasGeneradasHasta()));
+		Specification<Usuario> spec = Specification.where((root, query, criteriaBuilder) -> null);
+		
+		if (dto.getNombreEmpleado() != null) {
+			spec = spec.and(specifications.nombreUsuarioContains(dto.getNombreEmpleado()));
+		}
+		if (dto.getEmail() != null) {
+			spec = spec.and(specifications.emailUsuarioContains(dto.getEmail()));
+		}
+		if (dto.getNumero() != null) {
+			spec = spec.and(specifications.numeroUsuarioContains(dto.getNumero()));
+		}
+		if (dto.getDni() != null) {
+			spec = spec.and(specifications.dniUsuarioContains(dto.getDni()));
+		}
+		if (dto.getWorking() != null) {
+			spec = spec.and(specifications.isWorking(dto.getWorking()));
+		}
+		if (dto.getEnVacaciones() != null) {
+			spec = spec.and(specifications.isEnVacaciones(dto.getEnVacaciones()));
+		}
+		if (dto.getDeBaja() != null) {
+			spec = spec.and(specifications.isDeBaja(dto.getDeBaja()));
+		}
+		if (dto.getDiasVacacionesDesde() != null) {
+			spec = spec.and(specifications.diasDesde(dto.getDiasVacacionesDesde()));
+		}
+		if (dto.getDiasVacacionesHasta() != null) {
+			spec = spec.and(specifications.diasHasta(dto.getDiasVacacionesHasta()));
+		}
+		if (dto.getHorasGeneradasDesde() != null) {
+			spec = spec.and(specifications.horasDesde(dto.getHorasGeneradasDesde()));
+		}
+		if (dto.getHorasGeneradasHasta() != null) {
+			spec = spec.and(specifications.horasHasta(dto.getHorasGeneradasHasta()));
+		}
 
 		Page<Usuario> entities = service.pagesAndSpec(
 				spec,
@@ -108,40 +101,41 @@ public class UsuarioController
 	@PostMapping("/listFiltered")
 	public ResponseEntity<List<Usuario>> filteredList(@RequestBody UsuarioDtoFilter dto) {
 
-		Specification<Usuario> spec = Specification
-				.where(dto.getNombreEmpleado() == null ? null
-						: specifications.nombreUsuarioContains(
-								dto.getNombreEmpleado()))
-				.and(dto.getEmail() == null ? null
-						: specifications.emailUsuarioContains(
-								dto.getEmail()))
-				.and(dto.getNumero() == null ? null
-						: specifications.numeroUsuarioContains(
-								dto.getNumero()))
-				.and(dto.getDni() == null ? null
-						: specifications.dniUsuarioContains(
-								dto.getDni()))
-				.and(dto.getWorking() == null ? null
-						: specifications.isWorking(
-								dto.getWorking()))
-				.and(dto.getEnVacaciones() == null ? null
-						: specifications.isEnVacaciones(
-								dto.getEnVacaciones()))
-				.and(dto.getDeBaja() == null ? null
-						: specifications.isDeBaja(
-								dto.getDeBaja()))
-				.and(dto.getDiasVacacionesDesde() == null ? null
-						: specifications.diasDesde(
-								dto.getDiasVacacionesDesde()))
-				.and(dto.getDiasVacacionesHasta() == null ? null
-						: specifications.diasHasta(
-								dto.getDiasVacacionesHasta()))
-				.and(dto.getHorasGeneradasDesde() == null ? null
-						: specifications.horasDesde(
-								dto.getHorasGeneradasDesde()))
-				.and(dto.getHorasGeneradasHasta() == null ? null
-						: specifications.horasHasta(
-								dto.getHorasGeneradasHasta()));
+		Specification<Usuario> spec = Specification.where((root, query, criteriaBuilder) -> null);
+		
+		if (dto.getNombreEmpleado() != null) {
+			spec = spec.and(specifications.nombreUsuarioContains(dto.getNombreEmpleado()));
+		}
+		if (dto.getEmail() != null) {
+			spec = spec.and(specifications.emailUsuarioContains(dto.getEmail()));
+		}
+		if (dto.getNumero() != null) {
+			spec = spec.and(specifications.numeroUsuarioContains(dto.getNumero()));
+		}
+		if (dto.getDni() != null) {
+			spec = spec.and(specifications.dniUsuarioContains(dto.getDni()));
+		}
+		if (dto.getWorking() != null) {
+			spec = spec.and(specifications.isWorking(dto.getWorking()));
+		}
+		if (dto.getEnVacaciones() != null) {
+			spec = spec.and(specifications.isEnVacaciones(dto.getEnVacaciones()));
+		}
+		if (dto.getDeBaja() != null) {
+			spec = spec.and(specifications.isDeBaja(dto.getDeBaja()));
+		}
+		if (dto.getDiasVacacionesDesde() != null) {
+			spec = spec.and(specifications.diasDesde(dto.getDiasVacacionesDesde()));
+		}
+		if (dto.getDiasVacacionesHasta() != null) {
+			spec = spec.and(specifications.diasHasta(dto.getDiasVacacionesHasta()));
+		}
+		if (dto.getHorasGeneradasDesde() != null) {
+			spec = spec.and(specifications.horasDesde(dto.getHorasGeneradasDesde()));
+		}
+		if (dto.getHorasGeneradasHasta() != null) {
+			spec = spec.and(specifications.horasHasta(dto.getHorasGeneradasHasta()));
+		}
 
 		List<Usuario> entities = service.filterAndList(spec);
 
@@ -217,5 +211,30 @@ public class UsuarioController
 			return ResponseEntity.status(HttpStatus.FORBIDDEN)
 					.body(new Mensaje("Solo puedes acceder a la información de tú usuario"));
 		}
+	}
+
+	@Operation(summary = "Asigna una sede a un usuario")
+	@PostMapping("/{id}/sedes/{sedeId}")
+	public ResponseEntity<UsuarioDTO> addSede(@PathVariable Long id, @PathVariable Long sedeId) {
+		return ResponseEntity.ok(service.addSede(id, sedeId));
+	}
+
+	@Operation(summary = "Quita una sede a un usuario")
+	@DeleteMapping("/{id}/sedes/{sedeId}")
+	public ResponseEntity<?> removeSede(@PathVariable Long id, @PathVariable Long sedeId) {
+		service.removeSede(id, sedeId);
+		return ResponseEntity.noContent().build();
+	}
+
+	@Operation(summary = "Lista las sedes de un usuario")
+	@GetMapping("/{id}/sedes")
+	public ResponseEntity<List<SedeDTO>> listSedes(@PathVariable Long id) {
+		return ResponseEntity.ok(service.listSedes(id));
+	}
+
+	@Operation(summary = "Lista todas las empresas de un usuario")
+	@GetMapping("/{id}/empresas")
+	public ResponseEntity<List<EmpresaDTOWithoutSedes>> listEmpresas(@PathVariable Long id) {
+		return ResponseEntity.ok(service.findEmpresasByUsuarioIdWithoutSedes(id));
 	}
 }

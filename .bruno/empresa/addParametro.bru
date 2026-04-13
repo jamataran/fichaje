@@ -1,0 +1,22 @@
+meta {
+    name: Add Parametro
+    type: http
+    seq: 7
+}
+
+post {
+    url: {{baseUrl}}/empresas/:id/parametros
+    body: json
+    auth: inherit
+}
+
+params:path {
+    id: 1
+}
+
+body:json {
+    {
+        "clave": "horario_entrada",
+        "valor": "09:00"
+    }
+}

@@ -1,0 +1,24 @@
+meta {
+    name: Create User
+    type: http
+    seq: 2
+}
+
+post {
+    url: {{baseUrl}}/auth/nuevo
+    body: json
+    auth: inherit
+}
+
+body:json {
+    {
+        "numero": "E001",
+        "nombreEmpleado": "Juan García López",
+        "email": "juan.garcia@techsolutions.es",
+        "dni": "12345678A",
+        "password": "Password123!",
+        "roles": ["ROLE_USER"],
+        "sedeId": 1
+    }
+}
+

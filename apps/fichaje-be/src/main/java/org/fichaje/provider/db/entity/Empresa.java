@@ -1,16 +1,15 @@
 package org.fichaje.provider.db.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.Set;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -21,23 +20,24 @@ public class Empresa {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotNull
-	@Column()
+	@Column(nullable = false)
 	private String nombre;
 
-	@NotNull
-	@Column(unique = true)
+	@Column(name = "razon_social")
+	private String razonSocial;
+
+	@Column(unique = true, nullable = false, length = 20)
 	private String cif;
 
 	@Column(columnDefinition = "boolean default false")
 	private boolean activa;
 
-	@JsonIgnoreProperties(value = { "empresa" })
-	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Calendario> calendarios;
-
-	@JsonIgnore
-	@NotNull
 	@ManyToMany(mappedBy = "empresas")
 	private List<Usuario> usuarios;
+
+	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<EmpresaParametro> parametros;
+
+	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Sede> sedes;
 }

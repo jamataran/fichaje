@@ -1,6 +1,7 @@
 package org.fichaje.converter;
 
 import org.fichaje.dto.entity.UsuarioDTO;
+import org.fichaje.provider.db.entity.Sede;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -9,15 +10,19 @@ import org.fichaje.dto.entity.UsuarioDtoEdit;
 import org.fichaje.dto.entity.UsuarioDtoEditPassword;
 import org.fichaje.provider.db.entity.Usuario;
 
+import java.util.ArrayList;
+
 @Component
 public class UsuarioDtoConverter {
 
-	@Autowired
-	PasswordEncoder passwordEncoder;
+	private final PasswordEncoder passwordEncoder;
+	private final SedeDtoConverter sedeDtoConverter;
 
-	/**
-	 * Convierte un Usuario a UsuarioDTO (lectura/respuesta)
-	 */
+	public UsuarioDtoConverter(SedeDtoConverter sedeDtoConverter, PasswordEncoder passwordEncoder){
+		this.sedeDtoConverter = sedeDtoConverter;
+		this.passwordEncoder = passwordEncoder;
+	}
+
 	public UsuarioDTO inverseTransform(Usuario u) {
 		return UsuarioDTO
 				.builder()
@@ -31,6 +36,9 @@ public class UsuarioDtoConverter {
 				.working(u.getWorking())
 				.enVacaciones(u.getEnVacaciones())
 				.deBaja(u.getDeBaja())
+				.sedes(u.getSedes() != null ? u.getSedes().stream()
+						.map(sedeDtoConverter::todtoConverter)
+						.toList() : new ArrayList<>())
 				.build();
 	}
 

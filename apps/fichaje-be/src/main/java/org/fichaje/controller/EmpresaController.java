@@ -1,68 +1,108 @@
 package org.fichaje.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.fichaje.converter.EmpresaDtoConverter;
-import org.fichaje.dto.entity.EmpresaDto;
-import org.fichaje.dto.entity.Mensaje;
-import org.fichaje.provider.db.entity.Empresa;
+import jakarta.validation.Valid;
+import org.fichaje.dto.entity.EmpresaCreateDTO;
+import org.fichaje.dto.entity.EmpresaDTO;
+import org.fichaje.dto.entity.EmpresaParametroDTO;
+import org.fichaje.service.EmpresaParametroService;
 import org.fichaje.service.EmpresaService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
+import org.fichaje.dto.entity.UsuarioDTO;
 
 @RestController
-@RequestMapping("/empresa")
-//@CrossOrigin(origins = "http://localhost:4200")
-public class EmpresaController
-		extends CommonController<Empresa, EmpresaService> {
+@RequestMapping("/empresas")
+public class EmpresaController {
 
-	@Autowired
-	EmpresaDtoConverter dtoConverter;
+    private final EmpresaService service;
+    private final EmpresaParametroService parametroService;
 
-	@Operation(summary = "Crea una nueva empresa")
-	@PostMapping("/create")
-	public ResponseEntity<?> newEmpresa(
-			@RequestBody EmpresaDto empresaDto) {
-		service.save(dtoConverter.transform(empresaDto));
+    public EmpresaController(EmpresaService service, EmpresaParametroService parametroService) {
+        this.parametroService = parametroService;
+        this.service = service;
+    }
 
-//		return ResponseEntity.created(null).build();
-		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(new Mensaje("Empresa creada"));
+    @Operation(summary = "Crea una nueva empresa")
+    @PostMapping
+    public ResponseEntity<EmpresaDTO> newEmpresa(@Valid @RequestBody EmpresaCreateDTO empresaDto) {
+        EmpresaDTO empresaGuardada = service.save(empresaDto);
 
-//		return ResponseEntity.status(HttpStatus.CREATED)
-//				.body(service.save(dtoConverter.transform(calendarioDto)));
-	}
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(empresaGuardada.getId())
+                .toUri();
 
-	@Operation(summary = "Devuelve una lista de DTO de empresas")
-	@GetMapping("/list/dto")
-	public ResponseEntity<List<EmpresaDto>> listDto() {
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.body(service.list().stream()
-						.map(c -> dtoConverter.inverseTransform(c))
-						.collect(Collectors.toList()));
+        return ResponseEntity.created(location).body(empresaGuardada);
+    }
 
-	}
+    @Operation(summary = "Devuelve una lista paginada de empresas")
+    @GetMapping
+    public ResponseEntity<Page<EmpresaDTO>> list(Pageable pageable) {
+        return ResponseEntity.ok(service.findAll(pageable));
+    }
 
-	@Operation(summary = "Edita una empresa")
-	@PutMapping("/{id}")
-	public ResponseEntity<?> editEmpresa(@RequestBody Empresa editar,
-			@PathVariable Long id) {
+    @Operation(summary = "Edita una empresa existente")
+    @PutMapping("/{id}")
+    public ResponseEntity<EmpresaDTO> editEmpresa(@PathVariable Long id, @Valid @RequestBody EmpresaDTO empresa) {
+        return ResponseEntity.of(service.update(empresa, id));
+    }
 
-		return service.findById(id).map(c -> {
-			c.setId(editar.getId());
-			c.setNombre(editar.getNombre());
-			c.setCif(editar.getCif());
-			c.setActiva(editar.isActiva());
+    @Operation(summary = "Elimina una empresa")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 
-			return ResponseEntity.ok(service.save(c));
-		}).orElseGet(() -> {
-			return ResponseEntity.notFound().build();
-		});
-	}
+    @Operation(summary = "Activa una empresa")
+    @PatchMapping("/{id}/activar")
+    public ResponseEntity<?> activarEmpresa(@PathVariable Long id) {
+        service.activar(id);
+        return ResponseEntity.ok().build();
+    }
 
+    @Operation(summary = "Lista los parámetros de una empresa")
+    @GetMapping("/{id}/parametros")
+    public ResponseEntity<List<EmpresaParametroDTO>> listParametros(@PathVariable Long id) {
+        return ResponseEntity.ok(parametroService.findByEmpresaId(id));
+    }
+
+    @Operation(summary = "Añade un parámetro a una empresa")
+    @PostMapping("/{id}/parametros")
+    public ResponseEntity<EmpresaParametroDTO> addParametro(@PathVariable Long id, @Valid @RequestBody EmpresaParametroDTO dto) {
+        EmpresaParametroDTO saved = parametroService.save(id, dto);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{parametroId}")
+                .buildAndExpand(saved.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(saved);
+    }
+
+    @Operation(summary = "Edita un parámetro de una empresa")
+    @PutMapping("/{id}/parametros/{parametroId}")
+    public ResponseEntity<EmpresaParametroDTO> updateParametro(@PathVariable Long id, @PathVariable Long parametroId, @Valid @RequestBody EmpresaParametroDTO dto) {
+        return ResponseEntity.ok(parametroService.update(id, parametroId, dto));
+    }
+
+    @Operation(summary = "Elimina un parámetro de una empresa")
+    @DeleteMapping("/{id}/parametros/{parametroId}")
+    public ResponseEntity<?> deleteParametro(@PathVariable Long id, @PathVariable Long parametroId) {
+        parametroService.delete(id, parametroId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Lista todos los usuarios asignados a una empresa")
+    @GetMapping("/{id}/usuarios")
+    public ResponseEntity<List<UsuarioDTO>> listUsuarios(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findUsuariosByEmpresaId(id));
+    }
 }
