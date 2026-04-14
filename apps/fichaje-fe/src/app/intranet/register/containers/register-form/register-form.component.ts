@@ -3,8 +3,17 @@ import { Router } from '@angular/router';
 import { NuevoUsuario } from 'src/app/core/auth/model/nuevo-usuario';
 import { AuthService } from 'src/app/core/auth/service/auth.service';
 import { TokenService } from 'src/app/core/auth/service/token.service';
-import { SedeService, SedeDTO } from 'src/app/intranet/sedes/service/sede.service';
 import { Popup } from 'src/app/shared/helper/popup';
+import { HttpClient } from "@angular/common/http";
+import {environment } from "src/environments/environment";
+import { NgZone } from '@angular/core';
+
+export interface EmpresaDTO {
+  id: number;
+  nombre: string;
+  cif: string;
+  activa: boolean;
+}
 
 @Component({
     selector: 'app-register-form',
@@ -19,80 +28,85 @@ export class RegisterFormComponent implements OnInit {
   email = ''
   dni = ''
   rol = ''
-  sedeSearchInput = ''
-  selectedSedeId: number | null = null
-  allSedes: SedeDTO[] = []
-  filteredSedes: SedeDTO[] = []
-  isLoadingSedes = false
+
+  isAdmin = false;
+  empresaSearchInput = '';
+  selectedEmpresaId: number | null = null;
+  allEmpresas: EmpresaDTO[] = [];
+  filteredEmpresas: EmpresaDTO[] = [];
+  showEmpresaDropdown = false;
+  isLoadingEmpresas = false;
 
 
   constructor(
     private service: AuthService,
     private tokenService: TokenService,
-    private sedeService: SedeService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient,
+    private ngZone: NgZone
   ) { }
 
   ngOnInit(): void {
-    this.loadSedes();
+    this.isAdmin = this.tokenService.isAdmin();
+    if (this.isAdmin){
+      this.loadEmpresas();
+    }
   }
 
-  loadSedes(): void {
-    this.isLoadingSedes = true;
+  loadEmpresas(): void {
+    this.isLoadingEmpresas = true;
 
-    const usuarioId = this.tokenService.getId();
-
-    this.sedeService.getSedesByUsuarioId(usuarioId).subscribe(
-      (sedes: SedeDTO[]) => {
-        this.allSedes = sedes;
-        this.filteredSedes = sedes;
-        this.isLoadingSedes = false;
-        
-        // Establecer la sede principal por defecto (primera sede)
-        if (sedes && sedes.length > 0) {
-          this.selectedSedeId = sedes[0].id;
-          this.sedeSearchInput = sedes[0].nombre;
+    this.http.get<any>(`${environment.apiURL}/empresas?page=0&size=200&sort=nombre,asc`)
+      .subscribe({
+        next: (response) => {
+          this.ngZone.run(() => {   // ← envolver aquí
+            this.allEmpresas = (response.content ?? response).map((e: any) => ({
+              id: e.id,
+              nombre: e.nombre,
+              cif: e.cif,
+              activa: e.activa
+            }));
+            this.filteredEmpresas = this.allEmpresas;
+            this.isLoadingEmpresas = false;
+          });
+        },
+        error: (error) => {
+          this.ngZone.run(() => {   // ← y aquí
+            Popup.toastDanger('Error', 'No se pudieron cargar las empresas');
+            this.isLoadingEmpresas = false;
+          });
         }
-      },
-      (error) => {
-        console.error('Error cargando sedes', error);
-        Popup.toastDanger('Error', 'No se pudieron cargar las sedes');
-        this.isLoadingSedes = false;
-      }
-    );
+      });
   }
 
-  /**
-   * Buscar sedes cuando el usuario presiona Enter
-   */
-  onSedeKeyPress(event: KeyboardEvent): void {
-    // Solo buscar si presiona Enter
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      this.performSedeSearch();
+  onEmpresaInput(): void {
+    const term = this.empresaSearchInput.trim().toLowerCase();
+    this.filteredEmpresas = term
+      ? this.allEmpresas.filter(e => e.nombre.toLowerCase().includes(term))
+      : this.allEmpresas;
+    this.showEmpresaDropdown = true;
+    if (!this.empresaSearchInput.trim()) {
+      this.selectedEmpresaId = null;
     }
   }
 
-  /**
-   * Buscar sedes cuando el usuario hace click en el botón de búsqueda
-   */
-  performSedeSearch(): void {
-    const searchTerm = this.sedeSearchInput;
-
-    // Si el input está vacío, mostrar todas las sedes
-    if (!searchTerm || searchTerm.trim() === '') {
-      this.filteredSedes = this.allSedes;
-      return;
+  onEmpresaFocus(): void {
+    if (!this.empresaSearchInput.trim()) {
+      this.filteredEmpresas = this.allEmpresas;
     }
-
-    // Filtrar sedes localmente (sin llamar al backend)
-    this.filteredSedes = this.sedeService.filterSedes(this.allSedes, searchTerm);
+    this.showEmpresaDropdown = true;
   }
 
-  selectSede(sede: SedeDTO): void {
-    this.selectedSedeId = sede.id;
-    this.sedeSearchInput = sede.nombre;  // ← Mostrar el nombre en el input
-    this.filteredSedes = [];  // ← Cerrar el dropdown
+  selectEmpresa(empresa: EmpresaDTO): void {
+    this.selectedEmpresaId = empresa.id;
+    this.empresaSearchInput = empresa.nombre;
+    this.showEmpresaDropdown = false;
+  }
+
+  closeEmpresaDropdown(): void {
+    setTimeout(() => {
+      this.showEmpresaDropdown = false;
+    }, 200);
   }
 
   clear(): void {
@@ -101,21 +115,9 @@ export class RegisterFormComponent implements OnInit {
     this.email = ''
     this.dni = ''
     this.rol = ''
-    this.sedeSearchInput = ''
-    this.selectedSedeId = null
   }
 
   onRegister(): void {
-    // La sede es opcional, pero si no hay sedes cargadas, mostrar error
-    if (this.allSedes.length === 0) {
-      Popup.toastDanger('Error', 'No hay sedes disponibles');
-      return;
-    }
-
-    // Si no hay sede seleccionada, usar la primera (principal)
-    if (!this.selectedSedeId) {
-      this.selectedSedeId = this.allSedes[0].id;
-    }
 
     let roles = [this.rol];
 
@@ -124,8 +126,7 @@ export class RegisterFormComponent implements OnInit {
       this.nombreEmpleado,
       this.email,
       this.dni,
-      roles,
-      this.selectedSedeId
+      roles
     );
 
     this.service.nuevo(nuevoUsuario).subscribe(

@@ -25,7 +25,8 @@ export class LandingComponent implements OnInit {
   ) {
     this.loginForm = this.formBuilder.group({
       numero: ['', [Validators.required]],
-      password: ['', [Validators.required]]
+      password: ['', [Validators.required]],
+      empresaId: ['']
     });
   }
 
@@ -40,9 +41,12 @@ export class LandingComponent implements OnInit {
     this.isLoading = true;
     this.errMsg = '';
 
+    const objEmpresaId = this.loginForm.get('empresaId')?.value;
+
     const loginUsuario = new LoginUsuario(
       this.loginForm.get('numero')?.value,
-      this.loginForm.get('password')?.value
+      this.loginForm.get('password')?.value,
+      (objEmpresaId === null || objEmpresaId === undefined || objEmpresaId === '') ? null : Number(objEmpresaId)
     );
 
     this.authService.login(loginUsuario).subscribe(
@@ -53,7 +57,7 @@ export class LandingComponent implements OnInit {
       },
       err => {
         this.isLoading = false;
-        this.errMsg = err.error?.error || 'Error al iniciar sesión. Intenta nuevamente.';
+        this.errMsg = err.error?.mensaje || err.error?.error || 'Error al iniciar sesión. Verifica tus credenciales.';
       }
     );
   }

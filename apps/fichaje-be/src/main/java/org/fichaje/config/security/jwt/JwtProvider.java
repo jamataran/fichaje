@@ -31,7 +31,7 @@ public class JwtProvider {
 	@Value("${jwt.expiration}")
 	private int expiration;
 
-	public String generateToken(Authentication authentication) {
+	public String generateToken(Authentication authentication, Long empresaId, Long sedeId) {
 		UsuarioPrincipal usuarioPrincipal = (UsuarioPrincipal) authentication.getPrincipal();
 		List<String> roles = usuarioPrincipal.getAuthorities().stream()
 				.map(GrantedAuthority::getAuthority)
@@ -42,6 +42,8 @@ public class JwtProvider {
 				.claim("roles", roles)
 				.claim("nombre", sanitizeString(usuarioPrincipal.getNombre()))
 				.claim("id", usuarioPrincipal.getId())
+				.claim("empresaId", empresaId)
+				.claim("sedeId", sedeId)
 				.issuedAt(new Date())
 				.expiration(new Date(new Date().getTime() + expiration))
 				.signWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret)))

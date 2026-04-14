@@ -72,52 +72,57 @@
         </div>
       </div>
 
-      <div class="col-12 d-flex align-items-end justify-content-end mb-3">
+      <div class="col-12 d-flex align-items-end justify-content-end mb-3" *ngIf="isAdmin">
         <div class="form-group w-100">
-          <label for="sede"><b><i class="bi bi-building"></i> Sede:</b></label>
+          <label for="empresa">
+            <b><i class="bi bi-briefcase"></i> Empresa:</b>
+          </label>
           <div class="input-group position-relative">
             <input
               type="text"
               class="form-control"
-              name="sede"
-              id="sede"
-              [(ngModel)]="sedeSearchInput"
-              (keypress)="onSedeKeyPress($event)"
-              placeholder="Escribe el nombre de la sede..."
+              name="empresa"
+              id="empresa"
+              [(ngModel)]="empresaSearchInput"
+              (input)="onEmpresaInput()"
+              (focus)="onEmpresaFocus()"
+              (blur)="closeEmpresaDropdown()"
+              placeholder="Busca por nombre de empresa..."
               autocomplete="off"
-              [disabled]="isLoadingSedes">
+              [disabled]="isLoadingEmpresas">
 
-            <button
-              type="button"
-              class="btn btn-outline-secondary"
-              (click)="performSedeSearch()"
-              [disabled]="isLoadingSedes"
-              title="Buscar sedes">
-              <i class="bi bi-search" *ngIf="!isLoadingSedes"></i>
-              <span class="spinner-border spinner-border-sm" *ngIf="isLoadingSedes"></span>
-            </button>
+            <span class="input-group-text" *ngIf="isLoadingEmpresas">
+        <span class="spinner-border spinner-border-sm"></span>
+      </span>
+            <span class="input-group-text text-success" *ngIf="selectedEmpresaId && !isLoadingEmpresas">
+        <i class="bi bi-check-circle-fill"></i>
+      </span>
 
-            <!-- Dropdown con resultados -->
             <div class="dropdown-menu w-100 show position-absolute"
-                 *ngIf="filteredSedes.length > 0 && sedeSearchInput.trim() !== ''"
+                 *ngIf="showEmpresaDropdown && filteredEmpresas.length > 0"
                  style="top: 100%; left: 0; z-index: 1000; max-height: 300px; overflow-y: auto;">
-
               <button
                 type="button"
                 class="dropdown-item"
-                *ngFor="let sede of filteredSedes"
-                (click)="selectSede(sede)">
-                <i class="bi bi-building"></i> {{ sede.nombre }}
+                *ngFor="let empresa of filteredEmpresas"
+                (mousedown)="selectEmpresa(empresa)">
+                <i class="bi bi-briefcase me-2"></i>
+                <span>{{ empresa.nombre }}</span>
+                <small class="text-muted ms-2">{{ empresa.cif }}</small>
               </button>
             </div>
 
-            <!-- Mensaje cuando no hay resultados -->
             <div class="dropdown-menu w-100 show position-absolute"
-                 *ngIf="filteredSedes.length === 0 && sedeSearchInput.trim() !== '' && !isLoadingSedes"
+                 *ngIf="showEmpresaDropdown && filteredEmpresas.length === 0 && !isLoadingEmpresas"
                  style="top: 100%; left: 0; z-index: 1000;">
-              <span class="dropdown-item disabled">No se encontraron sedes</span>
+        <span class="dropdown-item disabled">
+          <i class="bi bi-exclamation-circle me-2"></i>No se encontraron empresas
+        </span>
             </div>
           </div>
+          <small class="text-muted" *ngIf="!selectedEmpresaId">
+            <i class="bi bi-info-circle"></i> Selecciona una empresa para asignar el empleado
+          </small>
         </div>
       </div>
 

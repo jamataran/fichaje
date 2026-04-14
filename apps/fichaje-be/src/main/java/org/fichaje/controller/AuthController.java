@@ -21,6 +21,12 @@ import org.fichaje.dto.JwtDto;
 import org.fichaje.dto.LoginUsuario;
 import org.fichaje.config.security.jwt.JwtProvider;
 import org.fichaje.service.UsuarioService;
+import org.fichaje.provider.db.entity.Usuario;
+import org.fichaje.provider.db.entity.Sede;
+import org.fichaje.config.security.enums.RolNombre;
+
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.authentication.BadCredentialsException;
 
 @RestController
 @RequestMapping("/auth")
@@ -67,12 +73,57 @@ public class AuthController {
 					HttpStatus.BAD_REQUEST);
 		}
 
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(
-						loginUsuario.getNumero(),
-						loginUsuario.getPassword()));
+		Authentication authentication;
+		try {
+			authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(
+							loginUsuario.getNumero(),
+							loginUsuario.getPassword()));
+		} catch (AuthenticationException e) {
+			return new ResponseEntity(new Mensaje("Número de empleado o contraseña incorrectos"), HttpStatus.UNAUTHORIZED);
+		}
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtProvider.generateToken(authentication);
+
+		Usuario usuario = usuarioService.findByNumero(loginUsuario.getNumero()).orElse(null);
+		if (usuario == null) {
+			return new ResponseEntity(new Mensaje("Usuario no encontrado"), HttpStatus.NOT_FOUND);
+		}
+
+		boolean isAdmin = usuario.getRoles().stream()
+				.anyMatch(r -> r.getRolNombre() == RolNombre.ROLE_SUPER_ADMIN);
+
+		Long empresaId = loginUsuario.getEmpresaId();
+		Long sedeId = loginUsuario.getSedeId();
+
+		if (!isAdmin) {
+			if (empresaId == null) {
+				return new ResponseEntity(new Mensaje("El id de la empresa es obligatorio"), HttpStatus.BAD_REQUEST);
+			}
+
+			boolean perteneceAEmpresa = usuario.getEmpresas() != null && usuario.getEmpresas().stream()
+					.anyMatch(e -> e.getId().equals(empresaId));
+
+			if (!perteneceAEmpresa) {
+				return new ResponseEntity(new Mensaje("El usuario no pertenece a la empresa seleccionada"), HttpStatus.FORBIDDEN);
+			}
+
+			if (sedeId != null) {
+				final Long finalSedeId = sedeId;
+				boolean perteneceASede = usuario.getSedes() != null && usuario.getSedes().stream()
+						.anyMatch(s -> s.getId().equals(finalSedeId));
+				if (!perteneceASede) {
+					return new ResponseEntity(new Mensaje("El usuario no pertenece a la sede seleccionada"), HttpStatus.FORBIDDEN);
+				}
+			} else {
+				sedeId = (usuario.getSedes() != null) ? usuario.getSedes().stream()
+						.filter(s -> s.getEmpresa() != null && s.getEmpresa().getId().equals(empresaId))
+						.findFirst()
+						.map(Sede::getId)
+						.orElse(null) : null;
+			}
+		}
+
+		String jwt = jwtProvider.generateToken(authentication, empresaId, sedeId);
 		JwtDto jwtDto = new JwtDto(jwt);
 		return ResponseEntity.status(HttpStatus.OK).body(jwtDto);
 	}
