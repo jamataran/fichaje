@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginUsuario } from 'src/app/core/auth/model/login-usuario';
-import { AuthService } from 'src/app/core/auth/service/auth.service';
+import { AuthService, EmpresaAuthOption } from 'src/app/core/auth/service/auth.service';
 import { TokenService } from 'src/app/core/auth/service/token.service';
 
 @Component({
@@ -16,6 +16,11 @@ export class LandingComponent implements OnInit {
   loginForm: UntypedFormGroup;
   errMsg: string = '';
   isLoading: boolean = false;
+  showEmpresaSelectorModal: boolean = false;
+  isLoadingEmpresas: boolean = false;
+  isSelectingEmpresa: boolean = false;
+  empresaOptions: EmpresaAuthOption[] = [];
+  selectedEmpresaId: number | null = null;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -47,13 +52,70 @@ export class LandingComponent implements OnInit {
 
     this.authService.login(loginUsuario).subscribe(
       data => {
+        this.tokenService.setToken(data.token);
+        this.loadEmpresasAndContinue();
+      },
+      err => {
         this.isLoading = false;
+        this.errMsg = err.error?.mensaje || err.error?.error || 'Error al iniciar sesión.';
+      }
+    );
+  }
+
+  private loadEmpresasAndContinue(): void {
+    this.isLoadingEmpresas = true;
+
+    this.authService.getEmpresasAuth().subscribe(
+      empresas => {
+        this.isLoadingEmpresas = false;
+        this.isLoading = false;
+
+        this.empresaOptions = empresas ?? [];
+
+        // Caso robusto: sin empresas asignadas (p.ej. super admin), continuar directamente
+        if (this.empresaOptions.length === 0) {
+          this.router.navigate(['/intranet']);
+          return;
+        }
+
+        // Si solo hay una empresa, selección automática y salto al dashboard
+        if (this.empresaOptions.length === 1) {
+          this.applyEmpresaSelection(this.empresaOptions[0].id);
+          return;
+        }
+
+        // Si hay más de una, mostrar modal de selección
+        this.selectedEmpresaId = null;
+        this.showEmpresaSelectorModal = true;
+      },
+      err => {
+        this.isLoadingEmpresas = false;
+        this.isLoading = false;
+        this.errMsg = err.error?.mensaje || err.error?.error || 'No se pudieron obtener las empresas del usuario.';
+      }
+    );
+  }
+
+  onConfirmEmpresaSelection(): void {
+    if (!this.selectedEmpresaId) {
+      return;
+    }
+    this.applyEmpresaSelection(this.selectedEmpresaId);
+  }
+
+  private applyEmpresaSelection(empresaId: number): void {
+    this.isSelectingEmpresa = true;
+
+    this.authService.authEmpresa(empresaId).subscribe(
+      data => {
+        this.isSelectingEmpresa = false;
+        this.showEmpresaSelectorModal = false;
         this.tokenService.setToken(data.token);
         this.router.navigate(['/intranet']);
       },
       err => {
-        this.isLoading = false;
-        this.errMsg = err.error?.error || 'Error al iniciar sesión.';
+        this.isSelectingEmpresa = false;
+        this.errMsg = err.error?.mensaje || err.error?.error || 'No se pudo seleccionar la empresa.';
       }
     );
   }

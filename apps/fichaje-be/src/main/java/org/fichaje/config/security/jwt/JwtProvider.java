@@ -48,6 +48,24 @@ public class JwtProvider {
 				.compact();
 	}
 
+	public String generateToken(Authentication authentication, Long empresaId) {
+		UsuarioPrincipal usuarioPrincipal = (UsuarioPrincipal) authentication.getPrincipal();
+		List<String> roles = usuarioPrincipal.getAuthorities().stream()
+				.map(GrantedAuthority::getAuthority)
+				.collect(Collectors.toList());
+
+		return Jwts.builder()
+				.subject(usuarioPrincipal.getUsername())
+				.claim("roles", roles)
+				.claim("nombre", sanitizeString(usuarioPrincipal.getNombre()))
+				.claim("id", usuarioPrincipal.getId())
+				.claim("empresaId", empresaId)
+				.issuedAt(new Date())
+				.expiration(new Date(new Date().getTime() + expiration))
+				.signWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret)))
+				.compact();
+	}
+
 	public String getSubjectFromToken(String token) {
 		return Jwts.parser().verifyWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret))).build().parseClaimsJws(token).getBody()
 				.getSubject();

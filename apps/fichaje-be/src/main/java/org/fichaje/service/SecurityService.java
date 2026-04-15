@@ -1,6 +1,12 @@
 package org.fichaje.service;
 
+import java.util.Optional;
+import java.util.List;
+
+import org.fichaje.dto.JwtDto;
+import org.fichaje.dto.entity.EmpresaDTOWithoutSedes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import org.fichaje.provider.db.entity.Rol;
@@ -40,5 +46,34 @@ public class SecurityService {
         }
 
         return new RrhhDto(response, numeroUsuario);
+    }
+
+    public Optional<JwtDto> generateEmpresaToken(Authentication authentication, Long empresaId) {
+        if (authentication == null || empresaId == null) {
+            return Optional.empty();
+        }
+
+        String numeroUsuario = authentication.getName();
+        boolean belongs = usuarioService.belongsToEmpresa(numeroUsuario, empresaId);
+        if (!belongs) {
+            return Optional.empty();
+        }
+
+        String jwt = jwtProvider.generateToken(authentication, empresaId);
+        return Optional.of(new JwtDto(jwt));
+    }
+
+    public Optional<List<EmpresaDTOWithoutSedes>> getEmpresasForAuthenticatedUser(Authentication authentication) {
+        if (authentication == null) {
+            return Optional.empty();
+        }
+
+        String numeroUsuario = authentication.getName();
+        Usuario usuario = usuarioService.findByNumero(numeroUsuario).orElse(null);
+        if (usuario == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(usuarioService.findEmpresasByUsuarioIdWithoutSedes(usuario.getId()));
     }
 }

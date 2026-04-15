@@ -10,20 +10,24 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.fichaje.dto.entity.Mensaje;
+import org.fichaje.dto.entity.EmpresaDTOWithoutSedes;
 import org.fichaje.dto.entity.UsuarioDTO;
+import org.fichaje.dto.AuthEmpresaRequest;
 import org.fichaje.dto.JwtDto;
 import org.fichaje.dto.LoginUsuario;
 import org.fichaje.config.security.jwt.JwtProvider;
 import org.fichaje.service.UsuarioService;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/auth")
 @RequestMapping("/auth")
 public class AuthController {
 
@@ -76,6 +80,30 @@ public class AuthController {
 		String jwt = jwtProvider.generateToken(authentication);
 		JwtDto jwtDto = new JwtDto(jwt);
 		return ResponseEntity.status(HttpStatus.OK).body(jwtDto);
+	}
+
+	@PostMapping("/empresa")
+	public ResponseEntity<?> authByEmpresa(
+			@Valid @RequestBody AuthEmpresaRequest request,
+			BindingResult bindingResult,
+			Authentication authentication) {
+
+		if (bindingResult.hasErrors()) {
+			return new ResponseEntity(new Mensaje("empresaId es obligatorio"), HttpStatus.BAD_REQUEST);
+		}
+
+		return securityService.generateEmpresaToken(authentication, request.getEmpresaId())
+				.<ResponseEntity<?>>map(jwtDto -> ResponseEntity.status(HttpStatus.OK).body(jwtDto))
+				.orElseGet(() -> ResponseEntity.status(HttpStatus.FORBIDDEN)
+						.body(new Mensaje("El usuario no pertenece a la empresa seleccionada")));
+	}
+
+	@GetMapping("/empresas")
+	public ResponseEntity<?> authEmpresas(Authentication authentication) {
+		return securityService.getEmpresasForAuthenticatedUser(authentication)
+				.<ResponseEntity<?>>map(empresas -> ResponseEntity.status(HttpStatus.OK).body(empresas))
+				.orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+						.body(new Mensaje("No autenticado o usuario no encontrado")));
 	}
 
     private ResponseEntity<Mensaje> validarUsuario(UsuarioDTO nuevoUsuario, BindingResult bindingResult) {

@@ -11,26 +11,25 @@ export class InterceptorService implements HttpInterceptor {
 
   constructor(private tokenService: TokenService) { }
 
-  intercept(
-    req: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const token = this.tokenService.getToken();
 
+    // Si no hay token, dejamos pasar sin modificar (login, endpoints públicos)
+    if (!token) {
+      return next.handle(req);
+    }
+
+    // Si hay token pero está expirado, logout
     if (this.tokenService.isExpired()) {
       this.tokenService.logOut();
       return next.handle(req);
-    } else {
-      let interceptedReq = req
-      const token = this.tokenService.getToken()
-      if (token != null) {
-        interceptedReq = req
-          .clone({
-            headers: req.headers
-              .set('Authorization', 'Bearer ' + token)
-          })
-      }
-      return next.handle(interceptedReq)
     }
+
+    // Token válido, añadir al header
+    const interceptedReq = req.clone({
+      headers: req.headers.set('Authorization', 'Bearer ' + token)
+    });
+    return next.handle(interceptedReq);
   }
 }
 

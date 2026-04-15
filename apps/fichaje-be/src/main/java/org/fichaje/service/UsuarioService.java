@@ -54,6 +54,21 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
         return repository.findByNumero(numero);
     }
 
+    @Transactional(readOnly = true)
+    public boolean belongsToEmpresa(String numeroUsuario, Long empresaId) {
+        if (numeroUsuario == null || empresaId == null) {
+            return false;
+        }
+
+        Usuario usuario = repository.findByNumero(numeroUsuario).orElse(null);
+        if (usuario == null || usuario.getEmpresas() == null) {
+            return false;
+        }
+
+        return usuario.getEmpresas().stream()
+                .anyMatch(empresa -> empresaId.equals(empresa.getId()));
+    }
+
     public List<Usuario> findByRoles(Set<Rol> roles) {
         return repository.findByRolesIn(roles);
     }
