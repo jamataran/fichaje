@@ -29,21 +29,6 @@
         <p>Ingresa tus credenciales para continuar</p>
       </div>
 
-      <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
-        <div class="form-group">
-          <label for="empresaId" class="form-label">
-            <i class="bi bi-building"></i>
-            ID de la Empresa
-          </label>
-          <input
-            type="number"
-            id="empresaId"
-            class="form-control login-input"
-            placeholder="Ej: 1"
-            formControlName="empresaId">
-          <small class="text-muted mt-1 d-block text-start">Por favor ingresa tu empresa</small>
-        </div>
-
         <!-- Número de empleado -->
         <div class="form-group">
           <label for="numero" class="form-label">

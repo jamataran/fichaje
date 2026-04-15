@@ -1,11 +1,9 @@
 export class LoginUsuario {
     numero: string
     password: string
-    empresaId: number | null
 
-    constructor(numero: string, password: string, empresaId: number | null) {
+    constructor(numero: string, password: string) {
         this.numero = numero
         this.password = password
-        this.empresaId = empresaId
     }
 }

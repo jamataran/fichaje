@@ -126,6 +126,63 @@
         </div>
       </div>
 
+      <div class="col-12 d-flex align-items-end justify-content-end mb-3" *ngIf="isAdmin">
+        <div class="form-group w-100">
+          <label for="sede">
+            <b><i class="bi bi-building"></i> Sede:</b>
+          </label>
+          <div class="input-group position-relative">
+            <input
+              type="text"
+              class="form-control"
+              name="sede"
+              id="sede"
+              [(ngModel)]="sedeSearchInput"
+              (input)="onSedeInput()"
+              (focus)="onSedeFocus()"
+              (blur)="closeSedeDropdown()"
+              placeholder="Busca por nombre de sede..."
+              autocomplete="off"
+              [disabled]="!selectedEmpresaId || isLoadingSedes">
+
+            <span class="input-group-text" *ngIf="isLoadingSedes">
+              <span class="spinner-border spinner-border-sm"></span>
+            </span>
+            <span class="input-group-text text-success" *ngIf="selectedSedeId && !isLoadingSedes">
+              <i class="bi bi-check-circle-fill"></i>
+            </span>
+
+            <div class="dropdown-menu w-100 show position-absolute"
+                 *ngIf="showSedeDropdown && filteredSedes.length > 0"
+                 style="top: 100%; left: 0; z-index: 1000; max-height: 300px; overflow-y: auto;">
+              <button
+                type="button"
+                class="dropdown-item"
+                *ngFor="let sede of filteredSedes"
+                (mousedown)="selectSede(sede)">
+                <i class="bi bi-building me-2"></i>
+                <span>{{ sede.nombre }}</span>
+                <small class="text-muted ms-2">{{ sede.direccion }}</small>
+              </button>
+            </div>
+
+            <div class="dropdown-menu w-100 show position-absolute"
+                 *ngIf="showSedeDropdown && filteredSedes.length === 0 && !isLoadingSedes"
+                 style="top: 100%; left: 0; z-index: 1000;">
+              <span class="dropdown-item disabled">
+                <i class="bi bi-exclamation-circle me-2"></i>No se encontraron sedes
+              </span>
+            </div>
+          </div>
+          <small class="text-muted" *ngIf="!selectedEmpresaId">
+            <i class="bi bi-info-circle"></i> Selecciona primero una empresa
+          </small>
+          <small class="text-muted" *ngIf="selectedEmpresaId && !selectedSedeId">
+            <i class="bi bi-info-circle"></i> Selecciona una sede de la empresa elegida
+          </small>
+        </div>
+      </div>
+
     </div>
 
 

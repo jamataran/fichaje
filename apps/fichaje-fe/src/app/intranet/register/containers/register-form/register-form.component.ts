@@ -15,6 +15,12 @@ export interface EmpresaDTO {
   activa: boolean;
 }
 
+export interface SedeDTO {
+  id: number;
+  nombre: string;
+  direccion: string;
+}
+
 @Component({
     selector: 'app-register-form',
     templateUrl: './register-form.component.html',
@@ -36,6 +42,14 @@ export class RegisterFormComponent implements OnInit {
   filteredEmpresas: EmpresaDTO[] = [];
   showEmpresaDropdown = false;
   isLoadingEmpresas = false;
+
+  sedeSearchInput = '';
+  selectedSedeId: number | null = null;
+  allSedes: SedeDTO[] = [];
+  filteredSedes: SedeDTO[] = [];
+  showSedeDropdown = false;
+  isLoadingSedes = false;
+  selectedSedeAddres: string = '';
 
 
   constructor(
@@ -85,9 +99,9 @@ export class RegisterFormComponent implements OnInit {
       ? this.allEmpresas.filter(e => e.nombre.toLowerCase().includes(term))
       : this.allEmpresas;
     this.showEmpresaDropdown = true;
-    if (!this.empresaSearchInput.trim()) {
-      this.selectedEmpresaId = null;
-    }
+
+    this.selectedEmpresaId = null;
+    this.resetSedes();
   }
 
   onEmpresaFocus(): void {
@@ -101,6 +115,7 @@ export class RegisterFormComponent implements OnInit {
     this.selectedEmpresaId = empresa.id;
     this.empresaSearchInput = empresa.nombre;
     this.showEmpresaDropdown = false;
+    this.loadSedesByEmpresa(empresa.id);
   }
 
   closeEmpresaDropdown(): void {
@@ -109,15 +124,90 @@ export class RegisterFormComponent implements OnInit {
     }, 200);
   }
 
+  loadSedesByEmpresa(empresaId: number): void {
+    this.isLoadingSedes = true;
+    this.http.get<SedeDTO[]>(`${environment.apiURL}/sedes/empresa/${empresaId}`)
+      .subscribe({
+        next: (sedes) => {
+          this.ngZone.run(() => {
+            this.allSedes = sedes ?? [];
+            this.filteredSedes = this.allSedes;
+            this.isLoadingSedes = false;
+
+            this.selectedSedeId = null;
+            this.sedeSearchInput = '';
+          });
+        },
+        error: () => {
+          this.ngZone.run(() => {
+            this.resetSedes();
+            this.isLoadingSedes = false;
+            Popup.toastDanger('Error', 'No se pudieron cargar las sedes de la empresa seleccionada');
+          });
+        }
+      });
+  }
+
+  onSedeInput(): void {
+    const term = this.sedeSearchInput.trim().toLowerCase();
+    this.filteredSedes = term
+      ? this.allSedes.filter(s => s.nombre.toLowerCase().includes(term))
+      : this.allSedes;
+    this.showSedeDropdown = true;
+    this.selectedSedeId = null;
+  }
+
+  onSedeFocus(): void {
+    if (!this.sedeSearchInput.trim()) {
+      this.filteredSedes = this.allSedes;
+    }
+    this.showSedeDropdown = true;
+  }
+
+  selectSede(sede: SedeDTO): void {
+    this.selectedSedeId = sede.id;
+    this.sedeSearchInput = sede.nombre;
+    this.selectedSedeAddres = sede.direccion;
+    this.showSedeDropdown = false;
+  }
+
+  closeSedeDropdown(): void {
+    setTimeout(() => {
+      this.showSedeDropdown = false;
+    }, 200);
+  }
+
+  private resetSedes(): void {
+    this.sedeSearchInput = '';
+    this.selectedSedeId = null;
+    this.allSedes = [];
+    this.filteredSedes = [];
+    this.showSedeDropdown = false;
+    this.selectedSedeAddres = ''
+  }
+
   clear(): void {
     this.numero = ''
     this.nombreEmpleado = ''
     this.email = ''
     this.dni = ''
     this.rol = ''
+    this.empresaSearchInput = ''
+    this.selectedEmpresaId = null
+    this.resetSedes()
   }
 
   onRegister(): void {
+
+    if (!this.selectedEmpresaId) {
+      Popup.toastDanger('Error', 'Debes seleccionar una empresa válida');
+      return;
+    }
+
+    if (!this.selectedSedeId) {
+      Popup.toastDanger('Error', 'Debes seleccionar una sede de la empresa elegida');
+      return;
+    }
 
     let roles = [this.rol];
 
@@ -126,7 +216,8 @@ export class RegisterFormComponent implements OnInit {
       this.nombreEmpleado,
       this.email,
       this.dni,
-      roles
+      roles,
+      this.selectedSedeId
     );
 
     this.service.nuevo(nuevoUsuario).subscribe(

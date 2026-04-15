@@ -40,8 +40,8 @@
       </li>
     </ul>
 
-    <!-- RRHH Section -->
-     @if (isAdmin) {
+  <!-- RRHH / Administración -->
+   @if (canViewAdminPanel) {
     <div class="mt-auto">
       <h6 class="sidebar-heading">
         <i class="bi bi-shield-lock" style="font-size: 0.85rem;"></i>
@@ -101,8 +101,8 @@
     </div>
     }
 
-    <!-- Super Admin Section -->
-     @if (isAdmin) {
+  <!-- Super Admin Section -->
+   @if (canViewSystemPanel) {
     <div class="mt-auto">
       <h6 class="sidebar-heading">
         <i class="bi bi-shield-lock" style="font-size: 0.85rem;"></i>
