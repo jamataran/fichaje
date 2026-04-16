@@ -25,6 +25,12 @@ export class GuardService  {
       this.router.navigate(['/'])
       return false
     }
+
+    if(!this.tokenService.isAdmin() && !this.tokenService.getEmpresaId()){
+      this.router.navigate(['/public/landing/home'])
+      return false
+    }
+
     return true
   }
 

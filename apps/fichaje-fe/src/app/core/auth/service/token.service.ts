@@ -115,4 +115,16 @@ export class TokenService {
     this.router.navigate(['/'])
   }
 
+  public getEmpresaId(): number | null {
+    if (!this.isLogged()) {
+      return null
+    }
+    const token = this.getToken()
+    const payload = token!.split('.')[1]
+    const payloadDecoded = atob(payload)
+    const values = JSON.parse(payloadDecoded)
+    const empresaId = values.empresaId
+    return empresaId ?? null
+  }
+
 }

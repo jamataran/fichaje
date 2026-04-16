@@ -72,12 +72,12 @@
         </div>
       </div>
 
-      <div class="col-12 d-flex align-items-end justify-content-end mb-3" *ngIf="isAdmin">
+      <div class="col-12 d-flex align-items-end justify-content-end mb-3">
         <div class="form-group w-100">
           <label for="empresa">
             <b><i class="bi bi-briefcase"></i> Empresa:</b>
           </label>
-          <div class="input-group position-relative">
+          <div class="input-group position-relative" #empresaDropdownContainer>
             <input
               type="text"
               class="form-control"
@@ -86,7 +86,6 @@
               [(ngModel)]="empresaSearchInput"
               (input)="onEmpresaInput()"
               (focus)="onEmpresaFocus()"
-              (blur)="closeEmpresaDropdown()"
               placeholder="Busca por nombre de empresa..."
               autocomplete="off"
               [disabled]="isLoadingEmpresas">
@@ -99,7 +98,7 @@
       </span>
 
             <div class="dropdown-menu w-100 show position-absolute"
-                 *ngIf="showEmpresaDropdown && filteredEmpresas.length > 0"
+        *ngIf="showEmpresaDropdown() && filteredEmpresas.length > 0"
                  style="top: 100%; left: 0; z-index: 1000; max-height: 300px; overflow-y: auto;">
               <button
                 type="button"
@@ -113,7 +112,7 @@
             </div>
 
             <div class="dropdown-menu w-100 show position-absolute"
-                 *ngIf="showEmpresaDropdown && filteredEmpresas.length === 0 && !isLoadingEmpresas"
+        *ngIf="showEmpresaDropdown() && filteredEmpresas.length === 0 && !isLoadingEmpresas"
                  style="top: 100%; left: 0; z-index: 1000;">
         <span class="dropdown-item disabled">
           <i class="bi bi-exclamation-circle me-2"></i>No se encontraron empresas
@@ -126,12 +125,12 @@
         </div>
       </div>
 
-      <div class="col-12 d-flex align-items-end justify-content-end mb-3" *ngIf="isAdmin">
+      <div class="col-12 d-flex align-items-end justify-content-end mb-3">
         <div class="form-group w-100">
           <label for="sede">
             <b><i class="bi bi-building"></i> Sede:</b>
           </label>
-          <div class="input-group position-relative">
+          <div class="input-group position-relative" #sedeDropdownContainer>
             <input
               type="text"
               class="form-control"
@@ -140,7 +139,6 @@
               [(ngModel)]="sedeSearchInput"
               (input)="onSedeInput()"
               (focus)="onSedeFocus()"
-              (blur)="closeSedeDropdown()"
               placeholder="Busca por nombre de sede..."
               autocomplete="off"
               [disabled]="!selectedEmpresaId || isLoadingSedes">
@@ -153,7 +151,7 @@
             </span>
 
             <div class="dropdown-menu w-100 show position-absolute"
-                 *ngIf="showSedeDropdown && filteredSedes.length > 0"
+        *ngIf="showSedeDropdown() && filteredSedes.length > 0"
                  style="top: 100%; left: 0; z-index: 1000; max-height: 300px; overflow-y: auto;">
               <button
                 type="button"
@@ -167,7 +165,7 @@
             </div>
 
             <div class="dropdown-menu w-100 show position-absolute"
-                 *ngIf="showSedeDropdown && filteredSedes.length === 0 && !isLoadingSedes"
+        *ngIf="showSedeDropdown() && filteredSedes.length === 0 && !isLoadingSedes"
                  style="top: 100%; left: 0; z-index: 1000;">
               <span class="dropdown-item disabled">
                 <i class="bi bi-exclamation-circle me-2"></i>No se encontraron sedes

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { NuevoUsuario } from 'src/app/core/auth/model/nuevo-usuario';
 import { AuthService } from 'src/app/core/auth/service/auth.service';
@@ -40,16 +40,19 @@ export class RegisterFormComponent implements OnInit {
   selectedEmpresaId: number | null = null;
   allEmpresas: EmpresaDTO[] = [];
   filteredEmpresas: EmpresaDTO[] = [];
-  showEmpresaDropdown = false;
+  showEmpresaDropdown = signal(false);
   isLoadingEmpresas = false;
 
   sedeSearchInput = '';
   selectedSedeId: number | null = null;
   allSedes: SedeDTO[] = [];
   filteredSedes: SedeDTO[] = [];
-  showSedeDropdown = false;
+  showSedeDropdown = signal(false);
   isLoadingSedes = false;
   selectedSedeAddres: string = '';
+
+  @ViewChild('empresaDropdownContainer') empresaDropdownContainer?: ElementRef<HTMLElement>;
+  @ViewChild('sedeDropdownContainer') sedeDropdownContainer?: ElementRef<HTMLElement>;
 
 
   constructor(
@@ -98,7 +101,7 @@ export class RegisterFormComponent implements OnInit {
     this.filteredEmpresas = term
       ? this.allEmpresas.filter(e => e.nombre.toLowerCase().includes(term))
       : this.allEmpresas;
-    this.showEmpresaDropdown = true;
+  this.showEmpresaDropdown.set(true);
 
     this.selectedEmpresaId = null;
     this.resetSedes();
@@ -108,19 +111,19 @@ export class RegisterFormComponent implements OnInit {
     if (!this.empresaSearchInput.trim()) {
       this.filteredEmpresas = this.allEmpresas;
     }
-    this.showEmpresaDropdown = true;
+    this.showEmpresaDropdown.set(true);
   }
 
   selectEmpresa(empresa: EmpresaDTO): void {
     this.selectedEmpresaId = empresa.id;
     this.empresaSearchInput = empresa.nombre;
-    this.showEmpresaDropdown = false;
+    this.showEmpresaDropdown.set(false);
     this.loadSedesByEmpresa(empresa.id);
   }
 
   closeEmpresaDropdown(): void {
     setTimeout(() => {
-      this.showEmpresaDropdown = false;
+      this.showEmpresaDropdown.set(false);
     }, 200);
   }
 
@@ -153,7 +156,7 @@ export class RegisterFormComponent implements OnInit {
     this.filteredSedes = term
       ? this.allSedes.filter(s => s.nombre.toLowerCase().includes(term))
       : this.allSedes;
-    this.showSedeDropdown = true;
+    this.showSedeDropdown.set(true);
     this.selectedSedeId = null;
   }
 
@@ -161,19 +164,19 @@ export class RegisterFormComponent implements OnInit {
     if (!this.sedeSearchInput.trim()) {
       this.filteredSedes = this.allSedes;
     }
-    this.showSedeDropdown = true;
+    this.showSedeDropdown.set(true);
   }
 
   selectSede(sede: SedeDTO): void {
     this.selectedSedeId = sede.id;
     this.sedeSearchInput = sede.nombre;
     this.selectedSedeAddres = sede.direccion;
-    this.showSedeDropdown = false;
+    this.showSedeDropdown.set(false);
   }
 
   closeSedeDropdown(): void {
     setTimeout(() => {
-      this.showSedeDropdown = false;
+      this.showSedeDropdown.set(false);
     }, 200);
   }
 
@@ -182,8 +185,30 @@ export class RegisterFormComponent implements OnInit {
     this.selectedSedeId = null;
     this.allSedes = [];
     this.filteredSedes = [];
-    this.showSedeDropdown = false;
+    this.showSedeDropdown.set(false);
     this.selectedSedeAddres = ''
+  }
+
+  @HostListener('document:pointerdown', ['$event'])
+  onDocumentPointerDown(event: PointerEvent): void {
+    const target = event.target as Node | null;
+    if (!target) {
+      return;
+    }
+
+    if (this.showEmpresaDropdown()) {
+      const insideEmpresa = this.empresaDropdownContainer?.nativeElement.contains(target) ?? false;
+      if (!insideEmpresa) {
+        this.showEmpresaDropdown.set(false);
+      }
+    }
+
+    if (this.showSedeDropdown()) {
+      const insideSede = this.sedeDropdownContainer?.nativeElement.contains(target) ?? false;
+      if (!insideSede) {
+        this.showSedeDropdown.set(false);
+      }
+    }
   }
 
   clear(): void {
