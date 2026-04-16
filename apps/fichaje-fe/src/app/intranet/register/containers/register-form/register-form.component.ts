@@ -36,6 +36,7 @@ export class RegisterFormComponent implements OnInit {
   rol = ''
 
   isAdmin = false;
+  isRRHH = false;
   empresaSearchInput = '';
   selectedEmpresaId: number | null = null;
   allEmpresas: EmpresaDTO[] = [];
@@ -65,6 +66,7 @@ export class RegisterFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.isAdmin = this.tokenService.isAdmin();
+    this.isRRHH = this.tokenService.isRRHH();
     if (this.isAdmin){
       this.loadEmpresas();
     }

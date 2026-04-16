@@ -1,0 +1,198 @@
+<div class="container-fluid mt-3">
+
+  <h3 class="mb-4 text-center selected bg-waves rounded p-3">Administración de empresas</h3>
+
+  <form class="my-3 mx-0 bg-light px-4 pt-3 pb-2 rounded" #f="ngForm" (ngSubmit)="onCreate()" novalidate>
+    <h5 class="mb-3">Crear nueva empresa</h5>
+
+    <div class="row mb-2">
+      <div class="col-12 col-md-6 col-lg-4 mb-3">
+        <label for="nombre" class="small"><b>Nombre *</b></label>
+        <input id="nombre" name="nombre" class="form-control" type="text" [(ngModel)]="formModel.nombre" required>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4 mb-3">
+        <label for="razonSocial" class="small"><b>Razón social</b></label>
+        <input id="razonSocial" name="razonSocial" class="form-control" type="text" [(ngModel)]="formModel.razonSocial">
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4 mb-3">
+        <label for="cif" class="small"><b>CIF *</b></label>
+        <input id="cif" name="cif" class="form-control" type="text" [(ngModel)]="formModel.cif" required>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4 mb-3">
+        <label for="email" class="small"><b>Email *</b></label>
+        <input id="email" name="email" class="form-control" type="email" [(ngModel)]="formModel.email" required>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4 mb-3">
+        <label for="telefono" class="small"><b>Teléfono</b></label>
+        <input id="telefono" name="telefono" class="form-control" type="text" [(ngModel)]="formModel.telefono">
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4 mb-3">
+        <label for="direccion" class="small"><b>Dirección *</b></label>
+        <input id="direccion" name="direccion" class="form-control" type="text" [(ngModel)]="formModel.direccion" required>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <label for="codigoPostal" class="small"><b>Código postal *</b></label>
+        <input id="codigoPostal" name="codigoPostal" class="form-control" type="text" [(ngModel)]="formModel.codigoPostal" required>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <label for="localidad" class="small"><b>Localidad *</b></label>
+        <input id="localidad" name="localidad" class="form-control" type="text" [(ngModel)]="formModel.localidad" required>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <label for="provincia" class="small"><b>Provincia *</b></label>
+        <input id="provincia" name="provincia" class="form-control" type="text" [(ngModel)]="formModel.provincia" required>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <label for="pais" class="small"><b>País *</b></label>
+        <input id="pais" name="pais" class="form-control" type="text" [(ngModel)]="formModel.pais" required>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <label for="latitud" class="small"><b>Latitud</b></label>
+        <input id="latitud" name="latitud" class="form-control" type="number" step="any" [(ngModel)]="formModel.latitud">
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <label for="longitud" class="small"><b>Longitud</b></label>
+        <input id="longitud" name="longitud" class="form-control" type="number" step="any" [(ngModel)]="formModel.longitud">
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3 d-flex align-items-end">
+        <div class="form-check mb-2">
+          <input id="activa" name="activa" class="form-check-input" type="checkbox" [(ngModel)]="formModel.activa">
+          <label for="activa" class="form-check-label"><b>Empresa activa</b></label>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3 d-flex align-items-end justify-content-end">
+        <button type="submit" class="btn bg-blue text-white w-100" [disabled]="f.invalid || isCreating()">
+          {{ isCreating() ? 'Guardando...' : 'Crear empresa' }}
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <div class="bg-light rounded p-3 mt-4">
+    <h5 class="mb-3">Empresas registradas</h5>
+
+    <table class="table table-hover text-center align-middle mb-2">
+      <thead>
+      <tr>
+        <th>
+          <app-th-sort [entity]="'nombre'" [name]="'Nombre'" [asc]="asc" [order]="order" (sort)="setOrder($event)"></app-th-sort>
+        </th>
+        <th>
+          <app-th-sort [entity]="'cif'" [name]="'CIF'" [asc]="asc" [order]="order" (sort)="setOrder($event)"></app-th-sort>
+        </th>
+        <th>Activa</th>
+        <th>Sedes</th>
+        <th>Acciones</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <ng-container *ngFor="let empresa of listaEmpresas">
+        <tr>
+          <td class="text-start">
+            <button type="button" class="btn btn-link p-0 text-decoration-none fw-semibold" (click)="toggleSedes(empresa)">
+              <i class="bi me-1" [ngClass]="isExpanded(empresa.id) ? 'bi-chevron-down' : 'bi-chevron-right'"></i>
+              {{ empresa.nombre }}
+            </button>
+          </td>
+          <td>{{ empresa.cif }}</td>
+          <td>
+            <span class="badge" [ngClass]="empresa.activa ? 'bg-success' : 'bg-secondary'">
+              {{ empresa.activa ? 'Sí' : 'No' }}
+            </span>
+          </td>
+          <td>{{ empresa.sedes?.length ?? getSedes(empresa.id).length }}</td>
+          <td class="d-flex gap-2 justify-content-center">
+            <button type="button" class="btn btn-outline-primary btn-sm" (click)="onStartEdit(empresa)">
+              <i class="bi bi-pencil"></i> Editar
+            </button>
+            <button type="button" class="btn btn-outline-danger btn-sm" (click)="onDelete(empresa)">
+              <i class="bi bi-trash"></i> Borrar
+            </button>
+          </td>
+        </tr>
+
+        <tr *ngIf="isExpanded(empresa.id)">
+          <td colspan="5" class="bg-white text-start">
+            <div class="p-2">
+              <h6 class="mb-2">Sedes de {{ empresa.nombre }}</h6>
+
+              <div *ngIf="loadingSedesEmpresaId() === empresa.id" class="text-muted">
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Cargando sedes...
+              </div>
+
+              <ul class="list-group" *ngIf="loadingSedesEmpresaId() !== empresa.id && getSedes(empresa.id).length > 0">
+                <li class="list-group-item" *ngFor="let sede of getSedes(empresa.id)">
+                  <div class="fw-semibold">{{ sede.nombre }}</div>
+                  <small class="text-muted">{{ sede.direccion }}</small>
+                </li>
+              </ul>
+
+              <div class="text-muted" *ngIf="loadingSedesEmpresaId() !== empresa.id && getSedes(empresa.id).length === 0">
+                Esta empresa no tiene sedes registradas.
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="isEditing(empresa.id)">
+          <td colspan="5" class="bg-white text-start">
+            <div class="border rounded p-3">
+              <h6 class="mb-3">Editar empresa</h6>
+
+              <div class="row g-3">
+                <div class="col-12 col-md-4">
+                  <label class="small" for="edit-nombre"><b>Nombre</b></label>
+                  <input id="edit-nombre" class="form-control" type="text" [(ngModel)]="editModel.nombre">
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label class="small" for="edit-razon"><b>Razón social</b></label>
+                  <input id="edit-razon" class="form-control" type="text" [(ngModel)]="editModel.razonSocial">
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <label class="small" for="edit-cif"><b>CIF</b></label>
+                  <input id="edit-cif" class="form-control" type="text" [(ngModel)]="editModel.cif">
+                </div>
+
+                <div class="col-12 col-md-4 d-flex align-items-end">
+                  <div class="form-check mb-2">
+                    <input id="edit-activa" class="form-check-input" type="checkbox" [(ngModel)]="editModel.activa">
+                    <label for="edit-activa" class="form-check-label">Empresa activa</label>
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-8 d-flex justify-content-end align-items-end gap-2">
+                  <button type="button" class="btn btn-outline-secondary" (click)="onCancelEdit()" [disabled]="isUpdating()">
+                    Cancelar
+                  </button>
+                  <button type="button" class="btn bg-blue text-white" (click)="onUpdate()" [disabled]="isUpdating()">
+                    {{ isUpdating() ? 'Guardando...' : 'Guardar cambios' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+      </tbody>
+    </table>
+
+    <app-pagination [pag]="pag" (paginacion)="onPaginate($event)"></app-pagination>
+  </div>
+</div>

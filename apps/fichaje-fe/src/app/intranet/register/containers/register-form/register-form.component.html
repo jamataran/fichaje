@@ -88,7 +88,7 @@
               (focus)="onEmpresaFocus()"
               placeholder="Busca por nombre de empresa..."
               autocomplete="off"
-              [disabled]="isLoadingEmpresas">
+              [disabled]="isLoadingEmpresas || isRRHH && !isAdmin">
 
             <span class="input-group-text" *ngIf="isLoadingEmpresas">
         <span class="spinner-border spinner-border-sm"></span>

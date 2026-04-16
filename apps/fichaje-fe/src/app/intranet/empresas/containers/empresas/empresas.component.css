@@ -1,0 +1,16 @@
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+.badge {
+  font-size: 0.8rem;
+}
+
+.btn-link {
+  color: inherit;
+}
+
+.btn-link:hover {
+  text-decoration: underline !important;
+}

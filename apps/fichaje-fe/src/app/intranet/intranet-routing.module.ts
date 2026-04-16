@@ -35,6 +35,10 @@ const routes: Routes = [
         path: 'register', loadChildren: () => import('./register/register.module').then(m => m.RegisterModule)
         , canActivate: [GuardService], data: { expectedRol: ['admin'] }
       },
+      {
+        path: 'empresas', loadChildren: () => import('./empresas/empresas.module').then(m => m.EmpresasModule)
+        , canActivate: [GuardService], data: { expectedRol: ['admin'] }
+      },
       { path: 'home', loadChildren: () => import('./home/home.module').then(m => m.HomeModule) },
     ]
   }
