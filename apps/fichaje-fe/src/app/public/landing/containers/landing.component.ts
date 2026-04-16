@@ -1,10 +1,9 @@
-import {ChangeDetectorRef, Component, NgZone, OnInit, signal} from '@angular/core';
+import {Component, OnInit, signal} from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginUsuario } from 'src/app/core/auth/model/login-usuario';
 import { AuthService, EmpresaAuthOption } from 'src/app/core/auth/service/auth.service';
 import { TokenService } from 'src/app/core/auth/service/token.service';
-import {sign} from "chart.js/types/helpers";
 
 @Component({
     selector: 'app-landing',
