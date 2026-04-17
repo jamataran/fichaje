@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { Popup } from 'src/app/shared/helper/popup';
 import { Pagination } from 'src/app/shared/components/pagination/model/pagination.model';
-import { Empresa, EmpresaCreate, EmpresaUpdate, SedeEmpresa } from '../../model/empresa.model';
+import { Empresa, EmpresaCreate, EmpresaUpdate, SedeEmpresa, SedeUpdate } from '../../model/empresa.model';
 import { EmpresasService } from '../../service/empresas.service';
 
 @Component({
@@ -15,9 +15,13 @@ export class EmpresasComponent implements OnInit {
   listaEmpresas: Empresa[] = [];
   isCreating = signal(false);
   isUpdating = signal(false);
+  isUpdatingSede = signal(false);
+  isDeletingSede = signal(false);
   loadingSedesEmpresaId = signal<number | null>(null);
   expandedEmpresaId = signal<number | null>(null);
   editingEmpresaId = signal<number | null>(null);
+  editingSedeId = signal<number | null>(null);
+  editingSedeEmpresaId = signal<number | null>(null);
 
   sedesByEmpresa: Record<number, SedeEmpresa[]> = {};
 
@@ -36,6 +40,7 @@ export class EmpresasComponent implements OnInit {
 
   formModel: EmpresaCreate = this.getEmptyEmpresa();
   editModel: EmpresaUpdate = this.getEmptyUpdateEmpresa();
+  sedeEditModel: SedeUpdate = this.getEmptyUpdateSede();
 
   constructor(
     private empresasService: EmpresasService
@@ -68,6 +73,20 @@ export class EmpresasComponent implements OnInit {
       nombre: '',
       razonSocial: '',
       cif: '',
+      activa: true,
+    };
+  }
+
+  private getEmptyUpdateSede(): SedeUpdate {
+    return {
+      nombre: '',
+      email: '',
+      telefono: '',
+      direccion: '',
+      codigoPostal: '',
+      localidad: '',
+      provincia: '',
+      pais: 'España',
       activa: true,
     };
   }
@@ -174,9 +193,9 @@ export class EmpresasComponent implements OnInit {
     this.empresasService.update(empresaId, payload).subscribe({
       next: () => {
         Popup.toastSucess('', 'Empresa actualizada correctamente');
-        this.isUpdating.set(false);
         this.onCancelEdit();
         this.listarEmpresas();
+        this.isUpdating.set(false);
       },
       error: (err) => {
         Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo actualizar la empresa');
@@ -224,8 +243,95 @@ export class EmpresasComponent implements OnInit {
     return this.editingEmpresaId() === empresaId;
   }
 
+  isEditingSede(empresaId: number, sedeId: number): boolean {
+    return this.editingSedeEmpresaId() === empresaId && this.editingSedeId() === sedeId;
+  }
+
   getSedes(empresaId: number): SedeEmpresa[] {
     return this.sedesByEmpresa[empresaId] ?? [];
+  }
+
+  onStartEditSede(empresaId: number, sede: SedeEmpresa): void {
+    this.editingSedeEmpresaId.set(empresaId);
+    this.editingSedeId.set(sede.id);
+    this.sedeEditModel = {
+      nombre: sede.nombre,
+      email: sede.email,
+      telefono: sede.telefono ?? '',
+      direccion: sede.direccion,
+      codigoPostal: sede.codigoPostal,
+      localidad: sede.localidad,
+      provincia: sede.provincia,
+      pais: sede.pais,
+      activa: sede.activa,
+    };
+  }
+
+  onCancelEditSede(): void {
+    this.editingSedeEmpresaId.set(null);
+    this.editingSedeId.set(null);
+    this.sedeEditModel = this.getEmptyUpdateSede();
+  }
+
+  onUpdateSede(empresaId: number): void {
+    const sedeId = this.editingSedeId();
+    if (!sedeId) {
+      return;
+    }
+
+    const payload: SedeUpdate = {
+      nombre: this.sedeEditModel.nombre.trim(),
+      email: this.sedeEditModel.email.trim(),
+      telefono: this.sedeEditModel.telefono?.trim() || '',
+      direccion: this.sedeEditModel.direccion.trim(),
+      codigoPostal: this.sedeEditModel.codigoPostal.trim(),
+      localidad: this.sedeEditModel.localidad.trim(),
+      provincia: this.sedeEditModel.provincia.trim(),
+      pais: this.sedeEditModel.pais.trim(),
+      activa: this.sedeEditModel.activa,
+    };
+
+    this.isUpdatingSede.set(true);
+
+    this.empresasService.updateSede(sedeId, payload).subscribe({
+      next: () => {
+        this.isUpdatingSede.set(false);
+        Popup.toastSucess('', 'Sede actualizada correctamente');
+        this.onCancelEditSede();
+        this.loadSedesByEmpresa(empresaId);
+      },
+      error: (err) => {
+        Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo actualizar la sede');
+        this.isUpdatingSede.set(false);
+      }
+    });
+  }
+
+  onDeleteSede(empresaId: number, sede: SedeEmpresa): void {
+    Popup.dangerConfirmBox(
+      `¿Desea borrar la sede ${sede.nombre}?`,
+      'Esta operación desactivará la sede y no se podrá usar para nuevas asignaciones',
+      'SI',
+      'NO',
+      () => this.deactivateSede(empresaId, sede.id)
+    );
+  }
+
+  private deactivateSede(empresaId: number, sedeId: number): void {
+    this.isDeletingSede.set(true);
+
+    this.empresasService.deactivateSede(sedeId).subscribe({
+      next: () => {
+        Popup.toastWarning('', 'Sede desactivada');
+        this.isDeletingSede.set(false);
+        this.onCancelEditSede();
+        this.loadSedesByEmpresa(empresaId);
+      },
+      error: (err) => {
+        Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo desactivar la sede');
+        this.isDeletingSede.set(false);
+      }
+    });
   }
 
   private deleteEmpresa(id: number): void {

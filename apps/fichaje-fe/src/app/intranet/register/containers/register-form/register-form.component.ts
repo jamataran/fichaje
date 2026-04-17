@@ -7,6 +7,7 @@ import { Popup } from 'src/app/shared/helper/popup';
 import { HttpClient } from "@angular/common/http";
 import {environment } from "src/environments/environment";
 import { NgZone } from '@angular/core';
+import {EmpresasService} from "../../../empresas/service/empresas.service";
 
 export interface EmpresaDTO {
   id: number;
@@ -34,6 +35,7 @@ export class RegisterFormComponent implements OnInit {
   email = ''
   dni = ''
   rol = ''
+  empresaNombre = ''
 
   isAdmin = false;
   isRRHH = false;
@@ -61,7 +63,8 @@ export class RegisterFormComponent implements OnInit {
     private tokenService: TokenService,
     private router: Router,
     private http: HttpClient,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private empresasService: EmpresasService
   ) { }
 
   ngOnInit(): void {
@@ -70,6 +73,42 @@ export class RegisterFormComponent implements OnInit {
     if (this.isAdmin){
       this.loadEmpresas();
     }
+
+    if(this.isRRHH){
+      const empresaId = this.tokenService.getEmpresaId()
+      if (empresaId){
+        this.selectedEmpresaId = empresaId
+        this.loadEmpresaNombre()
+        this.loadSede()
+      }
+    }
+  }
+
+  loadEmpresaNombre(): void{
+    this.empresasService.getMiEmpresa().subscribe({
+      next: (empresa) => {
+        this.empresaNombre = empresa.nombre
+        this.empresaSearchInput = empresa.nombre
+      },
+      error: () => {
+        Popup.toastDanger('Error', 'No se pudo cargar la empresa')
+      }
+    })
+  }
+
+  loadSede(): void{
+    this.isLoadingSedes = true
+    this.empresasService.getMisSedes().subscribe({
+      next: (sedes) => {
+        this.allSedes = sedes
+        this.filteredSedes = sedes
+        this.isLoadingSedes = false
+      },
+      error: () => {
+        Popup.toastDanger('Error', 'No se pudieron cargar las sedes')
+        this.isLoadingSedes = false
+      }
+    })
   }
 
   loadEmpresas(): void {

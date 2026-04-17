@@ -71,6 +71,29 @@ public class JwtProvider {
 				.getSubject();
 	}
 
+	public Long getEmpresaIdFromToken(String token) {
+		Object empresaId = Jwts.parser()
+				.verifyWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret)))
+				.build()
+				.parseClaimsJws(token)
+				.getBody()
+				.get("empresaId");
+
+		if (empresaId == null) {
+			return null;
+		}
+
+		if (empresaId instanceof Number number) {
+			return number.longValue();
+		}
+
+		try {
+			return Long.parseLong(String.valueOf(empresaId));
+		} catch (NumberFormatException e) {
+			return null;
+		}
+	}
+
 	public boolean validateToken(String token) {
 		try {
 			Jwts.parser().verifyWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret))).build().parseClaimsJws(token);

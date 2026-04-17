@@ -53,6 +53,12 @@ public class EmpresaService {
         return repository.findAll(pageable).map(dtoConverter::todtoConverter);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<EmpresaDTO> findById(Long id) {
+        log.info("Consultando empresa con ID: {}", id);
+        return repository.findById(id).map(dtoConverter::todtoConverter);
+    }
+
     @Transactional
     public EmpresaDTO save(EmpresaCreateDTO empresaDTO) {
         log.info("Iniciando proceso de creación para la empresa con CIF: {}", empresaDTO.getCif());

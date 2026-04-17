@@ -137,8 +137,83 @@
 
               <ul class="list-group" *ngIf="loadingSedesEmpresaId() !== empresa.id && getSedes(empresa.id).length > 0">
                 <li class="list-group-item" *ngFor="let sede of getSedes(empresa.id)">
-                  <div class="fw-semibold">{{ sede.nombre }}</div>
-                  <small class="text-muted">{{ sede.direccion }}</small>
+                  <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div>
+                      <div class="fw-semibold">{{ sede.nombre }}</div>
+                      <small class="text-muted d-block">{{ sede.direccion }}</small>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                      <button type="button" class="btn btn-outline-primary btn-sm" (click)="onStartEditSede(empresa.id, sede)">
+                        <i class="bi bi-pencil"></i> Editar
+                      </button>
+                      <button type="button" class="btn btn-outline-danger btn-sm" (click)="onDeleteSede(empresa.id, sede)" [disabled]="isDeletingSede()">
+                        <i class="bi bi-trash"></i> Borrar
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="border rounded p-3 mt-3" *ngIf="isEditingSede(empresa.id, sede.id)">
+                    <h6 class="mb-3">Editar sede</h6>
+
+                    <div class="row g-3">
+                      <div class="col-12 col-md-4">
+                        <label class="small" [for]="'sede-edit-nombre-' + sede.id"><b>Nombre</b></label>
+                        <input class="form-control" [id]="'sede-edit-nombre-' + sede.id" type="text" [(ngModel)]="sedeEditModel.nombre">
+                      </div>
+
+                      <div class="col-12 col-md-4">
+                        <label class="small" [for]="'sede-edit-email-' + sede.id"><b>Email</b></label>
+                        <input class="form-control" [id]="'sede-edit-email-' + sede.id" type="email" [(ngModel)]="sedeEditModel.email">
+                      </div>
+
+                      <div class="col-12 col-md-4">
+                        <label class="small" [for]="'sede-edit-telefono-' + sede.id"><b>Teléfono</b></label>
+                        <input class="form-control" [id]="'sede-edit-telefono-' + sede.id" type="text" [(ngModel)]="sedeEditModel.telefono">
+                      </div>
+
+                      <div class="col-12 col-md-6">
+                        <label class="small" [for]="'sede-edit-direccion-' + sede.id"><b>Dirección</b></label>
+                        <input class="form-control" [id]="'sede-edit-direccion-' + sede.id" type="text" [(ngModel)]="sedeEditModel.direccion">
+                      </div>
+
+                      <div class="col-12 col-md-3">
+                        <label class="small" [for]="'sede-edit-cp-' + sede.id"><b>Código postal</b></label>
+                        <input class="form-control" [id]="'sede-edit-cp-' + sede.id" type="text" [(ngModel)]="sedeEditModel.codigoPostal">
+                      </div>
+
+                      <div class="col-12 col-md-3">
+                        <label class="small" [for]="'sede-edit-localidad-' + sede.id"><b>Localidad</b></label>
+                        <input class="form-control" [id]="'sede-edit-localidad-' + sede.id" type="text" [(ngModel)]="sedeEditModel.localidad">
+                      </div>
+
+                      <div class="col-12 col-md-3">
+                        <label class="small" [for]="'sede-edit-provincia-' + sede.id"><b>Provincia</b></label>
+                        <input class="form-control" [id]="'sede-edit-provincia-' + sede.id" type="text" [(ngModel)]="sedeEditModel.provincia">
+                      </div>
+
+                      <div class="col-12 col-md-3">
+                        <label class="small" [for]="'sede-edit-pais-' + sede.id"><b>País</b></label>
+                        <input class="form-control" [id]="'sede-edit-pais-' + sede.id" type="text" [(ngModel)]="sedeEditModel.pais">
+                      </div>
+
+                      <div class="col-12 col-md-3 d-flex align-items-end">
+                        <div class="form-check mb-2">
+                          <input class="form-check-input" [id]="'sede-edit-activa-' + sede.id" type="checkbox" [(ngModel)]="sedeEditModel.activa">
+                          <label class="form-check-label" [for]="'sede-edit-activa-' + sede.id">Sede activa</label>
+                        </div>
+                      </div>
+
+                      <div class="col-12 col-md-3 d-flex justify-content-end align-items-end gap-2">
+                        <button type="button" class="btn btn-outline-secondary" (click)="onCancelEditSede()" [disabled]="isUpdatingSede()">
+                          Cancelar
+                        </button>
+                        <button type="button" class="btn bg-blue text-white" (click)="onUpdateSede(empresa.id)" [disabled]="isUpdatingSede()">
+                          {{ isUpdatingSede() ? 'Guardando...' : 'Guardar sede' }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </li>
               </ul>
 

@@ -2,12 +2,16 @@ package org.fichaje.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import org.fichaje.config.security.jwt.JwtProvider;
 import org.fichaje.dto.entity.SedeDTO;
 import org.fichaje.dto.entity.SedeParametroDTO;
 import org.fichaje.service.SedeParametroService;
 import org.fichaje.service.SedeService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -19,10 +23,32 @@ public class SedeController {
 
     private final SedeService sedeService;
     private final SedeParametroService parametroService;
+    private final JwtProvider jwtProvider;
 
-    public SedeController(SedeService sedeService, SedeParametroService parametroService) {
+    public SedeController(SedeService sedeService, SedeParametroService parametroService, JwtProvider jwtProvider) {
         this.sedeService = sedeService;
         this.parametroService = parametroService;
+        this.jwtProvider = jwtProvider;
+    }
+
+    @Operation(summary = "Lista las sedes de la empresa asociada al token autenticado")
+    @GetMapping("/mis-sedes")
+    public ResponseEntity<List<SedeDTO>> listMisSedes(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token de autorización no válido");
+        }
+
+        String token = authHeader.replace("Bearer ", "").trim();
+        if (!jwtProvider.validateToken(token)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token no válido o expirado");
+        }
+
+        Long empresaId = jwtProvider.getEmpresaIdFromToken(token);
+        if (empresaId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El token no contiene empresaId");
+        }
+
+        return ResponseEntity.ok(sedeService.findByEmpresaId(empresaId));
     }
 
     @Operation(summary = "Lista las sedes de una empresa")

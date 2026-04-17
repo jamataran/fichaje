@@ -19,7 +19,26 @@ export interface Empresa {
 export interface SedeEmpresa {
   id: number;
   nombre: string;
+  email: string;
+  telefono?: string;
   direccion: string;
+  codigoPostal: string;
+  localidad: string;
+  provincia: string;
+  pais: string;
+  activa: boolean;
+}
+
+export interface SedeUpdate {
+  nombre: string;
+  email: string;
+  telefono?: string;
+  direccion: string;
+  codigoPostal: string;
+  localidad: string;
+  provincia: string;
+  pais: string;
+  activa: boolean;
 }
 
 export interface EmpresaCreate {

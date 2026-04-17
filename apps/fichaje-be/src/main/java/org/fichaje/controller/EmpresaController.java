@@ -5,12 +5,16 @@ import jakarta.validation.Valid;
 import org.fichaje.dto.entity.EmpresaCreateDTO;
 import org.fichaje.dto.entity.EmpresaDTO;
 import org.fichaje.dto.entity.EmpresaParametroDTO;
+import org.fichaje.config.security.jwt.JwtProvider;
 import org.fichaje.service.EmpresaParametroService;
 import org.fichaje.service.EmpresaService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -23,10 +27,32 @@ public class EmpresaController {
 
     private final EmpresaService service;
     private final EmpresaParametroService parametroService;
+    private final JwtProvider jwtProvider;
 
-    public EmpresaController(EmpresaService service, EmpresaParametroService parametroService) {
+    public EmpresaController(EmpresaService service, EmpresaParametroService parametroService, JwtProvider jwtProvider) {
         this.parametroService = parametroService;
         this.service = service;
+        this.jwtProvider = jwtProvider;
+    }
+
+    @Operation(summary = "Devuelve la empresa asociada al token autenticado")
+    @GetMapping("/mi-empresa")
+    public ResponseEntity<EmpresaDTO> getMiEmpresa(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token de autorización no válido");
+        }
+
+        String token = authHeader.replace("Bearer ", "").trim();
+        if (!jwtProvider.validateToken(token)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token no válido o expirado");
+        }
+
+        Long empresaId = jwtProvider.getEmpresaIdFromToken(token);
+        if (empresaId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El token no contiene empresaId");
+        }
+
+        return ResponseEntity.of(service.findById(empresaId));
     }
 
     @Operation(summary = "Crea una nueva empresa")

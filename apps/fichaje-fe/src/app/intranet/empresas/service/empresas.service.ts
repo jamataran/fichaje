@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Empresa, EmpresaCreate, EmpresaUpdate, SedeEmpresa } from '../model/empresa.model';
+import { Empresa, EmpresaCreate, EmpresaUpdate, SedeEmpresa, SedeUpdate } from '../model/empresa.model';
 
 @Injectable({
   providedIn: 'root'
@@ -32,5 +32,21 @@ export class EmpresasService {
 
   public getSedesByEmpresa(id: number): Observable<SedeEmpresa[]> {
     return this.httpClient.get<SedeEmpresa[]>(environment.apiURL + `/sedes/empresa/${id}`);
+  }
+
+  public updateSede(id: number, model: SedeUpdate): Observable<SedeEmpresa> {
+    return this.httpClient.put<SedeEmpresa>(environment.apiURL + `/sedes/${id}`, model);
+  }
+
+  public deactivateSede(id: number): Observable<any> {
+    return this.httpClient.patch<any>(environment.apiURL + `/sedes/${id}/desactivar`, {});
+  }
+
+  public getMiEmpresa(): Observable<Empresa> {
+    return this.httpClient.get<Empresa>(this.endPoint + `/mi-empresa`);
+  }
+
+  public getMisSedes(): Observable<SedeEmpresa[]> {
+    return this.httpClient.get<SedeEmpresa[]>(environment.apiURL + `/sedes/mis-sedes`);
   }
 }
