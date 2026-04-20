@@ -1,4 +1,5 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Popup } from 'src/app/shared/helper/popup';
 import { Pagination } from 'src/app/shared/components/pagination/model/pagination.model';
 import { Empresa, EmpresaCreate, EmpresaUpdate, SedeEmpresa, SedeUpdate } from '../../model/empresa.model';
@@ -38,57 +39,63 @@ export class EmpresasComponent implements OnInit {
     listPagesLimits: 4,
   };
 
-  formModel: EmpresaCreate = this.getEmptyEmpresa();
-  editModel: EmpresaUpdate = this.getEmptyUpdateEmpresa();
-  sedeEditModel: SedeUpdate = this.getEmptyUpdateSede();
+  // Formularios Reactivos
+  createForm: FormGroup;
+  editEmpresaForm: FormGroup;
+  editSedeForm: FormGroup;
 
   constructor(
-    private empresasService: EmpresasService
-  ) { }
+    private empresasService: EmpresasService,
+    private fb: FormBuilder
+  ) {
+    this.createForm = this.initCreateForm();
+    this.editEmpresaForm = this.initEditEmpresaForm();
+    this.editSedeForm = this.initEditSedeForm();
+  }
 
   ngOnInit(): void {
     this.listarEmpresas();
   }
 
-  private getEmptyEmpresa(): EmpresaCreate {
-    return {
-      nombre: '',
-      razonSocial: '',
-      cif: '',
-      activa: true,
-      email: '',
-      telefono: '',
-      direccion: '',
-      codigoPostal: '',
-      localidad: '',
-      provincia: '',
-      pais: 'España',
-      latitud: null,
-      longitud: null
-    };
+  private initCreateForm(): FormGroup {
+    return this.fb.group({
+      nombre: ['', Validators.required],
+      razonSocial: [''],
+      cif: ['', Validators.required],
+      activa: [true],
+      email: ['', [Validators.required, Validators.email]],
+      telefono: [''],
+      direccion: ['', Validators.required],
+      codigoPostal: ['', Validators.required],
+      localidad: ['', Validators.required],
+      provincia: ['', Validators.required],
+      pais: ['España', Validators.required],
+      latitud: [null],
+      longitud: [null]
+    });
   }
 
-  private getEmptyUpdateEmpresa(): EmpresaUpdate {
-    return {
-      nombre: '',
-      razonSocial: '',
-      cif: '',
-      activa: true,
-    };
+  private initEditEmpresaForm(): FormGroup {
+    return this.fb.group({
+      nombre: ['', Validators.required],
+      razonSocial: [''],
+      cif: ['', Validators.required],
+      activa: [true]
+    });
   }
 
-  private getEmptyUpdateSede(): SedeUpdate {
-    return {
-      nombre: '',
-      email: '',
-      telefono: '',
-      direccion: '',
-      codigoPostal: '',
-      localidad: '',
-      provincia: '',
-      pais: 'España',
-      activa: true,
-    };
+  private initEditSedeForm(): FormGroup {
+    return this.fb.group({
+      nombre: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      telefono: [''],
+      direccion: ['', Validators.required],
+      codigoPostal: ['', Validators.required],
+      localidad: ['', Validators.required],
+      provincia: ['', Validators.required],
+      pais: ['España', Validators.required],
+      activa: [true]
+    });
   }
 
   listarEmpresas(): void {
@@ -117,21 +124,13 @@ export class EmpresasComponent implements OnInit {
   }
 
   onCreate(): void {
-    const payload: EmpresaCreate = {
-      ...this.formModel,
-      nombre: this.formModel.nombre.trim(),
-      razonSocial: this.formModel.razonSocial?.trim() || '',
-      cif: this.formModel.cif.trim().toUpperCase(),
-      email: this.formModel.email.trim(),
-      telefono: this.formModel.telefono?.trim() || '',
-      direccion: this.formModel.direccion.trim(),
-      codigoPostal: this.formModel.codigoPostal.trim(),
-      localidad: this.formModel.localidad.trim(),
-      provincia: this.formModel.provincia.trim(),
-      pais: this.formModel.pais.trim(),
-      latitud: this.formModel.latitud ?? null,
-      longitud: this.formModel.longitud ?? null,
-    };
+    if (this.createForm.invalid) {
+      return;
+    }
+
+    const payload: EmpresaCreate = this.createForm.value;
+    payload.nombre = payload.nombre.trim();
+    payload.cif = payload.cif.trim().toUpperCase();
 
     this.isCreating.set(true);
 
@@ -139,7 +138,7 @@ export class EmpresasComponent implements OnInit {
       next: () => {
         this.isCreating.set(false);
         Popup.toastSucess('', 'Empresa creada correctamente');
-        this.formModel = this.getEmptyEmpresa();
+        this.createForm.reset({ activa: true, pais: 'España' });
         this.pag.page = 0;
         this.listarEmpresas();
       },
@@ -162,32 +161,32 @@ export class EmpresasComponent implements OnInit {
   }
 
   onStartEdit(empresa: Empresa): void {
+    this.expandedEmpresaId.set(null);
+    this.onCancelEditSede();
+
     this.editingEmpresaId.set(empresa.id);
-    this.editModel = {
+    this.editEmpresaForm.patchValue({
       nombre: empresa.nombre,
       razonSocial: empresa.razonSocial ?? '',
       cif: empresa.cif,
-      activa: empresa.activa,
-    };
+      activa: empresa.activa
+    });
   }
 
   onCancelEdit(): void {
     this.editingEmpresaId.set(null);
-    this.editModel = this.getEmptyUpdateEmpresa();
+    this.editEmpresaForm.reset();
   }
 
   onUpdate(): void {
     const empresaId = this.editingEmpresaId();
-    if (!empresaId) {
+    if (!empresaId || this.editEmpresaForm.invalid) {
       return;
     }
 
-    const payload: EmpresaUpdate = {
-      nombre: this.editModel.nombre.trim(),
-      razonSocial: this.editModel.razonSocial?.trim() || '',
-      cif: this.editModel.cif.trim().toUpperCase(),
-      activa: this.editModel.activa,
-    };
+    const payload: EmpresaUpdate = this.editEmpresaForm.value;
+    payload.nombre = payload.nombre.trim();
+    payload.cif = payload.cif.trim().toUpperCase();
 
     this.isUpdating.set(true);
 
@@ -200,16 +199,19 @@ export class EmpresasComponent implements OnInit {
       },
       error: (err) => {
         this.isUpdating.set(false);
-        Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo actualizar la empresa');
+        const msg = err?.error?.mensaje || err?.error?.message || 'No se pudo actualizar la empresa';
+        Popup.toastDanger('Error', msg);
       }
     });
   }
 
   toggleSedes(empresa: Empresa): void {
     const currentExpanded = this.expandedEmpresaId();
+    this.onCancelEdit();
 
     if (currentExpanded === empresa.id) {
       this.expandedEmpresaId.set(null);
+      this.onCancelEditSede();
       return;
     }
 
@@ -253,9 +255,12 @@ export class EmpresasComponent implements OnInit {
   }
 
   onStartEditSede(empresaId: number, sede: SedeEmpresa): void {
+    this.onCancelEdit();
+
     this.editingSedeEmpresaId.set(empresaId);
     this.editingSedeId.set(sede.id);
-    this.sedeEditModel = {
+    
+    this.editSedeForm.patchValue({
       nombre: sede.nombre,
       email: sede.email,
       telefono: sede.telefono ?? '',
@@ -264,33 +269,25 @@ export class EmpresasComponent implements OnInit {
       localidad: sede.localidad,
       provincia: sede.provincia,
       pais: sede.pais,
-      activa: sede.activa,
-    };
+      activa: sede.activa
+    });
   }
 
   onCancelEditSede(): void {
     this.editingSedeEmpresaId.set(null);
     this.editingSedeId.set(null);
-    this.sedeEditModel = this.getEmptyUpdateSede();
+    this.editSedeForm.reset();
   }
 
   onUpdateSede(empresaId: number): void {
     const sedeId = this.editingSedeId();
-    if (!sedeId) {
+    if (!sedeId || this.editSedeForm.invalid) {
       return;
     }
 
-    const payload: SedeUpdate = {
-      nombre: this.sedeEditModel.nombre.trim(),
-      email: this.sedeEditModel.email.trim(),
-      telefono: this.sedeEditModel.telefono?.trim() || '',
-      direccion: this.sedeEditModel.direccion.trim(),
-      codigoPostal: this.sedeEditModel.codigoPostal.trim(),
-      localidad: this.sedeEditModel.localidad.trim(),
-      provincia: this.sedeEditModel.provincia.trim(),
-      pais: this.sedeEditModel.pais.trim(),
-      activa: this.sedeEditModel.activa,
-    };
+    const payload: SedeUpdate = this.editSedeForm.value;
+    payload.nombre = payload.nombre.trim();
+    payload.email = payload.email.trim();
 
     this.isUpdatingSede.set(true);
 
