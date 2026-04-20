@@ -193,3 +193,76 @@ a:hover {
 ::-webkit-scrollbar-thumb:hover {
   background: #a0aec0;
 }
+
+/* ============ Popups ============ */
+.p-toast {
+  opacity: 0.98;
+}
+
+.p-toast-message {
+    border-radius: 8px !important;
+    border-width: 0 0 0 6px !important;
+    margin-bottom: 1rem !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.p-toast-message-success {
+    background: #f0fdf4 !important;
+    border-color: #22c55e !important;
+    color: #166534 !important;
+}
+
+.p-toast-message-error {
+    background: #fef2f2 !important;
+    border-color: #ef4444 !important;
+    color: #991b1b !important;
+}
+
+.p-toast-message-warn {
+    background: #fffbeb !important;
+    border-color: #f59e0b !important;
+    color: #92400e !important;
+}
+
+.p-toast-message-content {
+    padding: 1rem !important;
+  padding-right: 1.5rem !important;
+    display: flex;
+    align-items: center;
+}
+
+.p-toast-message-icon {
+  display: none !important;
+}
+
+.p-toast-summary {
+    font-weight: 700 !important;
+}
+
+.p-toast-icon {
+    font-size: 1.5rem !important;
+    margin-right: 1rem !important;
+}
+
+.p-toast-close-icon {
+    color: inherit !important;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.p-toast-icon-close {
+  margin-left: 0.8rem !important;
+}
+
+.p-toast-close-button {
+  margin-left: 0.8rem !important;
+}
+
+.p-toast-close-icon:hover {
+    opacity: 1;
+}
+
+
+
+

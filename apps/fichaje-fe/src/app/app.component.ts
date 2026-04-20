@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { PopupBridgeService } from './shared/helper/popup-bridge.service';
 
 @Component({
     selector: 'app-root',
@@ -8,4 +9,6 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'angular-fichajesPi';
+
+  constructor(private popupBridge: PopupBridgeService) {}
 }

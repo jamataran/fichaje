@@ -137,15 +137,16 @@ export class EmpresasComponent implements OnInit {
 
     this.empresasService.create(payload).subscribe({
       next: () => {
+        this.isCreating.set(false);
         Popup.toastSucess('', 'Empresa creada correctamente');
         this.formModel = this.getEmptyEmpresa();
         this.pag.page = 0;
         this.listarEmpresas();
-        this.isCreating.set(false);
       },
       error: (err) => {
-        Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo crear la empresa');
         this.isCreating.set(false);
+        const msg = err?.error?.mensaje || err?.error?.message || 'No se pudo crear la empresa';
+        Popup.toastDanger('Error', msg);
       }
     });
   }
@@ -192,14 +193,14 @@ export class EmpresasComponent implements OnInit {
 
     this.empresasService.update(empresaId, payload).subscribe({
       next: () => {
+        this.isUpdating.set(false);
         Popup.toastSucess('', 'Empresa actualizada correctamente');
         this.onCancelEdit();
         this.listarEmpresas();
-        this.isUpdating.set(false);
       },
       error: (err) => {
-        Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo actualizar la empresa');
         this.isUpdating.set(false);
+        Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo actualizar la empresa');
       }
     });
   }
@@ -301,8 +302,9 @@ export class EmpresasComponent implements OnInit {
         this.loadSedesByEmpresa(empresaId);
       },
       error: (err) => {
-        Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo actualizar la sede');
         this.isUpdatingSede.set(false);
+        const msg = err?.error?.mensaje || err?.error?.message || 'No se pudo actualizar la sede';
+        Popup.toastDanger('Error', msg);
       }
     });
   }
