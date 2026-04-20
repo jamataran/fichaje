@@ -74,13 +74,11 @@ export class RegisterFormComponent implements OnInit {
       this.loadEmpresas();
     }
 
-    if(this.isRRHH){
-      const empresaId = this.tokenService.getEmpresaId()
-      if (empresaId){
-        this.selectedEmpresaId = empresaId
-        this.loadEmpresaNombre()
-        this.loadSede()
-      }
+    const empresaId = this.tokenService.getEmpresaId()
+    if (empresaId){
+      this.selectedEmpresaId = empresaId
+      this.loadEmpresaNombre()
+      this.loadSede()
     }
   }
 
@@ -103,6 +101,9 @@ export class RegisterFormComponent implements OnInit {
         this.allSedes = sedes
         this.filteredSedes = sedes
         this.isLoadingSedes = false
+        if (this.allSedes && this.allSedes.length > 0) {
+          this.selectSede(this.allSedes[0]);
+        }
       },
       error: () => {
         Popup.toastDanger('Error', 'No se pudieron cargar las sedes')
