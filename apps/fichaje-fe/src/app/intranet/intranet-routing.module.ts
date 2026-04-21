@@ -9,35 +9,39 @@ const routes: Routes = [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       {
         path: 'empleados', loadChildren: () => import('./empleados/empleados.module').then(m => m.EmpleadosModule)
-        , canActivate: [GuardService], data: { expectedRol: ['admin'] }
+        , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
       },
       {
         path: 'incidencias', loadChildren: () => import('./incidencias/incidencias.module').then(m => m.IncidenciasModule)
-        , canActivate: [GuardService], data: { expectedRol: ['admin'] }
+        , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
       },
       {
         path: 'fichajes', loadChildren: () => import('./fichajes/fichajes.module').then(m => m.FichajesModule)
-        , canActivate: [GuardService], data: { expectedRol: ['admin'] }
+        , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
       },
       {
         path: 'permisos', loadChildren: () => import('./permisos/permisos.module').then(m => m.PermisosModule)
-        , canActivate: [GuardService], data: { expectedRol: ['admin'] }
+        , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
       },
       {
         path: 'calendario', loadChildren: () => import('./calendario/calendario.module').then(m => m.CalendarioModule)
-        , canActivate: [GuardService], data: { expectedRol: ['admin'] }
+        , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
       },
       {
         path: 'vacaciones', loadChildren: () => import('./vacaciones/vacaciones.module').then(m => m.VacacionesModule)
-        , canActivate: [GuardService], data: { expectedRol: ['admin'] }
+        , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
       },
       {
         path: 'register', loadChildren: () => import('./register/register.module').then(m => m.RegisterModule)
-        , canActivate: [GuardService], data: { expectedRol: ['admin'] }
+        , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
       },
       {
         path: 'empresas', loadChildren: () => import('./empresas/empresas.module').then(m => m.EmpresasModule)
         , canActivate: [GuardService], data: { expectedRol: ['admin'] }
+      },
+      {
+        path: 'sedes', loadChildren: () => import('./sedes/sedes.module').then(m => m.SedesModule)
+        , canActivate: [GuardService], data: { expectedRol: ['rrhh'] }
       },
       { path: 'home', loadChildren: () => import('./home/home.module').then(m => m.HomeModule) },
     ]

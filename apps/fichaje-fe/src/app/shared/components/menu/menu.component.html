@@ -102,13 +102,23 @@
     }
 
   <!-- Super Admin Section -->
-   @if (canViewSystemPanel) {
+   @if (canViewAdminPanel) {
     <div class="mt-auto">
       <h6 class="sidebar-heading">
         <i class="bi bi-shield-lock" style="font-size: 0.85rem;"></i>
         Sistema
       </h6>
 
+      @if (isRRHH && !isAdmin) {
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" routerLink="/intranet/sedes/list">
+            <i class="bi bi-building feather"></i>
+            <span>Sedes</span>
+          </a>
+        </li>
+      }
+
+      @if (isAdmin) {
       <ul class="nav">
         <li class="nav-item">
           <a class="nav-link" routerLinkActive="active" routerLink="/intranet/empresas/list">
@@ -116,14 +126,8 @@
             <span>Empresas</span>
           </a>
         </li>
-
-        <li class="nav-item">
-          <a class="nav-link" routerLinkActive="active" routerLink="/intranet/sedes/list">
-            <i class="bi bi-exclamation-triangle feather"></i>
-            <span>Sedes</span>
-          </a>
-        </li>
       </ul>
+    }
     </div>
     }
   </div>

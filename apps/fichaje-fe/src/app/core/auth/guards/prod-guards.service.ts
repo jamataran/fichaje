@@ -7,8 +7,6 @@ import { TokenService } from '../service/token.service';
 })
 export class GuardService  {
 
-  realRol: string = ''
-
   constructor(
     private tokenService: TokenService,
     private router: Router
@@ -17,22 +15,43 @@ export class GuardService  {
   canActivate(route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): boolean {
 
-    const expectedRol = route.data.expectedRol
+    const expectedRoles: string[] = route.data.expectedRol || [];
 
-  this.realRol = (this.tokenService.isRRHH() || this.tokenService.isAdmin()) ? 'admin' : 'user'
-
-    if (!this.tokenService.isLogged() || expectedRol.indexOf(this.realRol) === -1) {
-      this.router.navigate(['/'])
-      return false
+    if (!this.tokenService.isLogged()) {
+      this.router.navigate(['/']);
+      return false;
     }
 
-    if(!this.tokenService.isAdmin() && !this.tokenService.getEmpresaId()){
-      this.router.navigate(['/public/landing/home'])
-      return false
+    if (expectedRoles.length === 0) {
+      return this.checkEmpresaAccess();
     }
 
-    return true
+    const userRoles: string[] = [];
+    if (this.tokenService.isAdmin()) {
+      userRoles.push('admin');
+    }
+    if (this.tokenService.isRRHH()) {
+      userRoles.push('rrhh');
+    }
+    if (userRoles.length === 0) {
+      userRoles.push('user');
+    }
+
+    const hasRole = expectedRoles.some(role => userRoles.includes(role));
+
+    if (!hasRole) {
+      this.router.navigate(['/intranet/home']); // Redirigir a home en lugar de fuera para evitar bucles
+      return false;
+    }
+
+    return this.checkEmpresaAccess();
   }
 
-
+  private checkEmpresaAccess(): boolean {
+    if(!this.tokenService.isAdmin() && !this.tokenService.getEmpresaId()){
+      this.router.navigate(['/public/landing/home']);
+      return false;
+    }
+    return true;
+  }
 }

@@ -1,0 +1,157 @@
+<div class="container-fluid mt-3">
+
+  <h3 class="mb-4 text-center selected bg-waves rounded p-3">Gestión de Sedes - {{ nombreEmpresa }}</h3>
+
+  <form class="my-3 mx-0 bg-light px-4 pt-3 pb-2 rounded shadow-sm" [formGroup]="sedeForm" (ngSubmit)="onCreate()" novalidate>
+    <h5 class="mb-3">Crear nueva sede</h5>
+
+    <div class="row mb-2">
+      <div class="col-12 col-md-6 col-lg-4 mb-3">
+        <label class="small"><b>Nombre *</b></label>
+        <input formControlName="nombre" class="form-control" type="text" placeholder="Ej: Oficina Central">
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4 mb-3">
+        <label class="small"><b>Email *</b></label>
+        <input formControlName="email" class="form-control" type="email">
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4 mb-3">
+        <label class="small"><b>Teléfono</b></label>
+        <input formControlName="telefono" class="form-control" type="text">
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-6 mb-3">
+        <label class="small"><b>Dirección *</b></label>
+        <input formControlName="direccion" class="form-control" type="text">
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <label class="small"><b>Código postal *</b></label>
+        <input formControlName="codigoPostal" class="form-control" type="text">
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <label class="small"><b>Localidad *</b></label>
+        <input formControlName="localidad" class="form-control" type="text">
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <label class="small"><b>Provincia *</b></label>
+        <input formControlName="provincia" class="form-control" type="text">
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <label class="small"><b>País *</b></label>
+        <input formControlName="pais" class="form-control" type="text">
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3 d-flex align-items-end">
+        <div class="form-check mb-2">
+          <input formControlName="activa" class="form-check-input" type="checkbox" id="checkActivaSede">
+          <label for="checkActivaSede" class="form-check-label"><b>Sede activa</b></label>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3 d-flex align-items-end justify-content-end">
+        <button type="submit" class="btn bg-blue text-white w-100 shadow-sm" [disabled]="sedeForm.invalid || isCreating()">
+          {{ isCreating() ? 'Guardando...' : 'Crear sede' }}
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <div class="bg-light rounded p-3 mt-4 border shadow-sm">
+    <h5 class="mb-3">Sedes registradas</h5>
+
+    <div class="table-responsive">
+      <table class="table table-hover text-center align-middle mb-2">
+        <thead>
+          <tr>
+            <th class="text-start">Nombre</th>
+            <th>Email</th>
+            <th>Localidad</th>
+            <th>Activa</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let sede of listaSedes">
+            <tr [class.table-primary]="isEditing(sede.id)">
+              <td class="text-start">
+                <div class="fw-semibold">{{ sede.nombre }}</div>
+                <small class="text-muted">{{ sede.direccion }}</small>
+              </td>
+              <td>{{ sede.email }}</td>
+              <td>{{ sede.localidad }} ({{ sede.provincia }})</td>
+              <td>
+                <span class="badge" [ngClass]="sede.activa ? 'bg-success' : 'bg-secondary'">
+                  {{ sede.activa ? 'Sí' : 'No' }}
+                </span>
+              </td>
+              <td>
+                <div class="d-flex gap-2 justify-content-center">
+                  <button type="button" class="btn btn-outline-primary btn-sm" (click)="onStartEdit(sede)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button type="button" class="btn btn-outline-danger btn-sm" (click)="onDeactivate(sede)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="isEditing(sede.id)">
+              <td colspan="5" class="bg-white text-start">
+                <div class="border rounded p-3 shadow-sm bg-light" [formGroup]="editSedeForm">
+                  <h6 class="mb-3 text-primary">Editar sede: <b>{{ sede.nombre }}</b></h6>
+                  
+                  <div class="row g-3">
+                    <div class="col-12 col-md-4">
+                      <label class="small"><b>Nombre</b></label>
+                      <input formControlName="nombre" class="form-control" type="text">
+                    </div>
+                    <div class="col-12 col-md-4">
+                      <label class="small"><b>Email</b></label>
+                      <input formControlName="email" class="form-control" type="email">
+                    </div>
+                    <div class="col-12 col-md-4">
+                      <label class="small"><b>Teléfono</b></label>
+                      <input formControlName="telefono" class="form-control" type="text">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="small"><b>Dirección</b></label>
+                      <input formControlName="direccion" class="form-control" type="text">
+                    </div>
+                    <div class="col-12 col-md-3">
+                      <label class="small"><b>Código postal</b></label>
+                      <input formControlName="codigoPostal" class="form-control" type="text">
+                    </div>
+                    <div class="col-12 col-md-3">
+                      <div class="form-check mt-4">
+                        <input formControlName="activa" class="form-check-input" type="checkbox" [id]="'edit-activa-sede-' + sede.id">
+                        <label class="form-check-label" [for]="'edit-activa-sede-' + sede.id">Activa</label>
+                      </div>
+                    </div>
+
+                    <div class="col-12 d-flex justify-content-end gap-2">
+                      <button type="button" class="btn btn-outline-secondary" (click)="onCancelEdit()" [disabled]="isUpdating()">
+                        Cancelar
+                      </button>
+                      <button type="button" class="btn bg-blue text-white" (click)="onUpdate()" [disabled]="editSedeForm.invalid || isUpdating()">
+                        {{ isUpdating() ? 'Guardando...' : 'Guardar cambios' }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+          <tr *ngIf="listaSedes.length === 0">
+            <td colspan="5" class="py-4 text-muted">No hay sedes registradas para esta empresa.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

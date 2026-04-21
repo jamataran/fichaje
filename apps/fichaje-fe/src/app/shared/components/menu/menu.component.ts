@@ -13,7 +13,6 @@ export class MenuComponent implements OnInit {
   isRRHH: boolean = false;
   isAdmin: boolean = false;
   canViewAdminPanel: boolean = false;
-  canViewSystemPanel: boolean = false;
   numero:string='';
 
 
@@ -25,7 +24,6 @@ export class MenuComponent implements OnInit {
     this.isRRHH = this.service.isRRHH();
     this.isAdmin = this.service.isAdmin();
     this.canViewAdminPanel = this.isRRHH || this.isAdmin;
-    this.canViewSystemPanel = this.isAdmin;
     this.numero = this.service.getNumero();
   }
 

@@ -16,7 +16,7 @@ export class LoginGuard  {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    if (this.tokenService.isLogged() && (this.tokenService.isAdmin() || this.tokenService.getEmpresaId())) {
+    if (this.tokenService.isLogged() && (this.tokenService.isAdmin() || this.tokenService.isRRHH() || this.tokenService.getEmpresaId())) {
       this.router.navigate(['/intranet'])
       return false
     }
