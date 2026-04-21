@@ -49,4 +49,8 @@ export class EmpresasService {
   public getMisSedes(): Observable<SedeEmpresa[]> {
     return this.httpClient.get<SedeEmpresa[]>(environment.apiURL + `/sedes/mis-sedes`);
   }
+
+  public getAllEmpresas(): Observable<Empresa[]> {
+    return this.httpClient.get<Empresa[]>(this.endPoint + `/list`);
+  }
 }

@@ -5,6 +5,30 @@
   <form class="my-3 mx-0 bg-light px-4 pt-2 rounded ">
     <div class="row mb-4">
 
+      <!-- Filtro Empresa -->
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
+        <div class="form-group small w-100">
+          <label class="small" for="empresa"><b>Empresa:</b></label>
+          <select class="form-control form-control-sm" name="empresa" id="empresa"
+            [(ngModel)]="dto.empresaId" (change)="onEmpresaChange()" [disabled]="lockEmpresa">
+            <option [ngValue]="null">Todas</option>
+            <option *ngFor="let e of listaEmpresas" [ngValue]="e.id">{{e.nombre}}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Filtro Sede -->
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
+        <div class="form-group small w-100">
+          <label class="small" for="sede"><b>Sede:</b></label>
+          <select class="form-control form-control-sm" name="sede" id="sede"
+            [(ngModel)]="dto.sedeId" (change)="onSedeChange()">
+            <option [ngValue]="null">Todas</option>
+            <option *ngFor="let s of listaSedes" [ngValue]="s.id">{{s.nombre}}</option>
+          </select>
+        </div>
+      </div>
+
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
         <app-input-filter-text class="w-100" [(inputValue)]="dto.nombreEmpleado" (clear)="clearNombre()"
           (list)="listarElementos()" [name]="'Nombre'" [id]="'nombre'"></app-input-filter-text>
@@ -53,7 +77,7 @@
           <label class="small" for="en-vacaciones"><b>De Vacaciones:</b></label>
           <select class="form-control form-control-sm" name="en-vacaciones" id="en-vacaciones"
             [(ngModel)]="dto.enVacaciones" (change)="listarElementos()">
-            <option value="">Todos</option>
+            <option [ngValue]="null">Todos</option>
             <option value="true">Si</option>
             <option value="false">No</option>
           </select>
@@ -65,7 +89,7 @@
           <label class="small" for="de-baja"><b>De Baja:</b></label>
           <select class="form-control form-control-sm" name="de-baja" id="de-baja" [(ngModel)]="dto.deBaja"
             (change)="listarElementos()">
-            <option value="" selected>Todos</option>
+            <option [ngValue]="null">Todos</option>
             <option value="true">Si</option>
             <option value="false">No</option>
           </select>
@@ -77,7 +101,7 @@
           <label class="small" for="working"><b>Trabajando:</b></label>
           <select class="form-control form-control-sm" name="working" id="working" [(ngModel)]="dto.working"
             (change)="listarElementos()">
-            <option value="" selected>Todos</option>
+            <option [ngValue]="null" selected>Todos</option>
             <option value="true">Si</option>
             <option value="false">No</option>
           </select>
@@ -130,6 +154,8 @@
           <app-th-sort [entity]="'working'" [name]="'Trabajando'" [asc]="asc" [order]="order" (sort)="setOrder($event)">
           </app-th-sort>
         </th>
+        <th>E-IDs</th>
+        <th>S-IDs</th>
         <th *ngIf="isAdmin">Ver Detalle</th>
       </tr>
     </thead>
@@ -147,6 +173,8 @@
         <td *ngIf="!elemento.deBaja">No</td>
         <td *ngIf="elemento.working">Si</td>
         <td *ngIf="!elemento.working">No</td>
+        <td>{{elemento.empresaIds}}</td>
+        <td>{{elemento.sedeIds}}</td>
         <td *ngIf="isAdmin" routerLink='/intranet/empleados/list/{{elemento.id}}'><div class="w-100 h-100 btn btn-outline-secondary"><i class="bi bi-eye-fill"></i></div></td>
       </tr>
     </tbody>

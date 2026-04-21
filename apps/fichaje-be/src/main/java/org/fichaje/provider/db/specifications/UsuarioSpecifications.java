@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import org.fichaje.provider.db.entity.Usuario;
 import org.fichaje.provider.db.specifications.common.UserSpecificationImpl;
+import jakarta.persistence.criteria.Join;
 
 @Component
 public final class UsuarioSpecifications extends UserSpecificationImpl<Usuario> {
@@ -63,6 +64,24 @@ public final class UsuarioSpecifications extends UserSpecificationImpl<Usuario> 
 	public Specification<Usuario> horasHasta(Double h) {
 		return (root, query, builder) -> builder
 				.lessThanOrEqualTo(root.get("horasGeneradas"), h);
+	}
+
+	public Specification<Usuario> hasEmpresa(Long empresaId) {
+		return (root, query, builder) -> {
+			if (empresaId == null) return null;
+			query.distinct(true);
+			Join<Object, Object> empresasJoin = root.join("empresas");
+			return builder.equal(empresasJoin.get("id"), empresaId);
+		};
+	}
+
+	public Specification<Usuario> hasSede(Long sedeId) {
+		return (root, query, builder) -> {
+			if (sedeId == null) return null;
+			query.distinct(true);
+			Join<Object, Object> sedesJoin = root.join("sedes");
+			return builder.equal(sedesJoin.get("id"), sedeId);
+		};
 	}
 
 

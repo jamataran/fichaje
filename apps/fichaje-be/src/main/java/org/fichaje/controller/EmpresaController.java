@@ -75,6 +75,12 @@ public class EmpresaController {
         return ResponseEntity.ok(service.findAll(pageable));
     }
 
+    @Operation(summary = "Devuelve una lista de todas las empresas")
+    @GetMapping("/list")
+    public ResponseEntity<List<EmpresaDTO>> listAll() {
+        return ResponseEntity.ok(service.findAllList());
+    }
+
     @Operation(summary = "Edita una empresa existente")
     @PutMapping("/{id}")
     public ResponseEntity<EmpresaDTO> editEmpresa(@PathVariable Long id, @Valid @RequestBody EmpresaDTO empresa) {

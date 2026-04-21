@@ -2,6 +2,7 @@ package org.fichaje.converter;
 
 import org.fichaje.dto.entity.UsuarioDTO;
 import org.fichaje.provider.db.entity.Sede;
+import org.fichaje.provider.db.entity.Empresa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import org.fichaje.dto.entity.UsuarioDtoEditPassword;
 import org.fichaje.provider.db.entity.Usuario;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Component
 public class UsuarioDtoConverter {
@@ -39,6 +41,12 @@ public class UsuarioDtoConverter {
 				.sedes(u.getSedes() != null ? u.getSedes().stream()
 						.map(sedeDtoConverter::todtoConverter)
 						.toList() : new ArrayList<>())
+				.empresaIds(u.getEmpresas() != null ? u.getEmpresas().stream()
+						.map(Empresa::getId)
+						.collect(Collectors.toList()) : new ArrayList<>())
+				.sedeIds(u.getSedes() != null ? u.getSedes().stream()
+						.map(Sede::getId)
+						.collect(Collectors.toList()) : new ArrayList<>())
 				.build();
 	}
 

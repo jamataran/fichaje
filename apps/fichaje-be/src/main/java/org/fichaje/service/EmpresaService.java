@@ -54,6 +54,14 @@ public class EmpresaService {
     }
 
     @Transactional(readOnly = true)
+    public java.util.List<EmpresaDTO> findAllList() {
+        log.info("Consultando listado completo de empresas");
+        return repository.findAll().stream()
+                .map(dtoConverter::todtoConverter)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public Optional<EmpresaDTO> findById(Long id) {
         log.info("Consultando empresa con ID: {}", id);
         return repository.findById(id).map(dtoConverter::todtoConverter);

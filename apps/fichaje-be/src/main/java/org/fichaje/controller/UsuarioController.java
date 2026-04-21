@@ -78,6 +78,12 @@ public class UsuarioController
 		if (dto.getHorasGeneradasHasta() != null) {
 			spec = spec.and(specifications.horasHasta(dto.getHorasGeneradasHasta()));
 		}
+		if (dto.getEmpresaId() != null) {
+			spec = spec.and(specifications.hasEmpresa(dto.getEmpresaId()));
+		}
+		if (dto.getSedeId() != null) {
+			spec = spec.and(specifications.hasSede(dto.getSedeId()));
+		}
 
 		Page<Usuario> entities = service.pagesAndSpec(
 				spec,
@@ -135,6 +141,12 @@ public class UsuarioController
 		}
 		if (dto.getHorasGeneradasHasta() != null) {
 			spec = spec.and(specifications.horasHasta(dto.getHorasGeneradasHasta()));
+		}
+		if (dto.getEmpresaId() != null) {
+			spec = spec.and(specifications.hasEmpresa(dto.getEmpresaId()));
+		}
+		if (dto.getSedeId() != null) {
+			spec = spec.and(specifications.hasSede(dto.getSedeId()));
 		}
 
 		List<Usuario> entities = service.filterAndList(spec);
