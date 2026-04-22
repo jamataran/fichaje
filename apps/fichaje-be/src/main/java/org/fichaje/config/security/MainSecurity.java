@@ -81,7 +81,6 @@ public class MainSecurity {
 						.requestMatchers("/empresas/list").hasRole(SUPER_ADMIN)
 						.requestMatchers("/empresas/**").hasRole(SUPER_ADMIN)
 						.requestMatchers("/sedes/mis-sedes").hasRole(RRHH)
-						.requestMatchers("/sedes/empresa/**").hasAnyRole(RRHH, SUPER_ADMIN)
 						.requestMatchers("/sedes/**").hasRole(SUPER_ADMIN)
 						.requestMatchers("/auth/nuevo").hasRole(RRHH)
 						.requestMatchers("/auth/login").permitAll()

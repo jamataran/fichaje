@@ -1,5 +1,6 @@
 package org.fichaje.config.security.jwt;
 
+import org.fichaje.provider.db.entity.UsuarioPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             if(token != null && jwtProvider.validateToken(token)){
                 String nombreUsuario = jwtProvider.getSubjectFromToken(token);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(nombreUsuario);
+
+                Long empresaId = jwtProvider.getEmpresaIdFromToken(token);
+                ((UsuarioPrincipal) userDetails).setEmpresaId(empresaId);
 
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

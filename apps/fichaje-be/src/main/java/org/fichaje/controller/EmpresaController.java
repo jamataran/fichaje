@@ -2,24 +2,23 @@ package org.fichaje.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import org.fichaje.dto.entity.EmpresaCreateDTO;
-import org.fichaje.dto.entity.EmpresaDTO;
-import org.fichaje.dto.entity.EmpresaParametroDTO;
+import org.fichaje.dto.entity.*;
 import org.fichaje.config.security.jwt.JwtProvider;
 import org.fichaje.service.EmpresaParametroService;
 import org.fichaje.service.EmpresaService;
+import org.fichaje.service.SedeService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import org.fichaje.dto.entity.UsuarioDTO;
 
 @RestController
 @RequestMapping("/empresas")
@@ -28,31 +27,13 @@ public class EmpresaController {
     private final EmpresaService service;
     private final EmpresaParametroService parametroService;
     private final JwtProvider jwtProvider;
+    private final SedeService sedeService;
 
-    public EmpresaController(EmpresaService service, EmpresaParametroService parametroService, JwtProvider jwtProvider) {
+    public EmpresaController(EmpresaService service, EmpresaParametroService parametroService, JwtProvider jwtProvider, SedeService sedeService) {
         this.parametroService = parametroService;
         this.service = service;
         this.jwtProvider = jwtProvider;
-    }
-
-    @Operation(summary = "Devuelve la empresa asociada al token autenticado")
-    @GetMapping("/mi-empresa")
-    public ResponseEntity<EmpresaDTO> getMiEmpresa(@RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token de autorización no válido");
-        }
-
-        String token = authHeader.replace("Bearer ", "").trim();
-        if (!jwtProvider.validateToken(token)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token no válido o expirado");
-        }
-
-        Long empresaId = jwtProvider.getEmpresaIdFromToken(token);
-        if (empresaId == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El token no contiene empresaId");
-        }
-
-        return ResponseEntity.of(service.findById(empresaId));
+        this.sedeService = sedeService;
     }
 
     @Operation(summary = "Crea una nueva empresa")
@@ -136,5 +117,25 @@ public class EmpresaController {
     @GetMapping("/{id}/usuarios")
     public ResponseEntity<List<UsuarioDTO>> listUsuarios(@PathVariable Long id) {
         return ResponseEntity.ok(service.findUsuariosByEmpresaId(id));
+    }
+
+    @Operation(summary = "Lista las sedes de una empresa")
+    @GetMapping("/{empresaId}/sedes")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or (hasRole('RRHH') and #empresaId == authentication.principal.empresaId)")
+    public ResponseEntity<List<SedeDTO>> listSedes(@PathVariable Long empresaId) {
+        return ResponseEntity.ok(sedeService.findByEmpresaId(empresaId));
+    }
+
+    @Operation(summary = "Añade una sede a una empresa")
+    @PostMapping("/{empresaId}/sedes")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or (hasRole('RRHH') and #empresaId == authentication.principal.empresaId)")
+    public ResponseEntity<SedeDTO> addSede(@PathVariable Long empresaId, @Valid @RequestBody SedeDTO dto) {
+        SedeDTO saved = sedeService.save(empresaId, dto);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{sedeId}")
+                .buildAndExpand(saved.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(saved);
     }
 }

@@ -1,11 +1,11 @@
 meta {
     name: Add Sede
     type: http
-    seq: 2
+    seq: 12
 }
 
 post {
-    url: {{baseUrl}}/sedes/empresa/:empresaId
+    url: {{baseUrl}}/empresas/:empresaId/sedes
     body: json
     auth: inherit
 }
@@ -29,4 +29,3 @@ body:json {
         "activa": true
     }
 }
-

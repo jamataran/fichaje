@@ -103,4 +103,12 @@ public class SedeService {
         repository.save(sede);
         log.info("Sede con ID: {} desactivada correctamente", sedeId);
     }
+
+    @Transactional(readOnly = true)
+    public SedeDTO findById(Long sedeId) {
+        log.info("Consultando sede con ID: {}", sedeId);
+        Sede sede = repository.findById(sedeId)
+                .orElseThrow(() -> new SedeNotFoundException(sedeId));
+        return dtoConverter.todtoConverter(sede);
+    }
 }
