@@ -9,3 +9,12 @@ get {
     body: none
     auth: inherit
 }
+
+script:post-response {
+  const data = res.getBody();
+  if (data && data.empresaId) {
+    bru.setEnvVar("empresaId", data.empresaId);
+  } else if (data && data.empresa && data.empresa.id) {
+    bru.setEnvVar("empresaId", data.empresa.id);
+  }
+}

@@ -34,18 +34,21 @@ public class SedeController {
 
     @Operation(summary = "Obtiene una sede por su ID")
     @GetMapping("/{sedeId}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<SedeDTO> getSede(@PathVariable Long sedeId) {
         return ResponseEntity.ok(sedeService.findById(sedeId));
     }
 
     @Operation(summary = "Edita una sede")
     @PutMapping("/{sedeId}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<SedeDTO> updateSede(@PathVariable Long sedeId, @Valid @RequestBody SedeDTO dto) {
         return ResponseEntity.ok(sedeService.update(sedeId, dto));
     }
 
     @Operation(summary = "Activa una sede")
     @PatchMapping("/{sedeId}/activar")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> activarSede(@PathVariable Long sedeId) {
         sedeService.activar(sedeId);
         return ResponseEntity.ok().build();
@@ -53,6 +56,7 @@ public class SedeController {
 
     @Operation(summary = "Desactiva una sede")
     @PatchMapping("/{sedeId}/desactivar")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> desactivarSede(@PathVariable Long sedeId) {
         sedeService.desactivar(sedeId);
         return ResponseEntity.ok().build();
@@ -60,12 +64,14 @@ public class SedeController {
 
     @Operation(summary = "Lista los parámetros de una sede")
     @GetMapping("/{sedeId}/parametros")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<List<SedeParametroDTO>> listParametros(@PathVariable Long sedeId) {
         return ResponseEntity.ok(parametroService.findBySedeId(sedeId));
     }
 
     @Operation(summary = "Añade un parámetro a una sede")
     @PostMapping("/{sedeId}/parametros")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<SedeParametroDTO> addParametro(@PathVariable Long sedeId, @Valid @RequestBody SedeParametroDTO dto) {
         SedeParametroDTO saved = parametroService.save(sedeId, dto);
         URI location = ServletUriComponentsBuilder
@@ -78,12 +84,14 @@ public class SedeController {
 
     @Operation(summary = "Edita un parámetro de una sede")
     @PutMapping("/{sedeId}/parametros/{parametroId}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<SedeParametroDTO> updateParametro(@PathVariable Long sedeId, @PathVariable Long parametroId, @Valid @RequestBody SedeParametroDTO dto) {
         return ResponseEntity.ok(parametroService.update(sedeId, parametroId, dto));
     }
 
     @Operation(summary = "Elimina un parámetro de una sede")
     @DeleteMapping("/{sedeId}/parametros/{parametroId}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> deleteParametro(@PathVariable Long sedeId, @PathVariable Long parametroId) {
         parametroService.delete(sedeId, parametroId);
         return ResponseEntity.noContent().build();

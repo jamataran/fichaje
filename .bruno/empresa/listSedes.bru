@@ -1,14 +1,15 @@
 meta {
-    name: List Sedes
-    type: http
-    seq: 11
+  name: List Sedes
+  type: http
+  seq: 11
 }
 
 get {
-    url: {{baseUrl}}/empresas/:empresaId/sedes
-    auth: inherit
+  url: {{baseUrl}}/empresas/:empresaId/sedes
+  body: none
+  auth: inherit
 }
 
 params:path {
-    empresaId: 1
+  empresaId: 2
 }
