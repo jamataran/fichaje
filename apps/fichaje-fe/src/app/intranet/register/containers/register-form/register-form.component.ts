@@ -78,7 +78,7 @@ export class RegisterFormComponent implements OnInit {
     if (empresaId){
       this.selectedEmpresaId = empresaId
       this.loadEmpresaNombre()
-      this.loadSede()
+      this.loadSede(empresaId)
     }
   }
 
@@ -94,9 +94,9 @@ export class RegisterFormComponent implements OnInit {
     })
   }
 
-  loadSede(): void{
+  loadSede(empresaId: number): void{
     this.isLoadingSedes = true
-    this.empresasService.getMisSedes().subscribe({
+    this.empresasService.getMisSedes(empresaId).subscribe({
       next: (sedes) => {
         this.allSedes = sedes
         this.filteredSedes = sedes
@@ -118,7 +118,7 @@ export class RegisterFormComponent implements OnInit {
     this.http.get<any>(`${environment.apiURL}/empresas?page=0&size=200&sort=nombre,asc`)
       .subscribe({
         next: (response) => {
-          this.ngZone.run(() => {   // ← envolver aquí
+          this.ngZone.run(() => {
             this.allEmpresas = (response.content ?? response).map((e: any) => ({
               id: e.id,
               nombre: e.nombre,
@@ -171,7 +171,7 @@ export class RegisterFormComponent implements OnInit {
 
   loadSedesByEmpresa(empresaId: number): void {
     this.isLoadingSedes = true;
-    this.http.get<SedeDTO[]>(`${environment.apiURL}/sedes/empresa/${empresaId}`)
+    this.http.get<SedeDTO[]>(`${environment.apiURL}/empresas/${empresaId}/sedes`)
       .subscribe({
         next: (sedes) => {
           this.ngZone.run(() => {

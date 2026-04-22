@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.fichaje.dto.entity.*;
 import org.fichaje.config.security.jwt.JwtProvider;
+import org.fichaje.provider.db.entity.UsuarioPrincipal;
 import org.fichaje.service.EmpresaParametroService;
 import org.fichaje.service.EmpresaService;
 import org.fichaje.service.SedeService;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -148,5 +150,13 @@ public class EmpresaController {
                 .buildAndExpand(saved.getId())
                 .toUri();
         return ResponseEntity.created(location).body(saved);
+    }
+
+    @Operation(summary = "Devuelve la empresa asociada al token autenticado")
+    @GetMapping("/mi-empresa")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RRHH')")
+    public ResponseEntity<EmpresaDTO> getMiEmpresa(Authentication authentication) {
+        Long empresaId = ((UsuarioPrincipal) authentication.getPrincipal()).getEmpresaId();
+        return ResponseEntity.of(service.findById(empresaId));
     }
 }

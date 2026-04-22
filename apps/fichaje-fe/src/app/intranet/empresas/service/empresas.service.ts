@@ -31,7 +31,7 @@ export class EmpresasService {
   }
 
   public getSedesByEmpresa(id: number): Observable<SedeEmpresa[]> {
-    return this.httpClient.get<SedeEmpresa[]>(environment.apiURL + `/sedes/empresa/${id}`);
+    return this.httpClient.get<SedeEmpresa[]>(environment.apiURL + `/empresas/${id}/sedes`);
   }
 
   public updateSede(id: number, model: SedeUpdate): Observable<SedeEmpresa> {
@@ -46,8 +46,8 @@ export class EmpresasService {
     return this.httpClient.get<Empresa>(this.endPoint + `/mi-empresa`);
   }
 
-  public getMisSedes(): Observable<SedeEmpresa[]> {
-    return this.httpClient.get<SedeEmpresa[]>(environment.apiURL + `/sedes/mis-sedes`);
+  public getMisSedes(id: number): Observable<SedeEmpresa[]> {
+    return this.httpClient.get<SedeEmpresa[]>(environment.apiURL + `/empresas/${id}/sedes`);
   }
 
   public getAllEmpresas(): Observable<Empresa[]> {
