@@ -150,7 +150,11 @@
                       <button type="button" class="btn btn-outline-primary btn-sm" (click)="onStartEditSede(empresa.id, sede)">
                         <i class="bi bi-pencil"></i> Editar
                       </button>
-                      <button type="button" class="btn btn-sm" [ngClass]="sede.activa ? 'btn-outline-danger' : 'btn-outline-success'" (click)="onToggleSede(empresa.id, sede)" [disabled]="isDeletingSede() || isActivatingSede()">
+                      <button type="button" class="btn btn-sm"
+                              [ngClass]="sede.activa ? 'btn-outline-danger' : 'btn-outline-success'"
+                              (click)="onToggleSede(empresa.id, sede)"
+                              [disabled]="isDeletingSede() || isActivatingSede() || (!empresa.activa && !sede.activa)"
+                              [title]="(!empresa.activa && !sede.activa) ? 'Debe activar la empresa primero' : ''">
                         <i class="bi" [ngClass]="sede.activa ? 'bi-power' : 'bi-check-circle'"></i>
                         {{ sede.activa ? 'Desactivar' : 'Activar' }}
                       </button>
@@ -184,13 +188,6 @@
                       <div class="col-12 col-md-3">
                         <label class="small"><b>Código postal</b></label>
                         <input formControlName="codigoPostal" class="form-control" type="text">
-                      </div>
-
-                      <div class="col-12 col-md-3 d-flex align-items-end">
-                        <div class="form-check mb-2">
-                          <input formControlName="activa" class="form-check-input" type="checkbox" [id]="'sede-activa-' + sede.id">
-                          <label class="form-check-label" [for]="'sede-activa-' + sede.id">Sede activa</label>
-                        </div>
                       </div>
 
                       <div class="col-12 d-flex justify-content-end align-items-end gap-2">
@@ -234,14 +231,7 @@
                   <input formControlName="cif" class="form-control" type="text">
                 </div>
 
-                <div class="col-12 col-md-4 d-flex align-items-end">
-                  <div class="form-check mb-2">
-                    <input formControlName="activa" class="form-check-input" type="checkbox" [id]="'edit-activa-' + empresa.id">
-                    <label class="form-check-label" [for]="'edit-activa-' + empresa.id">Empresa activa</label>
-                  </div>
-                </div>
-
-                <div class="col-12 col-md-8 d-flex justify-content-end align-items-end gap-2">
+                <div class="col-12 d-flex justify-content-end align-items-end gap-2">
                   <button type="button" class="btn btn-outline-secondary" (click)="onCancelEdit()" [disabled]="isUpdating()">
                     Cancelar
                   </button>

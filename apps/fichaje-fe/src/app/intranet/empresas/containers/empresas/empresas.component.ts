@@ -82,8 +82,7 @@ export class EmpresasComponent implements OnInit {
     return this.fb.group({
       nombre: ['', Validators.required],
       razonSocial: [''],
-      cif: ['', Validators.required],
-      activa: [true]
+      cif: ['', Validators.required]
     });
   }
 
@@ -96,8 +95,7 @@ export class EmpresasComponent implements OnInit {
       codigoPostal: ['', Validators.required],
       localidad: ['', Validators.required],
       provincia: ['', Validators.required],
-      pais: ['España', Validators.required],
-      activa: [true]
+      pais: ['España', Validators.required]
     });
   }
 
@@ -368,6 +366,7 @@ export class EmpresasComponent implements OnInit {
         Popup.toastSucess('', 'Empresa activada');
         this.isActivatingEmpresa.set(false);
         this.listarEmpresas();
+        this.loadSedesByEmpresa(id);
       },
       error: (err) => {
         Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo activar la empresa');
@@ -384,6 +383,7 @@ export class EmpresasComponent implements OnInit {
         Popup.toastWarning('', 'Empresa desactivada');
         this.isDeactivatingEmpresa.set(false);
         this.listarEmpresas();
+        this.loadSedesByEmpresa(id);
       },
       error: (err) => {
         Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo desactivar la empresa');

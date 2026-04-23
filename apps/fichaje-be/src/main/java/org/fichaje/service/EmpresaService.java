@@ -130,8 +130,12 @@ public class EmpresaService {
         }
 
         empresaExistente.setActiva(false);
+        if (empresaExistente.getSedes() != null) {
+            empresaExistente.getSedes().forEach(sede -> sede.setActiva(false));
+        }
+
         repository.save(empresaExistente);
-        log.info("Empresa con ID: {} desactivada correctamente", id);
+        log.info("Empresa con ID: {} y sus sedes desactivadas correctamente", id);
     }
 
     @Transactional
@@ -145,8 +149,12 @@ public class EmpresaService {
         }
 
         empresaExistente.setActiva(true);
+        if (empresaExistente.getSedes() != null) {
+            empresaExistente.getSedes().forEach(sede -> sede.setActiva(true));
+        }
+
         repository.save(empresaExistente);
-        log.info("Empresa con ID: {} activada correctamente", id);
+        log.info("Empresa con ID: {} e sus sedes activadas correctamente", id);
     }
 
     @Transactional(readOnly = true)

@@ -84,6 +84,10 @@ public class SedeService {
             throw new BusinessException("La sede con id " + sedeId + " ya está activa");
         }
 
+        if (!sede.getEmpresa().isActiva()) {
+            throw new BusinessException("No se puede activar la sede porque la empresa '" + sede.getEmpresa().getNombre() + "' está desactivada");
+        }
+
         sede.setActiva(true);
         repository.save(sede);
         log.info("Sede con ID: {} activada correctamente", sedeId);
