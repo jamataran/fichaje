@@ -42,6 +42,14 @@ export class EmpresasService {
     return this.httpClient.patch<any>(environment.apiURL + `/sedes/${id}/desactivar`, {});
   }
 
+  public activateSede(id: number): Observable<any> {
+    return this.httpClient.patch<any>(environment.apiURL + `/sedes/${id}/activar`, {});
+  }
+
+  public activateEmpresa(id: number): Observable<any> {
+    return this.httpClient.patch<any>(this.endPoint + `/${id}/activar`, {});
+  }
+
   public getMiEmpresa(): Observable<Empresa> {
     return this.httpClient.get<Empresa>(this.endPoint + `/mi-empresa`);
   }

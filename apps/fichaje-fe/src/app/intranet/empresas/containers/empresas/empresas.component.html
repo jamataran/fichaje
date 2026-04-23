@@ -121,8 +121,9 @@
             <button type="button" class="btn btn-outline-primary btn-sm" (click)="onStartEdit(empresa)">
               <i class="bi bi-pencil"></i> Editar
             </button>
-            <button type="button" class="btn btn-outline-danger btn-sm" (click)="onDelete(empresa)">
-              <i class="bi bi-trash"></i> Borrar
+            <button type="button" class="btn btn-sm" [ngClass]="empresa.activa ? 'btn-outline-danger' : 'btn-outline-success'" (click)="onToggleEmpresa(empresa)" [disabled]="isDeactivatingEmpresa() || isActivatingEmpresa()">
+              <i class="bi" [ngClass]="empresa.activa ? 'bi-power' : 'bi-check-circle'"></i>
+              {{ empresa.activa ? 'Desactivar' : 'Activar' }}
             </button>
           </td>
         </tr>
@@ -149,8 +150,9 @@
                       <button type="button" class="btn btn-outline-primary btn-sm" (click)="onStartEditSede(empresa.id, sede)">
                         <i class="bi bi-pencil"></i> Editar
                       </button>
-                      <button type="button" class="btn btn-outline-danger btn-sm" (click)="onDeleteSede(empresa.id, sede)" [disabled]="isDeletingSede()">
-                        <i class="bi bi-trash"></i> Borrar
+                      <button type="button" class="btn btn-sm" [ngClass]="sede.activa ? 'btn-outline-danger' : 'btn-outline-success'" (click)="onToggleSede(empresa.id, sede)" [disabled]="isDeletingSede() || isActivatingSede()">
+                        <i class="bi" [ngClass]="sede.activa ? 'bi-power' : 'bi-check-circle'"></i>
+                        {{ sede.activa ? 'Desactivar' : 'Activar' }}
                       </button>
                     </div>
                   </div>

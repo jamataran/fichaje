@@ -18,6 +18,9 @@ export class EmpresasComponent implements OnInit {
   isUpdating = signal(false);
   isUpdatingSede = signal(false);
   isDeletingSede = signal(false);
+  isActivatingSede = signal(false);
+  isActivatingEmpresa = signal(false);
+  isDeactivatingEmpresa = signal(false);
   loadingSedesEmpresaId = signal<number | null>(null);
   expandedEmpresaId = signal<number | null>(null);
   editingEmpresaId = signal<number | null>(null);
@@ -148,16 +151,6 @@ export class EmpresasComponent implements OnInit {
         Popup.toastDanger('Error', msg);
       }
     });
-  }
-
-  onDelete(empresa: Empresa): void {
-    Popup.dangerConfirmBox(
-      `¿Desea eliminar la empresa ${empresa.nombre}?`,
-      'Esta operación no se puede deshacer',
-      'SI',
-      'NO',
-      () => this.deleteEmpresa(empresa.id)
-    );
   }
 
   onStartEdit(empresa: Empresa): void {
@@ -306,14 +299,34 @@ export class EmpresasComponent implements OnInit {
     });
   }
 
-  onDeleteSede(empresaId: number, sede: SedeEmpresa): void {
-    Popup.dangerConfirmBox(
-      `¿Desea borrar la sede ${sede.nombre}?`,
-      'Esta operación desactivará la sede y no se podrá usar para nuevas asignaciones',
-      'SI',
-      'NO',
-      () => this.deactivateSede(empresaId, sede.id)
-    );
+  onToggleSede(empresaId: number, sede: SedeEmpresa): void {
+    if (sede.activa) {
+      Popup.dangerConfirmBox(
+        `¿Desea desactivar la sede ${sede.nombre}?`,
+        'Esta operación desactivará la sede y no se podrá usar para nuevas asignaciones',
+        'DESACTIVAR',
+        'CANCELAR',
+        () => this.deactivateSede(empresaId, sede.id)
+      );
+    } else {
+      this.activateSede(empresaId, sede.id);
+    }
+  }
+
+  private activateSede(empresaId: number, sedeId: number): void {
+    this.isActivatingSede.set(true);
+
+    this.empresasService.activateSede(sedeId).subscribe({
+      next: () => {
+        Popup.toastSucess('', 'Sede activada');
+        this.isActivatingSede.set(false);
+        this.loadSedesByEmpresa(empresaId);
+      },
+      error: (err) => {
+        Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo activar la sede');
+        this.isActivatingSede.set(false);
+      }
+    });
   }
 
   private deactivateSede(empresaId: number, sedeId: number): void {
@@ -333,19 +346,48 @@ export class EmpresasComponent implements OnInit {
     });
   }
 
-  private deleteEmpresa(id: number): void {
-    this.empresasService.delete(id).subscribe({
+  onToggleEmpresa(empresa: Empresa): void {
+    if (empresa.activa) {
+      Popup.dangerConfirmBox(
+        `¿Desea desactivar la empresa ${empresa.nombre}?`,
+        'Los usuarios de esta empresa no podrán acceder al sistema.',
+        'DESACTIVAR',
+        'CANCELAR',
+        () => this.deactivateEmpresa(empresa.id)
+      );
+    } else {
+      this.activateEmpresa(empresa.id);
+    }
+  }
+
+  private activateEmpresa(id: number): void {
+    this.isActivatingEmpresa.set(true);
+
+    this.empresasService.activateEmpresa(id).subscribe({
       next: () => {
-        Popup.toastWarning('', 'Empresa eliminada');
-
-        if (this.listaEmpresas.length === 1 && this.pag.page > 0) {
-          this.pag.page--;
-        }
-
+        Popup.toastSucess('', 'Empresa activada');
+        this.isActivatingEmpresa.set(false);
         this.listarEmpresas();
       },
       error: (err) => {
-        Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo eliminar la empresa');
+        Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo activar la empresa');
+        this.isActivatingEmpresa.set(false);
+      }
+    });
+  }
+
+  private deactivateEmpresa(id: number): void {
+    this.isDeactivatingEmpresa.set(true);
+
+    this.empresasService.delete(id).subscribe({
+      next: () => {
+        Popup.toastWarning('', 'Empresa desactivada');
+        this.isDeactivatingEmpresa.set(false);
+        this.listarEmpresas();
+      },
+      error: (err) => {
+        Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo desactivar la empresa');
+        this.isDeactivatingEmpresa.set(false);
       }
     });
   }
