@@ -8,6 +8,7 @@ import { HttpClient } from "@angular/common/http";
 import {environment } from "src/environments/environment";
 import { NgZone } from '@angular/core';
 import {EmpresasService} from "../../../empresas/service/empresas.service";
+import { EmpleadosService } from 'src/app/intranet/empleados/service/empleados.service';
 
 export interface EmpresaDTO {
   id: number;
@@ -64,7 +65,8 @@ export class RegisterFormComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private ngZone: NgZone,
-    private empresasService: EmpresasService
+    private empresasService: EmpresasService,
+    private empleadosService: EmpleadosService
   ) { }
 
   ngOnInit(): void {
@@ -83,15 +85,21 @@ export class RegisterFormComponent implements OnInit {
   }
 
   loadEmpresaNombre(): void{
-    this.empresasService.getMiEmpresa().subscribe({
-      next: (empresa) => {
-        this.empresaNombre = empresa.nombre
-        this.empresaSearchInput = empresa.nombre
+    this.empleadosService.getMyUsuario().subscribe({
+      next: (usuario) => {
+        if (usuario.empresas && usuario.empresas.length > 0) {
+          const empresaId = this.tokenService.getEmpresaId();
+          const empresa = usuario.empresas.find((e: any) => e.id === empresaId);
+          if (empresa) {
+            this.empresaNombre = empresa.nombre;
+            this.empresaSearchInput = empresa.nombre;
+          }
+        }
       },
       error: () => {
-        Popup.toastDanger('Error', 'No se pudo cargar la empresa')
+        Popup.toastDanger('Error', 'No se pudo cargar la empresa desde el perfil');
       }
-    })
+    });
   }
 
   loadSede(empresaId: number): void{

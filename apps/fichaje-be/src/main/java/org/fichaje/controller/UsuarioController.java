@@ -47,6 +47,14 @@ public class UsuarioController
 		return ResponseEntity.ok(page);
 	}
 
+	@Override
+	@GetMapping("/{id}")
+	public ResponseEntity<?> getById(@PathVariable Long id) {
+		return service.findById(id)
+				.map(usuario -> ResponseEntity.ok(dtoConverter.inverseTransform(usuario)))
+				.orElse(ResponseEntity.notFound().build());
+	}
+
 	private Specification<Usuario> createSpec(UsuarioDtoFilter dto) {
 		Specification<Usuario> spec = Specification.where((root, query, criteriaBuilder) -> null);
 		if (dto == null) return spec;

@@ -5,6 +5,7 @@ import { Sede, SedeCreate, SedeUpdate } from '../../model/sede.model';
 import { SedesService } from '../../service/sedes.service';
 import { EmpresasService } from '../../../empresas/service/empresas.service';
 import { TokenService } from 'src/app/core/auth/service/token.service';
+import { EmpleadosService } from 'src/app/intranet/empleados/service/empleados.service';
 
 @Component({
   selector: 'app-sedes',
@@ -30,6 +31,7 @@ export class SedesComponent implements OnInit {
   constructor(
     private sedesService: SedesService,
     private empresasService: EmpresasService,
+    private empleadosService: EmpleadosService,
     private tokenService: TokenService,
     private fb: FormBuilder
   ) {
@@ -59,14 +61,20 @@ export class SedesComponent implements OnInit {
   }
 
   cargarDatos(): void {
-    // Cargar mi empresa para tener el nombre
-    this.empresasService.getMiEmpresa().subscribe({
-      next: (empresa) => {
-        this.nombreEmpresa = empresa.nombre;
-        if (!this.empresaId) this.empresaId = empresa.id;
+    // Cargar mi empresa para tener el nombre desde el perfil del usuario
+    this.empleadosService.getMyUsuario().subscribe({
+      next: (usuario) => {
+        if (usuario.empresas && usuario.empresas.length > 0) {
+          const empresaId = this.tokenService.getEmpresaId();
+          const empresa = usuario.empresas.find((e: any) => e.id === empresaId);
+          if (empresa) {
+            this.nombreEmpresa = empresa.nombre;
+            if (!this.empresaId) this.empresaId = empresa.id;
+          }
+        }
       },
       error: () => {
-        Popup.toastDanger('Error', 'No se pudo cargar la información de la empresa');
+        Popup.toastDanger('Error', 'No se pudo cargar la información de la empresa desde el perfil');
       }
     });
 

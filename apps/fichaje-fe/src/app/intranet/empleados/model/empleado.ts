@@ -11,6 +11,8 @@ export class Empleado {
   enVacaciones: boolean | null
   deBaja: boolean | null
   ultimoFichaje: string
+  empresas: any[]
+  sedes: any[]
 
   constructor(
     email: string,
@@ -22,7 +24,9 @@ export class Empleado {
     working: boolean | null,
     enVacaciones: boolean | null,
     deBaja: boolean | null,
-    ultimoFichaje: string
+    ultimoFichaje: string,
+    empresas: any[] = [],
+    sedes: any[] = []
   ) {
     this.email = email
     this.numero = numero
@@ -34,6 +38,8 @@ export class Empleado {
     this.enVacaciones = enVacaciones
     this.deBaja = deBaja
     this.ultimoFichaje = ultimoFichaje
+    this.empresas = empresas
+    this.sedes = sedes
   }
 
 }

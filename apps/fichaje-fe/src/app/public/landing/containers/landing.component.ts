@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { LoginUsuario } from 'src/app/core/auth/model/login-usuario';
 import { AuthService, EmpresaAuthOption } from 'src/app/core/auth/service/auth.service';
 import { TokenService } from 'src/app/core/auth/service/token.service';
+import { EmpleadosService } from 'src/app/intranet/empleados/service/empleados.service';
 
 @Component({
     selector: 'app-landing',
@@ -26,6 +27,7 @@ export class LandingComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     private tokenService: TokenService,
     private authService: AuthService,
+    private empleadosService: EmpleadosService,
     private router: Router
   ) {
     this.loginForm = this.formBuilder.group({
@@ -65,12 +67,12 @@ export class LandingComponent implements OnInit {
   private loadEmpresasAndContinue(): void {
     this.isLoadingEmpresas.set(true);
 
-    this.authService.getEmpresasAuth().subscribe(
-      empresas => {
+    this.empleadosService.getMyUsuario().subscribe(
+      usuario => {
         this.isLoadingEmpresas.set(false);
         this.isLoading.set(false);
 
-        this.empresaOptions.set(empresas ?? []);
+        this.empresaOptions.set(usuario.empresas ?? []);
 
         // Caso robusto: sin empresas asignadas, continuar directamente
         if (this.empresaOptions().length === 0) {
@@ -92,7 +94,7 @@ export class LandingComponent implements OnInit {
       err => {
         this.isLoadingEmpresas.set(false);
         this.isLoading.set(false);
-        this.errMsg = err.error?.mensaje || err.error?.error || 'No se pudieron obtener las empresas del usuario.';
+        this.errMsg = err.error?.mensaje || err.error?.error || 'No se pudieron obtener las empresas del usuario desde su perfil.';
       }
     );
   }

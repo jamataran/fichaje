@@ -26,7 +26,7 @@ export class EmpleadosService implements DataCsv {
     size: number,
     order: string,
     asc: boolean): Observable<any> {
-    
+
     const sort = `${order},${asc ? 'asc' : 'desc'}`;
     let params = `?page=${page}&size=${size}&sort=${sort}`;
     params = this.addFilterParams(params, dto);
@@ -48,7 +48,7 @@ export class EmpleadosService implements DataCsv {
   }
 
   /**
-   * Método de utilidad para añadir parámetros de filtrado a la URL
+   * Metodo de utilidad para añadir parámetros de filtrado a la URL
    */
   private addFilterParams(currentParams: string, dto: EmpleadoDto): string {
     let params = currentParams;

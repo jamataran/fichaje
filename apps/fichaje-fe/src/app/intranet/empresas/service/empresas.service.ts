@@ -50,10 +50,6 @@ export class EmpresasService {
     return this.httpClient.patch<any>(this.endPoint + `/${id}/activar`, {});
   }
 
-  public getMiEmpresa(): Observable<Empresa> {
-    return this.httpClient.get<Empresa>(this.endPoint + `/mi-empresa`);
-  }
-
   public getMisSedes(id: number): Observable<SedeEmpresa[]> {
     return this.httpClient.get<SedeEmpresa[]>(environment.apiURL + `/empresas/${id}/sedes`);
   }

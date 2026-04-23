@@ -144,12 +144,4 @@ public class EmpresaController {
                 .toUri();
         return ResponseEntity.created(location).body(saved);
     }
-
-    @Operation(summary = "Devuelve la empresa asociada al token autenticado")
-    @GetMapping("/mi-empresa")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RRHH')")
-    public ResponseEntity<EmpresaDTO> getMiEmpresa(Authentication authentication) {
-        Long empresaId = ((UsuarioPrincipal) authentication.getPrincipal()).getEmpresaId();
-        return ResponseEntity.of(service.findById(empresaId));
-    }
 }

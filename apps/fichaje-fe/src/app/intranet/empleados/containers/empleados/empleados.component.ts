@@ -104,12 +104,17 @@ export class EmpleadosComponent implements OnInit {
         this.lockEmpresa = true;
         this.cargarSedes(empresaId);
         
-        this.empresasService.getMiEmpresa().subscribe({
-          next: (empresa) => {
-            this.listaEmpresas = [empresa];
+        this.service.getMyUsuario().subscribe({
+          next: (usuario) => {
+            if (usuario.empresas && usuario.empresas.length > 0) {
+              const empresa = usuario.empresas.find((e: any) => e.id === empresaId);
+              if (empresa) {
+                this.listaEmpresas = [empresa];
+              }
+            }
           },
           error: (err) => {
-            console.error('Error al cargar mi empresa', err);
+            console.error('Error al cargar mi perfil de usuario', err);
           }
         });
       }
