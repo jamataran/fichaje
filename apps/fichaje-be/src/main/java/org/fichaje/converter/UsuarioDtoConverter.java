@@ -19,10 +19,12 @@ public class UsuarioDtoConverter {
 
 	private final PasswordEncoder passwordEncoder;
 	private final SedeDtoConverter sedeDtoConverter;
+	private final EmpresaDtoConverter empresaDtoConverter;
 
-	public UsuarioDtoConverter(SedeDtoConverter sedeDtoConverter, PasswordEncoder passwordEncoder){
+	public UsuarioDtoConverter(SedeDtoConverter sedeDtoConverter, PasswordEncoder passwordEncoder, EmpresaDtoConverter empresaDtoConverter){
 		this.sedeDtoConverter = sedeDtoConverter;
 		this.passwordEncoder = passwordEncoder;
+		this.empresaDtoConverter = empresaDtoConverter;
 	}
 
 	public UsuarioDTO inverseTransform(Usuario u) {
@@ -41,12 +43,9 @@ public class UsuarioDtoConverter {
 				.sedes(u.getSedes() != null ? u.getSedes().stream()
 						.map(sedeDtoConverter::todtoConverter)
 						.toList() : new ArrayList<>())
-				.empresaIds(u.getEmpresas() != null ? u.getEmpresas().stream()
-						.map(Empresa::getId)
-						.collect(Collectors.toList()) : new ArrayList<>())
-				.sedeIds(u.getSedes() != null ? u.getSedes().stream()
-						.map(Sede::getId)
-						.collect(Collectors.toList()) : new ArrayList<>())
+				.empresas(u.getEmpresas() != null ? u.getEmpresas().stream()
+						.map(empresaDtoConverter::toDtoWithoutSedes)
+						.toList() : new ArrayList<>())
 				.build();
 	}
 

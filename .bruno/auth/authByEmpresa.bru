@@ -1,19 +1,23 @@
 meta {
-    name: Auth By Empresa
-    type: http
-    seq: 3
+  name: Auth By Empresa
+  type: http
+  seq: 3
 }
 
 post {
-    url: {{baseUrl}}/auth/empresa
-    body: json
-    auth: inherit
+  url: {{baseUrl}}/auth/empresa
+  body: json
+  auth: inherit
 }
 
 body:json {
     {
         "empresaId": {{empresaId}}
     }
+}
+
+vars:pre-request {
+  empresaId: 1
 }
 
 script:post-response {

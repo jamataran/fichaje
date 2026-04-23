@@ -34,11 +34,8 @@ public class UsuarioDTO {
 	private Boolean working;
 
 	private List<SedeDTO> sedes;
+	private List<EmpresaDTOWithoutSedes> empresas;
 
 	private Long sedeId;
-	
-	// Para depuración temporal
-	private List<Long> empresaIds;
-	private List<Long> sedeIds;
 
 }

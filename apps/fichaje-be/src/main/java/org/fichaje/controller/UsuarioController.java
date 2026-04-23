@@ -143,7 +143,7 @@ public class UsuarioController
 			String numeroUsuario = jwtProvider.getSubjectFromToken(token);
 			Usuario usuario = service.findByNumero(numeroUsuario).orElse(null);
 			if (usuario != null) {
-				return ResponseEntity.ok(usuario);
+				return ResponseEntity.ok(dtoConverter.inverseTransform(usuario));
 			} else {
 				return ResponseEntity.notFound().build();
 			}
@@ -164,17 +164,5 @@ public class UsuarioController
 	public ResponseEntity<?> removeSede(@PathVariable Long id, @PathVariable Long sedeId) {
 		service.removeSede(id, sedeId);
 		return ResponseEntity.noContent().build();
-	}
-
-	@Operation(summary = "Lista las sedes de un usuario")
-	@GetMapping("/{id}/sedes")
-	public ResponseEntity<List<SedeDTO>> listSedes(@PathVariable Long id) {
-		return ResponseEntity.ok(service.listSedes(id));
-	}
-
-	@Operation(summary = "Lista todas las empresas de un usuario")
-	@GetMapping("/{id}/empresas")
-	public ResponseEntity<List<EmpresaDTOWithoutSedes>> listEmpresas(@PathVariable Long id) {
-		return ResponseEntity.ok(service.findEmpresasByUsuarioIdWithoutSedes(id));
 	}
 }

@@ -1,5 +1,7 @@
 package org.fichaje.provider.db.entity;
 
+import java.util.Set;
+import java.util.HashSet;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -70,7 +72,7 @@ public class Usuario {
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "usuario_rol", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "rol_id"))
 //	private Set<Rol> roles = new HashSet<>();
-	private List<Rol> roles;
+	private Set<Rol> roles;
 
 	@JsonIgnore
 //	@JsonIgnoreProperties(value = { "usuario" })
@@ -97,12 +99,12 @@ public class Usuario {
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "usuario_empresa", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "empresa_id"))
-	private List<Empresa> empresas;
+	private Set<Empresa> empresas;
 
 	@JsonIgnore
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "usuario_sede", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "sede_id"))
-	private List<Sede> sedes;
+	private Set<Sede> sedes;
 
 //	@ManyToOne
 //	@JoinColumn(name = "calendario_id")

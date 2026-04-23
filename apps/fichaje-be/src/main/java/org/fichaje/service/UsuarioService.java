@@ -54,6 +54,10 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
         return repository.findByNumero(numero);
     }
 
+    public Optional<Usuario> findSimpleByNumero(String numero) {
+        return repository.findSimpleByNumero(numero);
+    }
+
     @Transactional(readOnly = true)
     public boolean belongsToEmpresa(String numeroUsuario, Long empresaId) {
         if (numeroUsuario == null || empresaId == null) {
@@ -108,8 +112,8 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
         usuario.setDeBaja(false);
         usuario.setWorking(false);
         usuario.setAdmin(false);
-        usuario.setSedes(new ArrayList<>());
-        usuario.setEmpresas(new ArrayList<>());
+        usuario.setSedes(new HashSet<>());
+        usuario.setEmpresas(new HashSet<>());
 
         // Generar y establecer contraseña
         // FIXME
@@ -117,7 +121,7 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
         usuario.setPassword(passwordEncoder.encode(password));
 
         // Asignar roles
-        List<Rol> roles = assignRoles(usuarioDto.getRoles());
+        Set<Rol> roles = assignRoles(usuarioDto.getRoles());
         usuario.setRoles(roles);
 
         // Guardar usuario
@@ -155,12 +159,14 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
         usuario.setDeBaja(false);
         usuario.setWorking(false);
         usuario.setAdmin(true);
+        usuario.setSedes(new HashSet<>());
+        usuario.setEmpresas(new HashSet<>());
 
         // Usar contraseña proporcionada
         usuario.setPassword(passwordEncoder.encode(usuarioDto.getPassword()));
 
         // Asignar roles (incluyendo ROLE_ADMIN si aplica)
-        List<Rol> roles = assignRoles(usuarioDto.getRoles());
+        Set<Rol> roles = assignRoles(usuarioDto.getRoles());
         usuario.setRoles(roles);
 
         return save(usuario);
@@ -170,10 +176,10 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
      * Asigna los roles correspondientes al usuario.
      *
      * @param rolesFromDto Lista de nombres de roles desde el DTO
-     * @return Lista de entidades Rol
+     * @return Set de entidades Rol
      */
-    private List<Rol> assignRoles(List<String> rolesFromDto) {
-        List<Rol> roles = new ArrayList<>();
+    private Set<Rol> assignRoles(List<String> rolesFromDto) {
+        Set<Rol> roles = new HashSet<>();
 
         // Rol base: ROLE_USER
         roles.add(rolService.findByRolNombre(RolNombre.ROLE_USER)

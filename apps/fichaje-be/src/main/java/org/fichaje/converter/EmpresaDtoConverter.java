@@ -15,8 +15,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.fichaje.dto.entity.EmpresaDTOWithoutSedes;
+
 @Component
 public class EmpresaDtoConverter {
+
+	public EmpresaDTOWithoutSedes toDtoWithoutSedes(Empresa e) {
+		return EmpresaDTOWithoutSedes.builder()
+				.id(e.getId())
+				.nombre(e.getNombre())
+				.razonSocial(e.getRazonSocial())
+				.cif(e.getCif())
+				.activa(e.isActiva())
+				.build();
+	}
 
 	public Empresa transform(EmpresaCreateDTO dto) {
 		return Empresa.builder()
