@@ -72,7 +72,7 @@ public class MainSecurity {
 						.requestMatchers("/permiso/**").hasRole(RRHH)
 						.requestMatchers("/usuario/password/**").hasRole(USER)
 						.requestMatchers("/usuario/miusuario").hasRole(USER)
-						.requestMatchers("/usuario/**").hasRole(RRHH)
+						.requestMatchers("/usuario/**").hasAnyRole(RRHH, SUPER_ADMIN)
 						.requestMatchers("/vacaciones/create").hasRole(USER)
 						.requestMatchers("/vacaciones/pagesFiltered").hasRole(USER)
 						.requestMatchers("/vacaciones/listFiltered").hasRole(USER)

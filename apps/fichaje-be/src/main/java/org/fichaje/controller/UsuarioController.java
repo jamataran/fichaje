@@ -1,12 +1,11 @@
 package org.fichaje.controller;
 
-import java.util.List;
-
 import org.fichaje.dto.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +20,10 @@ import org.fichaje.provider.db.specifications.UsuarioSpecifications;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/usuario")
-//@CrossOrigin(origins = "http://localhost:4200")
 public class UsuarioController
 		extends CommonController<Usuario, UsuarioService> {
 
@@ -34,81 +34,23 @@ public class UsuarioController
 	@Autowired
 	UsuarioSpecifications specifications;
 
-	@Operation(summary = "Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
-	@PostMapping("/pagesFiltered")
-	public ResponseEntity<Page<UsuarioDTO>> pageDtoSpec(
-			@RequestBody UsuarioDtoFilter dto,
-			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "20") int size,
-			@RequestParam(defaultValue = "id") String order,
-			@RequestParam(defaultValue = "true") boolean asc) {
-
-		Specification<Usuario> spec = Specification.where((root, query, criteriaBuilder) -> null);
+	@Operation(summary = "Punto único de obtención de usuarios: permite listado, paginación y filtrado mediante query params")
+	@GetMapping
+	public ResponseEntity<Page<UsuarioDTO>> list(
+			UsuarioDtoFilter filter,
+			@PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
 		
-		if (dto.getNombreEmpleado() != null) {
-			spec = spec.and(specifications.nombreUsuarioContains(dto.getNombreEmpleado()));
-		}
-		if (dto.getEmail() != null) {
-			spec = spec.and(specifications.emailUsuarioContains(dto.getEmail()));
-		}
-		if (dto.getNumero() != null) {
-			spec = spec.and(specifications.numeroUsuarioContains(dto.getNumero()));
-		}
-		if (dto.getDni() != null) {
-			spec = spec.and(specifications.dniUsuarioContains(dto.getDni()));
-		}
-		if (dto.getWorking() != null) {
-			spec = spec.and(specifications.isWorking(dto.getWorking()));
-		}
-		if (dto.getEnVacaciones() != null) {
-			spec = spec.and(specifications.isEnVacaciones(dto.getEnVacaciones()));
-		}
-		if (dto.getDeBaja() != null) {
-			spec = spec.and(specifications.isDeBaja(dto.getDeBaja()));
-		}
-		if (dto.getDiasVacacionesDesde() != null) {
-			spec = spec.and(specifications.diasDesde(dto.getDiasVacacionesDesde()));
-		}
-		if (dto.getDiasVacacionesHasta() != null) {
-			spec = spec.and(specifications.diasHasta(dto.getDiasVacacionesHasta()));
-		}
-		if (dto.getHorasGeneradasDesde() != null) {
-			spec = spec.and(specifications.horasDesde(dto.getHorasGeneradasDesde()));
-		}
-		if (dto.getHorasGeneradasHasta() != null) {
-			spec = spec.and(specifications.horasHasta(dto.getHorasGeneradasHasta()));
-		}
-		if (dto.getEmpresaId() != null) {
-			spec = spec.and(specifications.hasEmpresa(dto.getEmpresaId()));
-		}
-		if (dto.getSedeId() != null) {
-			spec = spec.and(specifications.hasSede(dto.getSedeId()));
-		}
-
-		Page<Usuario> entities = service.pagesAndSpec(
-				spec,
-				PageRequest.of(page, size, Sort.by(order)));
-
-		if (!asc)
-			entities = service.pagesAndSpec(
-					spec,
-					PageRequest.of(page, size, Sort.by(order).descending()));
-
-		Page<UsuarioDTO> entitiesDto = entities
+		Specification<Usuario> spec = createSpec(filter);
+		Page<UsuarioDTO> page = service.pagesAndSpec(spec, pageable)
 				.map(usu -> dtoConverter.inverseTransform(usu));
-
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.body(entitiesDto);
-
+		
+		return ResponseEntity.ok(page);
 	}
 
-	@Operation(summary = "Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
-	@PostMapping("/listFiltered")
-	public ResponseEntity<List<Usuario>> filteredList(@RequestBody UsuarioDtoFilter dto) {
-
+	private Specification<Usuario> createSpec(UsuarioDtoFilter dto) {
 		Specification<Usuario> spec = Specification.where((root, query, criteriaBuilder) -> null);
-		
+		if (dto == null) return spec;
+
 		if (dto.getNombreEmpleado() != null) {
 			spec = spec.and(specifications.nombreUsuarioContains(dto.getNombreEmpleado()));
 		}
@@ -148,16 +90,7 @@ public class UsuarioController
 		if (dto.getSedeId() != null) {
 			spec = spec.and(specifications.hasSede(dto.getSedeId()));
 		}
-
-		List<Usuario> entities = service.filterAndList(spec);
-
-//		List<UsuarioDTO> entitiesDto = (List<UsuarioDTO>) entities.stream()
-//				.map(usu -> dtoConverter.inverseTransform(usu));
-
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.body(entities);
-
+		return spec;
 	}
 
 	@PutMapping("/{id}")
@@ -165,10 +98,8 @@ public class UsuarioController
 			@PathVariable Long id) {
 
 		return service.findById(id).map(d -> {
-
 			dtoConverter.transformEdit(d, editar);
 			return ResponseEntity.ok(service.save(d));
-
 		}).orElseGet(() -> {
 			return ResponseEntity.notFound().build();
 		});
@@ -176,17 +107,14 @@ public class UsuarioController
 
 	@PutMapping("password/{id}")
 	public ResponseEntity<?> editUserPassword(@RequestBody UsuarioDtoEditPassword editar,
-			// @RequestHeader Map<String, String> headers,
 			@RequestHeader("authorization") String token,
 			@PathVariable Long id) {
 
 		token = token.replace("Bearer ", "");
 		Usuario usuario = service.findById(id).orElse(null);
 		if (usuario != null) {
-
 			if (jwtProvider.validateToken(token)
 					&& jwtProvider.getSubjectFromToken(token).equals(usuario.getNumero())) {
-
 				usuario = dtoConverter.transformEditPassword(usuario, editar);
 				return ResponseEntity.ok(service.save(usuario));
 			} else {

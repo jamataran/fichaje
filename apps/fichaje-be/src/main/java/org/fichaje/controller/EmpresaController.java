@@ -125,13 +125,6 @@ public class EmpresaController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Lista todos los usuarios asignados a una empresa")
-    @GetMapping("/{id}/usuarios")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<List<UsuarioDTO>> listUsuarios(@PathVariable Long id) {
-        return ResponseEntity.ok(service.findUsuariosByEmpresaId(id));
-    }
-
     @Operation(summary = "Lista las sedes de una empresa")
     @GetMapping("/{empresaId}/sedes")
     @PreAuthorize("hasRole('SUPER_ADMIN') or (hasRole('RRHH') and #empresaId == authentication.principal.empresaId)")
