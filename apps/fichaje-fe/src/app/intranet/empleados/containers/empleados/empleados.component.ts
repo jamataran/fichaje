@@ -103,14 +103,12 @@ export class EmpleadosComponent implements OnInit {
         this.dto.empresaId = empresaId;
         this.lockEmpresa = true;
         this.cargarSedes(empresaId);
-        
+
         this.service.getMyUsuario().subscribe({
           next: (usuario) => {
             if (usuario.empresas && usuario.empresas.length > 0) {
-              const empresa = usuario.empresas.find((e: any) => e.id === empresaId);
-              if (empresa) {
-                this.listaEmpresas = [empresa];
-              }
+              const empresa = usuario.empresas[0];
+              this.listaEmpresas = [empresa];
             }
           },
           error: (err) => {
@@ -212,7 +210,7 @@ export class EmpleadosComponent implements OnInit {
     this.dto.enVacaciones = null
     this.dto.deBaja = null
     this.dto.working = null
-    
+
     if (!this.lockEmpresa) {
       this.dto.empresaId = null;
       this.listaSedes = [];

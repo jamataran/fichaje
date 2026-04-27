@@ -67,12 +67,12 @@ export class LandingComponent implements OnInit {
   private loadEmpresasAndContinue(): void {
     this.isLoadingEmpresas.set(true);
 
-    this.empleadosService.getMyUsuario().subscribe(
-      usuario => {
+    this.authService.getEmpresasAuth().subscribe(
+      empresas => {
         this.isLoadingEmpresas.set(false);
         this.isLoading.set(false);
 
-        this.empresaOptions.set(usuario.empresas ?? []);
+        this.empresaOptions.set(empresas ?? []);
 
         // Caso robusto: sin empresas asignadas, continuar directamente
         if (this.empresaOptions().length === 0) {

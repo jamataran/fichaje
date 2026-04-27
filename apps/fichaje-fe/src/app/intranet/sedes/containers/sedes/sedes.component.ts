@@ -65,12 +65,9 @@ export class SedesComponent implements OnInit {
     this.empleadosService.getMyUsuario().subscribe({
       next: (usuario) => {
         if (usuario.empresas && usuario.empresas.length > 0) {
-          const empresaId = this.tokenService.getEmpresaId();
-          const empresa = usuario.empresas.find((e: any) => e.id === empresaId);
-          if (empresa) {
-            this.nombreEmpresa = empresa.nombre;
-            if (!this.empresaId) this.empresaId = empresa.id;
-          }
+          const empresa = usuario.empresas[0];
+          this.nombreEmpresa = empresa.nombre;
+          if (!this.empresaId) this.empresaId = empresa.id;
         }
       },
       error: () => {
