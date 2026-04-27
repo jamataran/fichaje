@@ -83,27 +83,22 @@ public class AuthController {
 	}
 
 	@PostMapping("/empresa")
-	public ResponseEntity<?> authByEmpresa(
+	public ResponseEntity<JwtDto> authByEmpresa(
 			@Valid @RequestBody AuthEmpresaRequest request,
-			BindingResult bindingResult,
-			Authentication authentication) {
+			BindingResult bindingResult) {
 
 		if (bindingResult.hasErrors()) {
 			return new ResponseEntity(new Mensaje("empresaId es obligatorio"), HttpStatus.BAD_REQUEST);
 		}
 
-		return securityService.generateEmpresaToken(authentication, request.getEmpresaId())
-				.<ResponseEntity<?>>map(jwtDto -> ResponseEntity.status(HttpStatus.OK).body(jwtDto))
-				.orElseGet(() -> ResponseEntity.status(HttpStatus.FORBIDDEN)
-						.body(new Mensaje("El usuario no pertenece a la empresa seleccionada")));
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return ResponseEntity.ok(securityService.generateEmpresaToken(authentication, request.getEmpresaId()));
 	}
 
 	@GetMapping("/empresas")
-	public ResponseEntity<?> authEmpresas(Authentication authentication) {
-		return securityService.getEmpresasForAuthenticatedUser(authentication)
-				.<ResponseEntity<?>>map(empresas -> ResponseEntity.status(HttpStatus.OK).body(empresas))
-				.orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-						.body(new Mensaje("No autenticado o usuario no encontrado")));
+	public ResponseEntity<List<EmpresaDTOWithoutSedes>> authEmpresas() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return ResponseEntity.ok(securityService.getEmpresasForAuthenticatedUser(authentication));
 	}
 
     private ResponseEntity<Mensaje> validarUsuario(UsuarioDTO nuevoUsuario, BindingResult bindingResult) {

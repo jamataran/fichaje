@@ -6,6 +6,7 @@ import java.util.List;
 import org.fichaje.dto.JwtDto;
 import org.fichaje.dto.entity.EmpresaDTOWithoutSedes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import org.fichaje.provider.db.entity.Usuario;
 import org.fichaje.provider.db.entity.RrhhDto;
 import org.fichaje.config.security.enums.RolNombre;
 import org.fichaje.config.security.jwt.JwtProvider;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class SecurityService {
@@ -48,32 +50,29 @@ public class SecurityService {
         return new RrhhDto(response, numeroUsuario);
     }
 
-    public Optional<JwtDto> generateEmpresaToken(Authentication authentication, Long empresaId) {
+    public JwtDto generateEmpresaToken(Authentication authentication, Long empresaId) {
         if (authentication == null || empresaId == null) {
-            return Optional.empty();
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No autenticado");
         }
 
         String numeroUsuario = authentication.getName();
-        boolean belongs = usuarioService.belongsToEmpresa(numeroUsuario, empresaId);
-        if (!belongs) {
-            return Optional.empty();
+        if (!usuarioService.belongsToEmpresa(numeroUsuario, empresaId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "El usuario no pertenece a la empresa seleccionada");
         }
 
-        String jwt = jwtProvider.generateToken(authentication, empresaId);
-        return Optional.of(new JwtDto(jwt));
+        return new JwtDto(jwtProvider.generateToken(authentication, empresaId));
     }
 
-    public Optional<List<EmpresaDTOWithoutSedes>> getEmpresasForAuthenticatedUser(Authentication authentication) {
+    public List<EmpresaDTOWithoutSedes> getEmpresasForAuthenticatedUser(Authentication authentication) {
         if (authentication == null) {
-            return Optional.empty();
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No autenticado");
         }
 
-        String numeroUsuario = authentication.getName();
-        Usuario usuario = usuarioService.findByNumero(numeroUsuario).orElse(null);
-        if (usuario == null) {
-            return Optional.empty();
-        }
+        Usuario usuario = usuarioService.findByNumero(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                        "Usuario no encontrado"));
 
-        return Optional.of(usuarioService.findEmpresasByUsuarioIdWithoutSedes(usuario.getId()));
+        return usuarioService.findEmpresasByUsuarioIdWithoutSedes(usuario.getId());
     }
 }
