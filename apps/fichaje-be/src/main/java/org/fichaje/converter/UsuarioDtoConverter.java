@@ -73,4 +73,32 @@ public class UsuarioDtoConverter {
 		return u;
 	}
 
+	public UsuarioDTO inverseTransformForSession(Usuario u, Long empresaId) {
+		return UsuarioDTO
+				.builder()
+				.id(u.getId())
+				.email(u.getEmail())
+				.numero(u.getNumero())
+				.nombreEmpleado(u.getNombreEmpleado())
+				.dni(u.getDni())
+				.diasVacaciones(u.getDiasVacaciones())
+				.horasGeneradas(u.getHorasGeneradas())
+				.working(u.getWorking())
+				.enVacaciones(u.getEnVacaciones())
+				.deBaja(u.getDeBaja())
+				.empresas(u.getEmpresas() != null
+						? u.getEmpresas().stream()
+						.filter(e -> empresaId != null && e.getId().equals(empresaId))
+						.map(empresaDtoConverter::toDtoWithoutSedes)
+						.toList()
+						: new ArrayList<>())
+				.sedes(u.getSedes() != null
+						? u.getSedes().stream()
+						.filter(s -> empresaId != null && s.getEmpresa().getId().equals(empresaId))
+						.map(sedeDtoConverter::todtoConverter)
+						.toList()
+						: new ArrayList<>())
+				.build();
+	}
+
 }

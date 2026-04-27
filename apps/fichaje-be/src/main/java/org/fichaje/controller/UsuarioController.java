@@ -1,6 +1,8 @@
 package org.fichaje.controller;
 
+import com.nimbusds.jose.proc.SecurityContext;
 import org.fichaje.dto.entity.*;
+import org.fichaje.provider.db.entity.UsuarioPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +11,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import org.fichaje.converter.UsuarioDtoConverter;
@@ -145,20 +148,15 @@ public class UsuarioController
 
 	@Operation(summary = "Usuario obtiene la información de su usario")
 	@GetMapping("/miusuario")
-	public ResponseEntity<?> getYourUser(@RequestHeader("authorization") String token) {
-		token = token.replace("Bearer ", "");
-		if (jwtProvider.validateToken(token)) {
-			String numeroUsuario = jwtProvider.getSubjectFromToken(token);
-			Usuario usuario = service.findByNumero(numeroUsuario).orElse(null);
-			if (usuario != null) {
-				return ResponseEntity.ok(dtoConverter.inverseTransform(usuario));
-			} else {
-				return ResponseEntity.notFound().build();
-			}
-		} else {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN)
-					.body(new Mensaje("Solo puedes acceder a la información de tú usuario"));
-		}
+	public ResponseEntity<?> getYourUser() {
+		UsuarioPrincipal principal = (UsuarioPrincipal) SecurityContextHolder
+				.getContext()
+				.getAuthentication()
+				.getPrincipal();
+
+		return ResponseEntity.ok(
+				service.getMiUsuario(principal.getUsername(), principal.getEmpresaId())
+		);
 	}
 
 	@Operation(summary = "Asigna una sede a un usuario")

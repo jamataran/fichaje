@@ -300,4 +300,11 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
                 .collect(java.util.stream.Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public UsuarioDTO getMiUsuario(String numeroUsuario, Long empresaId) {
+        Usuario usuario = repository.findByNumero(numeroUsuario)
+                .orElseThrow(() -> new UsuarioNotFoundException(numeroUsuario));
+        return usuarioDtoConverter.inverseTransformForSession(usuario, empresaId);
+    }
+
 }
