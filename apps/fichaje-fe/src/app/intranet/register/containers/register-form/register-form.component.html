@@ -2,7 +2,7 @@
 
   <h3 class="text-center selected bg-waves rounded p-3 ">Crear Nuevo Empleado</h3>
 
-  <form class="mt-4" (ngSubmit)="onRegister()" novalidate #f="ngForm">
+  <form class="mt-4" [formGroup]="registerForm" (ngSubmit)="onRegister()" novalidate>
 
     <div class="w-75 mx-auto row justify-content-between">
       <p>La contraseña debe tener un mínimo de 6 caracteres y estar formada por Mayusculas, Minúsculas y Números </p>
@@ -11,8 +11,15 @@
         <div class="form-group w-100">
           <label for="nombre"><b><i class="bi bi-person"></i> Nombre empleado:</b></label>
           <div class="input-group ">
-            <input type="text" class="form-control" name="nombre" id="nombre" [(ngModel)]="nombreEmpleado" required>
+            <input type="text" class="form-control" formControlName="nombreEmpleado" id="nombre">
           </div>
+          @if (registerForm.get('nombreEmpleado')?.invalid && (registerForm.get('nombreEmpleado')?.dirty || registerForm.get('nombreEmpleado')?.touched)) {
+            <div class="alert-danger my-3 p-2 rounded">
+              @if (registerForm.get('nombreEmpleado')?.errors?.['required']) {
+                <div>El campo nombre es obligatorio.</div>
+              }
+            </div>
+          }
         </div>
       </div>
 
@@ -20,17 +27,18 @@
         <div class="form-group w-100">
           <label for="dni"><b><i class="bi bi-card-heading"></i> Dni:</b></label>
           <div class="input-group ">
-            <input #d="ngModel" type="text" class="form-control" name="dni" id="dni" [(ngModel)]="dni" required
-              pattern="^[XYZxyz0-9]{1}[0-9]{7,7}[A-Za-z]$">
+            <input type="text" class="form-control" formControlName="dni" id="dni">
           </div>
-          <div *ngIf="d.invalid && (d.dirty || d.touched)" class="alert-danger my-3 p-2 rounded">
-            <div *ngIf="d.errors?.required">
-              El campo dni es obligatorio.
+          @if (registerForm.get('dni')?.invalid && (registerForm.get('dni')?.dirty || registerForm.get('dni')?.touched)) {
+            <div class="alert-danger my-3 p-2 rounded">
+              @if (registerForm.get('dni')?.errors?.['required']) {
+                <div>El campo dni es obligatorio.</div>
+              }
+              @if (registerForm.get('dni')?.errors?.['pattern']) {
+                <div>El dni/nie debe tener el formato correcto. Escribe el número sin guiones ni espacios.</div>
+              }
             </div>
-            <div *ngIf="d.errors?.pattern">
-              El dni/nie debe tener el formato correcto. Escribe el número sin guiones ni espacios.
-            </div>
-          </div>
+          }
         </div>
       </div>
 
@@ -38,18 +46,18 @@
         <div class="form-group w-100">
           <label for="email"><b><i class="bi bi-envelope"></i> Email:</b></label>
           <div class="input-group ">
-            <input #e="ngModel" type="email" class="form-control" name="email" id="email" [(ngModel)]="email" required
-              pattern="^[^@]+@[^@]+\.[a-zA-Z]{2,}$">
-            <!--                 pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"> -->
+            <input type="email" class="form-control" formControlName="email" id="email">
           </div>
-          <div *ngIf="e.invalid && (e.dirty || e.touched)" class="alert-danger my-3 p-2 rounded">
-            <div *ngIf="e.errors?.required">
-              El campo email es obligatorio.
+          @if (registerForm.get('email')?.invalid && (registerForm.get('email')?.dirty || registerForm.get('email')?.touched)) {
+            <div class="alert-danger my-3 p-2 rounded">
+              @if (registerForm.get('email')?.errors?.['required']) {
+                <div>El campo email es obligatorio.</div>
+              }
+              @if (registerForm.get('email')?.errors?.['pattern']) {
+                <div>El email debe tener el formato correcto.</div>
+              }
             </div>
-            <div *ngIf="e.errors?.pattern">
-              El email debe tener el formato correcto.
-            </div>
-          </div>
+          }
         </div>
       </div>
 
@@ -57,15 +65,22 @@
         <div class="form-group w-100">
           <label for="numero"><b><i class="bi bi-credit-card"></i> Número tarjeta:</b></label>
           <div class="input-group ">
-            <input type="number" class="form-control" name="numero" id="numero" [(ngModel)]="numero" required>
+            <input type="number" class="form-control" formControlName="numero" id="numero">
           </div>
+          @if (registerForm.get('numero')?.invalid && (registerForm.get('numero')?.dirty || registerForm.get('numero')?.touched)) {
+            <div class="alert-danger my-3 p-2 rounded">
+              @if (registerForm.get('numero')?.errors?.['required']) {
+                <div>El campo número tarjeta es obligatorio.</div>
+              }
+            </div>
+          }
         </div>
       </div>
 
       <div class="col-12 d-flex align-items-end justify-content-end mb-3">
         <div class="form-group w-100">
           <label class="" for="rrhh"><b><i class="bi bi-hand-index-thumb"></i> Técnico RRHH:</b></label>
-          <select class="form-control " name="rrhh" id="rrhh" [(ngModel)]="rol">
+          <select class="form-control " formControlName="rol" id="rrhh">
             <option value="rrhh">SI</option>
             <option value="">NO</option>
           </select>
@@ -81,47 +96,55 @@
             <input
               type="text"
               class="form-control"
-              name="empresa"
+              formControlName="empresaSearchInput"
               id="empresa"
-              [(ngModel)]="empresaSearchInput"
               (input)="onEmpresaInput()"
               (focus)="onEmpresaFocus()"
               placeholder="Busca por nombre de empresa..."
-              autocomplete="off"
-              [disabled]="isLoadingEmpresas || isRRHH && !isAdmin">
+              autocomplete="off">
 
-            <span class="input-group-text" *ngIf="isLoadingEmpresas">
-        <span class="spinner-border spinner-border-sm"></span>
-      </span>
-            <span class="input-group-text text-success" *ngIf="selectedEmpresaId && !isLoadingEmpresas">
-        <i class="bi bi-check-circle-fill"></i>
-      </span>
+            @if (isLoadingEmpresas()) {
+              <span class="input-group-text">
+                <span class="spinner-border spinner-border-sm"></span>
+              </span>
+            }
+            
+            @if (selectedEmpresaId() && !isLoadingEmpresas()) {
+              <span class="input-group-text text-success">
+                <i class="bi bi-check-circle-fill"></i>
+              </span>
+            }
 
-            <div class="dropdown-menu w-100 show position-absolute"
-        *ngIf="showEmpresaDropdown() && filteredEmpresas.length > 0"
-                 style="top: 100%; left: 0; z-index: 1000; max-height: 300px; overflow-y: auto;">
-              <button
-                type="button"
-                class="dropdown-item"
-                *ngFor="let empresa of filteredEmpresas"
-                (mousedown)="selectEmpresa(empresa)">
-                <i class="bi bi-briefcase me-2"></i>
-                <span>{{ empresa.nombre }}</span>
-                <small class="text-muted ms-2">{{ empresa.cif }}</small>
-              </button>
-            </div>
+            @if (showEmpresaDropdown() && filteredEmpresas().length > 0) {
+              <div class="dropdown-menu w-100 show position-absolute"
+                   style="top: 100%; left: 0; z-index: 1000; max-height: 300px; overflow-y: auto;">
+                @for (empresa of filteredEmpresas(); track empresa.id) {
+                  <button
+                    type="button"
+                    class="dropdown-item"
+                    (mousedown)="selectEmpresa(empresa)">
+                    <i class="bi bi-briefcase me-2"></i>
+                    <span>{{ empresa.nombre }}</span>
+                    <small class="text-muted ms-2">{{ empresa.cif }}</small>
+                  </button>
+                }
+              </div>
+            }
 
-            <div class="dropdown-menu w-100 show position-absolute"
-        *ngIf="showEmpresaDropdown() && filteredEmpresas.length === 0 && !isLoadingEmpresas"
-                 style="top: 100%; left: 0; z-index: 1000;">
-        <span class="dropdown-item disabled">
-          <i class="bi bi-exclamation-circle me-2"></i>No se encontraron empresas
-        </span>
-            </div>
+            @if (showEmpresaDropdown() && filteredEmpresas().length === 0 && !isLoadingEmpresas()) {
+              <div class="dropdown-menu w-100 show position-absolute"
+                   style="top: 100%; left: 0; z-index: 1000;">
+                <span class="dropdown-item disabled">
+                  <i class="bi bi-exclamation-circle me-2"></i>No se encontraron empresas
+                </span>
+              </div>
+            }
           </div>
-          <small class="text-muted" *ngIf="!selectedEmpresaId">
-            <i class="bi bi-info-circle"></i> Selecciona una empresa para asignar el empleado
-          </small>
+          @if (!selectedEmpresaId()) {
+            <small class="text-muted">
+              <i class="bi bi-info-circle"></i> Selecciona una empresa para asignar el empleado
+            </small>
+          }
         </div>
       </div>
 
@@ -134,50 +157,61 @@
             <input
               type="text"
               class="form-control"
-              name="sede"
+              formControlName="sedeSearchInput"
               id="sede"
-              [(ngModel)]="sedeSearchInput"
               (input)="onSedeInput()"
               (focus)="onSedeFocus()"
               placeholder="Busca por nombre de sede..."
               autocomplete="off"
-              [disabled]="!selectedEmpresaId || isLoadingSedes">
+              [disabled]="!selectedEmpresaId() || isLoadingSedes()">
 
-            <span class="input-group-text" *ngIf="isLoadingSedes">
-              <span class="spinner-border spinner-border-sm"></span>
-            </span>
-            <span class="input-group-text text-success" *ngIf="selectedSedeId && !isLoadingSedes">
-              <i class="bi bi-check-circle-fill"></i>
-            </span>
-
-            <div class="dropdown-menu w-100 show position-absolute"
-        *ngIf="showSedeDropdown() && filteredSedes.length > 0"
-                 style="top: 100%; left: 0; z-index: 1000; max-height: 300px; overflow-y: auto;">
-              <button
-                type="button"
-                class="dropdown-item"
-                *ngFor="let sede of filteredSedes"
-                (mousedown)="selectSede(sede)">
-                <i class="bi bi-building me-2"></i>
-                <span>{{ sede.nombre }}</span>
-                <small class="text-muted ms-2">{{ sede.direccion }}</small>
-              </button>
-            </div>
-
-            <div class="dropdown-menu w-100 show position-absolute"
-        *ngIf="showSedeDropdown() && filteredSedes.length === 0 && !isLoadingSedes"
-                 style="top: 100%; left: 0; z-index: 1000;">
-              <span class="dropdown-item disabled">
-                <i class="bi bi-exclamation-circle me-2"></i>No se encontraron sedes
+            @if (isLoadingSedes()) {
+              <span class="input-group-text">
+                <span class="spinner-border spinner-border-sm"></span>
               </span>
-            </div>
+            }
+            
+            @if (selectedSedeId() && !isLoadingSedes()) {
+              <span class="input-group-text text-success">
+                <i class="bi bi-check-circle-fill"></i>
+              </span>
+            }
+
+            @if (showSedeDropdown() && filteredSedes().length > 0) {
+              <div class="dropdown-menu w-100 show position-absolute"
+                   style="top: 100%; left: 0; z-index: 1000; max-height: 300px; overflow-y: auto;">
+                @for (sede of filteredSedes(); track sede.id) {
+                  <button
+                    type="button"
+                    class="dropdown-item"
+                    (mousedown)="selectSede(sede)">
+                    <i class="bi bi-building me-2"></i>
+                    <span>{{ sede.nombre }}</span>
+                    <small class="text-muted ms-2">{{ sede.direccion }}</small>
+                  </button>
+                }
+              </div>
+            }
+
+            @if (showSedeDropdown() && filteredSedes().length === 0 && !isLoadingSedes()) {
+              <div class="dropdown-menu w-100 show position-absolute"
+                   style="top: 100%; left: 0; z-index: 1000;">
+                <span class="dropdown-item disabled">
+                  <i class="bi bi-exclamation-circle me-2"></i>No se encontraron sedes
+                </span>
+              </div>
+            }
           </div>
-          <small class="text-muted" *ngIf="!selectedEmpresaId">
-            <i class="bi bi-info-circle"></i> Selecciona primero una empresa
-          </small>
-          <small class="text-muted" *ngIf="selectedEmpresaId && !selectedSedeId">
-            <i class="bi bi-info-circle"></i> Selecciona una sede de la empresa elegida
-          </small>
+          @if (!selectedEmpresaId()) {
+            <small class="text-muted">
+              <i class="bi bi-info-circle"></i> Selecciona primero una empresa
+            </small>
+          }
+          @if (selectedEmpresaId() && !selectedSedeId()) {
+            <small class="text-muted">
+              <i class="bi bi-info-circle"></i> Selecciona una sede de la empresa elegida
+            </small>
+          }
         </div>
       </div>
 
@@ -187,7 +221,7 @@
     <div class="m-4 row justify-content-center">
 
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
-        <app-boton-guardar class="w-100" [valid]="f.valid"></app-boton-guardar>
+        <app-boton-guardar class="w-100" [valid]="registerForm.valid"></app-boton-guardar>
       </div>
 
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
