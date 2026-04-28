@@ -95,7 +95,7 @@ export class TokenService {
     return true
   }
 
-  public isAdmin(): boolean {
+  public isSuperAdmin(): boolean {
     if (!this.isLogged()) {
       return false
     }
@@ -105,6 +105,21 @@ export class TokenService {
     const values = JSON.parse(payloadDecoded)
     const roles = values.roles
     if (roles.indexOf('ROLE_SUPER_ADMIN') < 0) {
+      return false
+    }
+    return true
+  }
+
+  public isAdmin(): boolean {
+    if (!this.isLogged()) {
+      return false
+    }
+    const token = this.getToken()
+    const payload = token!.split('.')[1]
+    const payloadDecoded = atob(payload)
+    const values = JSON.parse(payloadDecoded)
+    const roles = values.roles
+    if (roles.indexOf('ROLE_ADMIN') < 0) {
       return false
     }
     return true

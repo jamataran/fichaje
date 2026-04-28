@@ -11,8 +11,10 @@ export class MenuComponent implements OnInit {
 
 
   isRRHH: boolean = false;
+  isSuperAdmin: boolean = false;
   isAdmin: boolean = false;
   canViewAdminPanel: boolean = false;
+  canViewSuperAdminPanel: boolean = false;
   numero:string='';
 
 
@@ -23,7 +25,9 @@ export class MenuComponent implements OnInit {
   ngOnInit(): void {
     this.isRRHH = this.service.isRRHH();
     this.isAdmin = this.service.isAdmin();
-    this.canViewAdminPanel = this.isRRHH || this.isAdmin;
+    this.isSuperAdmin = this.service.isSuperAdmin();
+    this.canViewAdminPanel = this.isSuperAdmin || this.isAdmin || this.isRRHH;
+    this.canViewSuperAdminPanel = this.isAdmin || this.isSuperAdmin;
     this.numero = this.service.getNumero();
   }
 

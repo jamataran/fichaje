@@ -37,7 +37,7 @@ export class EmpleadosComponent implements OnInit {
   order = signal('id');
   asc = signal(true);
   listaElementos = signal<any[]>([]);
-  
+
   pag = signal<Pagination>({
     totalPages: [],
     page: 0,
@@ -74,7 +74,7 @@ export class EmpleadosComponent implements OnInit {
 
   ngOnInit(): void {
     this.isRRHH.set(this.tokenService.isRRHH());
-    this.isSuperAdmin.set(this.tokenService.isAdmin());
+    this.isSuperAdmin.set(this.tokenService.isSuperAdmin());
     this.isAdmin.set(this.isRRHH() || this.isSuperAdmin());
 
     this.cargarFiltrosIniciales();

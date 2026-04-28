@@ -124,6 +124,11 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
         Set<Rol> roles = assignRoles(usuarioDto.getRoles());
         usuario.setRoles(roles);
 
+        // Si se asigna el rol ADMIN o SUPER_ADMIN, marcar como admin en la entidad
+        if (roles.stream().anyMatch(r -> r.getRolNombre() == RolNombre.ROLE_ADMIN || r.getRolNombre() == RolNombre.ROLE_SUPER_ADMIN)) {
+            usuario.setAdmin(true);
+        }
+
         // Guardar usuario
         usuario = save(usuario);
 
@@ -145,41 +150,52 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
      * @return Usuario administrador creado y guardado
      */
     public Usuario createNewAdminUser(UsuarioDTO usuarioDto) {
-        // Construir el usuario con datos básicos
         Usuario usuario = new Usuario();
         usuario.setEmail(usuarioDto.getEmail());
         usuario.setNumero(usuarioDto.getNumero());
         usuario.setNombreEmpleado(usuarioDto.getNombreEmpleado());
         usuario.setDni(usuarioDto.getDni());
-
-        // Inicializar valores por defecto
         usuario.setDiasVacaciones(0);
         usuario.setHorasGeneradas(0.0);
         usuario.setEnVacaciones(false);
         usuario.setDeBaja(false);
         usuario.setWorking(false);
-        usuario.setAdmin(true);
+        usuario.setAdmin(false);
         usuario.setSedes(new HashSet<>());
         usuario.setEmpresas(new HashSet<>());
-
-        // Usar contraseña proporcionada
         usuario.setPassword(passwordEncoder.encode(usuarioDto.getPassword()));
-
-        // Asignar roles (incluyendo ROLE_ADMIN si aplica)
         Set<Rol> roles = assignRoles(usuarioDto.getRoles());
         usuario.setRoles(roles);
+
+        boolean hasAdminRole = roles.stream()
+                .anyMatch(r -> r.getRolNombre() == RolNombre.ROLE_ADMIN || r.getRolNombre() == RolNombre.ROLE_SUPER_ADMIN);
+
+        if (hasAdminRole) {
+            usuario.setAdmin(true);
+        } else {
+            throw new IllegalArgumentException("No se puede crear el usuario administrador: No se especificaron roles de administrador en la petición o el creador no tiene permisos.");
+        }
 
         return save(usuario);
     }
 
     /**
      * Asigna los roles correspondientes al usuario.
+     * Valida que el usuario que realiza la acción tenga permisos para asignar dichos roles.
      *
      * @param rolesFromDto Lista de nombres de roles desde el DTO
      * @return Set de entidades Rol
      */
     private Set<Rol> assignRoles(List<String> rolesFromDto) {
         Set<Rol> roles = new HashSet<>();
+
+        // Obtener roles del usuario actual autenticado
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        boolean isCurrentUserAdmin = auth != null && auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        boolean isCurrentUserSuperAdmin = auth != null && auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_SUPER_ADMIN"));
 
         // Rol base: ROLE_USER
         roles.add(rolService.findByRolNombre(RolNombre.ROLE_USER)
@@ -191,13 +207,27 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
                 roles.add(rolService.findByRolNombre(RolNombre.ROLE_RRHH)
                         .orElseThrow(() -> new RuntimeException("Rol ROLE_RRHH no encontrado")));
             }
+
+            // Solo un ADMIN puede crear otro ADMIN o SUPER_ADMIN
             if (rolesFromDto.contains("admin")) {
-                roles.add(rolService.findByRolNombre(RolNombre.ROLE_ADMIN)
-                        .orElseThrow(() -> new RuntimeException("Rol ROLE_ADMIN no encontrado")));
+                if (isCurrentUserAdmin) {
+                    roles.add(rolService.findByRolNombre(RolNombre.ROLE_ADMIN)
+                            .orElseThrow(() -> new RuntimeException("Rol ROLE_ADMIN no encontrado")));
+                    // Cascada: Admin implica RRHH
+                    roles.add(rolService.findByRolNombre(RolNombre.ROLE_RRHH)
+                            .orElseThrow(() -> new RuntimeException("Rol ROLE_RRHH no encontrado")));
+                } else {
+                    throw new org.springframework.security.access.AccessDeniedException("No tienes permisos para asignar el rol Administrador");
+                }
             }
+
             if (rolesFromDto.contains("superadmin") || rolesFromDto.contains("ROLE_SUPER_ADMIN")) {
-                roles.add(rolService.findByRolNombre(RolNombre.ROLE_SUPER_ADMIN)
-                        .orElseThrow(() -> new RuntimeException("Rol ROLE_SUPER_ADMIN no encontrado")));
+                if (isCurrentUserSuperAdmin) {
+                    roles.add(rolService.findByRolNombre(RolNombre.ROLE_SUPER_ADMIN)
+                            .orElseThrow(() -> new RuntimeException("Rol ROLE_SUPER_ADMIN no encontrado")));
+                } else {
+                    throw new org.springframework.security.access.AccessDeniedException("No tienes permisos para asignar el rol Super Administrador");
+                }
             }
         }
 

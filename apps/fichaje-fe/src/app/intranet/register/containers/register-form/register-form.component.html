@@ -77,13 +77,27 @@
         </div>
       </div>
 
-      <div class="col-12 d-flex align-items-end justify-content-end mb-3">
+      <div class="col-12 d-flex align-items-center mb-3">
         <div class="form-group w-100">
-          <label class="" for="rrhh"><b><i class="bi bi-hand-index-thumb"></i> Técnico RRHH:</b></label>
-          <select class="form-control " formControlName="rol" id="rrhh">
-            <option value="rrhh">SI</option>
-            <option value="">NO</option>
-          </select>
+          <label class="mb-2"><b><i class="bi bi-shield-lock"></i> Rol del Usuario:</b></label>
+          <div class="d-flex gap-4">
+            @if (isAdmin()) {
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="rol" id="rolAdmin" value="admin" formControlName="rol">
+                <label class="form-check-label" for="rolAdmin">Administrador</label>
+              </div>
+            }
+            @if (isAdmin()){
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="rol" id="rolRRHH" value="rrhh" formControlName="rol">
+              <label class="form-check-label" for="rolRRHH">Técnico RRHH</label>
+            </div>
+            }
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="rol" id="rolNormal" value="user" formControlName="rol">
+              <label class="form-check-label" for="rolNormal">Empleado Normal</label>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -108,7 +122,7 @@
                 <span class="spinner-border spinner-border-sm"></span>
               </span>
             }
-            
+
             @if (selectedEmpresaId() && !isLoadingEmpresas()) {
               <span class="input-group-text text-success">
                 <i class="bi bi-check-circle-fill"></i>
@@ -170,7 +184,7 @@
                 <span class="spinner-border spinner-border-sm"></span>
               </span>
             }
-            
+
             @if (selectedSedeId() && !isLoadingSedes()) {
               <span class="input-group-text text-success">
                 <i class="bi bi-check-circle-fill"></i>

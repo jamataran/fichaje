@@ -27,7 +27,7 @@ export class GuardService  {
     }
 
     const userRoles: string[] = [];
-    if (this.tokenService.isAdmin()) {
+    if (this.tokenService.isSuperAdmin()) {
       userRoles.push('admin');
     }
     if (this.tokenService.isRRHH()) {
@@ -48,7 +48,7 @@ export class GuardService  {
   }
 
   private checkEmpresaAccess(): boolean {
-    if(!this.tokenService.isAdmin() && !this.tokenService.getEmpresaId()){
+    if(!this.tokenService.isSuperAdmin() && !this.tokenService.getEmpresaId()){
       this.router.navigate(['/public/landing/home']);
       return false;
     }

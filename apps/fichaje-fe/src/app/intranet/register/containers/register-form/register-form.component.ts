@@ -41,9 +41,10 @@ export class RegisterFormComponent implements OnInit {
 
   registerForm!: FormGroup;
 
-  isAdmin = signal(false);
+  isSuperAdmin = signal(false);
   isRRHH = signal(false);
-  
+  isAdmin = signal(false);
+
   selectedEmpresaId = signal<number | null>(null);
   allEmpresas = signal<EmpresaDTO[]>([]);
   filteredEmpresas = signal<EmpresaDTO[]>([]);
@@ -61,11 +62,12 @@ export class RegisterFormComponent implements OnInit {
   @ViewChild('sedeDropdownContainer') sedeDropdownContainer?: ElementRef<HTMLElement>;
 
   ngOnInit(): void {
-    this.isAdmin.set(this.tokenService.isAdmin());
+    this.isSuperAdmin.set(this.tokenService.isSuperAdmin());
     this.isRRHH.set(this.tokenService.isRRHH());
+    this.isAdmin.set(this.tokenService.isAdmin());
     this.initForm();
 
-    if (this.isAdmin()){
+    if (this.isSuperAdmin()){
       this.loadEmpresas();
     }
 
@@ -81,14 +83,14 @@ export class RegisterFormComponent implements OnInit {
     this.registerForm = this.fb.group({
       numero: ['', Validators.required],
       nombreEmpleado: ['', Validators.required],
-      email: ['', [Validators.required, Validators.pattern(/^[^@]+@[^@]+\.[a-zA-Z]{2,}$/)]],
+      email: ['', [Validators.required, Validators.email]],
       dni: ['', [Validators.required, Validators.pattern(/^[XYZxyz0-9]{1}[0-9]{7,7}[A-Za-z]$/)]],
-      rol: [''],
+      rol: ['user'],
       empresaSearchInput: [''],
       sedeSearchInput: ['']
     });
 
-    if (this.isRRHH() && !this.isAdmin()) {
+    if (this.isRRHH() && !this.isSuperAdmin()) {
       this.registerForm.get('empresaSearchInput')?.disable();
     }
   }
@@ -316,7 +318,15 @@ export class RegisterFormComponent implements OnInit {
     }
 
     const { numero, nombreEmpleado, email, dni, rol } = this.registerForm.value;
-    let roles = [rol];
+    let roles: string[] = [];
+
+    if (rol === 'admin') {
+      roles = ['admin', 'rrhh']; // El backend añadirá 'user' por defecto
+    } else if (rol === 'rrhh') {
+      roles = ['rrhh']; // El backend añadirá 'user' por defecto
+    } else {
+      roles = []; // El backend añadirá 'user' por defecto
+    }
 
     let nuevoUsuario = new NuevoUsuario(
       numero,
