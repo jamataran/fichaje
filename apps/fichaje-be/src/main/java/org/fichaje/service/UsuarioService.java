@@ -191,6 +191,14 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
                 roles.add(rolService.findByRolNombre(RolNombre.ROLE_RRHH)
                         .orElseThrow(() -> new RuntimeException("Rol ROLE_RRHH no encontrado")));
             }
+            if (rolesFromDto.contains("admin")) {
+                roles.add(rolService.findByRolNombre(RolNombre.ROLE_ADMIN)
+                        .orElseThrow(() -> new RuntimeException("Rol ROLE_ADMIN no encontrado")));
+            }
+            if (rolesFromDto.contains("superadmin") || rolesFromDto.contains("ROLE_SUPER_ADMIN")) {
+                roles.add(rolService.findByRolNombre(RolNombre.ROLE_SUPER_ADMIN)
+                        .orElseThrow(() -> new RuntimeException("Rol ROLE_SUPER_ADMIN no encontrado")));
+            }
         }
 
         return roles;
