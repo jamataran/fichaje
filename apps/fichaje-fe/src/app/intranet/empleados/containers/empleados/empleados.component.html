@@ -158,8 +158,8 @@
             <app-th-sort [entity]="'working'" [name]="'Trabajando'" [asc]="asc()" [order]="order()" (sort)="setOrder($event)">
             </app-th-sort>
           </th>
-          <th>E-IDs</th>
-          <th>S-IDs</th>
+          <th></th>
+          <th></th>
           @if (isAdmin()) {
             <th>Ver Detalle</th>
           }
@@ -197,7 +197,7 @@
       </tbody>
     </table>
   </div>
-  
+
   <app-pagination [pag]="pag()" (paginacion)="onPaginate($event)"></app-pagination>
 </div>
 
