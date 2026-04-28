@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Popup } from 'src/app/shared/helper/popup';
 import { Pagination } from 'src/app/shared/components/pagination/model/pagination.model';
@@ -12,8 +12,10 @@ import { EmpresasService } from '../../service/empresas.service';
   standalone: false
 })
 export class EmpresasComponent implements OnInit {
+  private empresasService = inject(EmpresasService);
+  private fb = inject(FormBuilder);
 
-  listaEmpresas: Empresa[] = [];
+  listaEmpresas = signal<Empresa[]>([]);
   isCreating = signal(false);
   isUpdating = signal(false);
   isUpdatingSede = signal(false);
@@ -27,12 +29,12 @@ export class EmpresasComponent implements OnInit {
   editingSedeId = signal<number | null>(null);
   editingSedeEmpresaId = signal<number | null>(null);
 
-  sedesByEmpresa: Record<number, SedeEmpresa[]> = {};
+  sedesByEmpresa = signal<Record<number, SedeEmpresa[]>>({});
 
-  order = 'nombre';
-  asc = true;
+  order = signal('nombre');
+  asc = signal(true);
 
-  pag: Pagination = {
+  pag = signal<Pagination>({
     totalPages: [],
     page: 0,
     isFirst: false,
@@ -40,23 +42,17 @@ export class EmpresasComponent implements OnInit {
     size: 15,
     sizeLimit: 100,
     listPagesLimits: 4,
-  };
+  });
 
   // Formularios Reactivos
-  createForm: FormGroup;
-  editEmpresaForm: FormGroup;
-  editSedeForm: FormGroup;
+  createForm!: FormGroup;
+  editEmpresaForm!: FormGroup;
+  editSedeForm!: FormGroup;
 
-  constructor(
-    private empresasService: EmpresasService,
-    private fb: FormBuilder
-  ) {
+  ngOnInit(): void {
     this.createForm = this.initCreateForm();
     this.editEmpresaForm = this.initEditEmpresaForm();
     this.editSedeForm = this.initEditSedeForm();
-  }
-
-  ngOnInit(): void {
     this.listarEmpresas();
   }
 
@@ -100,12 +96,16 @@ export class EmpresasComponent implements OnInit {
   }
 
   listarEmpresas(): void {
-    this.empresasService.getElements(this.pag.page, this.pag.size, this.order, this.asc).subscribe({
+    const currentPag = this.pag();
+    this.empresasService.getElements(currentPag.page, currentPag.size, this.order(), this.asc()).subscribe({
       next: (data) => {
-        this.listaEmpresas = data.content ?? [];
-        this.pag.isFirst = data.first;
-        this.pag.isLast = data.last;
-        this.pag.totalPages = new Array(data.totalPages);
+        this.listaEmpresas.set(data.content ?? []);
+        this.pag.update(p => ({
+          ...p,
+          isFirst: data.first,
+          isLast: data.last,
+          totalPages: new Array(data.totalPages)
+        }));
       },
       error: (err) => {
         Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudieron cargar las empresas');
@@ -114,13 +114,17 @@ export class EmpresasComponent implements OnInit {
   }
 
   onPaginate(pag: Pagination): void {
-    this.pag = pag;
+    this.pag.set(pag);
     this.listarEmpresas();
   }
 
   setOrder(order: string): void {
-    this.order = order;
-    this.asc = !this.asc;
+    if (this.order() === order) {
+      this.asc.update(a => !a);
+    } else {
+      this.order.set(order);
+      this.asc.set(true);
+    }
     this.listarEmpresas();
   }
 
@@ -140,7 +144,7 @@ export class EmpresasComponent implements OnInit {
         this.isCreating.set(false);
         Popup.toastSucess('', 'Empresa creada correctamente');
         this.createForm.reset({ activa: true, pais: 'España' });
-        this.pag.page = 0;
+        this.pag.update(p => ({ ...p, page: 0 }));
         this.listarEmpresas();
       },
       error: (err) => {
@@ -208,7 +212,7 @@ export class EmpresasComponent implements OnInit {
 
     this.expandedEmpresaId.set(empresa.id);
 
-    if (!this.sedesByEmpresa[empresa.id]) {
+    if (!this.sedesByEmpresa()[empresa.id]) {
       this.loadSedesByEmpresa(empresa.id);
     }
   }
@@ -218,11 +222,17 @@ export class EmpresasComponent implements OnInit {
 
     this.empresasService.getSedesByEmpresa(empresaId).subscribe({
       next: (sedes) => {
-        this.sedesByEmpresa[empresaId] = sedes ?? [];
+        this.sedesByEmpresa.update(prev => ({
+          ...prev,
+          [empresaId]: sedes ?? []
+        }));
         this.loadingSedesEmpresaId.set(null);
       },
       error: () => {
-        this.sedesByEmpresa[empresaId] = [];
+        this.sedesByEmpresa.update(prev => ({
+          ...prev,
+          [empresaId]: []
+        }));
         this.loadingSedesEmpresaId.set(null);
         Popup.toastDanger('Error', 'No se pudieron cargar las sedes de la empresa');
       }
@@ -242,7 +252,7 @@ export class EmpresasComponent implements OnInit {
   }
 
   getSedes(empresaId: number): SedeEmpresa[] {
-    return this.sedesByEmpresa[empresaId] ?? [];
+    return this.sedesByEmpresa()[empresaId] ?? [];
   }
 
   onStartEditSede(empresaId: number, sede: SedeEmpresa): void {

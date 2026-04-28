@@ -1,8 +1,8 @@
 <div class="container-fluid mt-3">
 
-  <h3 class="mb-4 text-center selected bg-waves rounded p-3">Administración de empresas</h3>
+  <h3 class="text-center selected bg-waves rounded p-3 mb-4">Administración de empresas</h3>
 
-  <form class="my-3 mx-0 bg-light px-4 pt-3 pb-2 rounded shadow-sm" [formGroup]="createForm" (ngSubmit)="onCreate()" novalidate>
+  <form class="bg-light shadow-sm rounded px-4 pt-3 pb-2 my-3 mx-0" [formGroup]="createForm" (ngSubmit)="onCreate()" novalidate>
     <h5 class="mb-3">Crear nueva empresa</h5>
 
     <div class="row mb-2">
@@ -81,17 +81,17 @@
     </div>
   </form>
 
-  <div class="bg-light rounded p-3 mt-4 border shadow-sm">
+  <div class="bg-light border shadow-sm rounded p-3 mt-4">
     <h5 class="mb-3">Empresas registradas</h5>
 
     <table class="table table-hover text-center align-middle mb-2">
       <thead>
       <tr>
         <th class="text-start ps-3">
-          <app-th-sort [entity]="'nombre'" [name]="'Nombre'" [asc]="asc" [order]="order" (sort)="setOrder($event)"></app-th-sort>
+          <app-th-sort [entity]="'nombre'" [name]="'Nombre'" [asc]="asc()" [order]="order()" (sort)="setOrder($event)"></app-th-sort>
         </th>
         <th>
-          <app-th-sort [entity]="'cif'" [name]="'CIF'" [asc]="asc" [order]="order" (sort)="setOrder($event)"></app-th-sort>
+          <app-th-sort [entity]="'cif'" [name]="'CIF'" [asc]="asc()" [order]="order()" (sort)="setOrder($event)"></app-th-sort>
         </th>
         <th>Activa</th>
         <th>Sedes</th>
@@ -100,17 +100,17 @@
       </thead>
 
       <tbody>
-      <ng-container *ngFor="let empresa of listaEmpresas">
+      @for (empresa of listaEmpresas(); track empresa.id) {
         <tr (click)="toggleSedes(empresa)" style="cursor: pointer;" [class.table-primary]="isExpanded(empresa.id) || isEditing(empresa.id)">
           <td class="text-start ps-3">
             <div class="fw-semibold d-flex align-items-center text-primary">
-              <i class="bi me-2" [ngClass]="isExpanded(empresa.id) ? 'bi-chevron-down' : 'bi-chevron-right'"></i>
+              <i class="bi me-2" [class.bi-chevron-down]="isExpanded(empresa.id)" [class.bi-chevron-right]="!isExpanded(empresa.id)"></i>
               {{ empresa.nombre }}
             </div>
           </td>
           <td>{{ empresa.cif }}</td>
           <td>
-            <span class="badge" [ngClass]="empresa.activa ? 'bg-success' : 'bg-secondary'">
+            <span class="badge" [class.bg-success]="empresa.activa" [class.bg-secondary]="!empresa.activa">
               {{ empresa.activa ? 'Sí' : 'No' }}
             </span>
           </td>
@@ -121,132 +121,149 @@
             <button type="button" class="btn btn-outline-primary btn-sm" (click)="onStartEdit(empresa)">
               <i class="bi bi-pencil"></i> Editar
             </button>
-            <button type="button" class="btn btn-sm" [ngClass]="empresa.activa ? 'btn-outline-danger' : 'btn-outline-success'" (click)="onToggleEmpresa(empresa)" [disabled]="isDeactivatingEmpresa() || isActivatingEmpresa()">
-              <i class="bi" [ngClass]="empresa.activa ? 'bi-power' : 'bi-check-circle'"></i>
+            <button type="button" class="btn btn-sm"
+                    [class.btn-outline-danger]="empresa.activa"
+                    [class.btn-outline-success]="!empresa.activa"
+                    (click)="onToggleEmpresa(empresa)"
+                    [disabled]="isDeactivatingEmpresa() || isActivatingEmpresa()">
+              <i class="bi" [class.bi-power]="empresa.activa" [class.bi-check-circle]="!empresa.activa"></i>
               {{ empresa.activa ? 'Desactivar' : 'Activar' }}
             </button>
           </td>
         </tr>
 
-        <tr *ngIf="isExpanded(empresa.id)">
-          <td colspan="5" class="bg-white text-start">
-            <div class="p-2">
-              <h6 class="mb-2 text-secondary">Sedes de {{ empresa.nombre }}</h6>
+        @if (isExpanded(empresa.id)) {
+          <tr>
+            <td colspan="5" class="bg-white text-start">
+              <div class="p-2">
+                <h6 class="text-secondary mb-2">Sedes de {{ empresa.nombre }}</h6>
 
-              <div *ngIf="loadingSedesEmpresaId() === empresa.id" class="text-muted">
-                <span class="spinner-border spinner-border-sm me-2"></span>
-                Cargando sedes...
+                @if (loadingSedesEmpresaId() === empresa.id) {
+                  <div class="text-muted">
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    Cargando sedes...
+                  </div>
+                } @else {
+                  @if (getSedes(empresa.id).length > 0) {
+                    <ul class="list-group">
+                      @for (sede of getSedes(empresa.id); track sede.id) {
+                        <li class="list-group-item">
+                          <div class="d-flex justify-content-between align-items-start gap-3">
+                            <div>
+                              <div class="fw-semibold">{{ sede.nombre }}</div>
+                              <small class="text-muted d-block">{{ sede.direccion }}</small>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                              <button type="button" class="btn btn-outline-primary btn-sm" (click)="onStartEditSede(empresa.id, sede)">
+                                <i class="bi bi-pencil"></i> Editar
+                              </button>
+                              <button type="button" class="btn btn-sm"
+                                      [class.btn-outline-danger]="sede.activa"
+                                      [class.btn-outline-success]="!sede.activa"
+                                      (click)="onToggleSede(empresa.id, sede)"
+                                      [disabled]="isDeletingSede() || isActivatingSede() || (!empresa.activa && !sede.activa)"
+                                      [title]="(!empresa.activa && !sede.activa) ? 'Debe activar la empresa primero' : ''">
+                                <i class="bi" [class.bi-power]="sede.activa" [class.bi-check-circle]="!sede.activa"></i>
+                                {{ sede.activa ? 'Desactivar' : 'Activar' }}
+                              </button>
+                            </div>
+                          </div>
+
+                          @if (isEditingSede(empresa.id, sede.id)) {
+                            <div class="bg-light border shadow-sm rounded p-3 mt-3" [formGroup]="editSedeForm">
+                              <h6 class="mb-3">Editar sede</h6>
+
+                              <div class="row g-3">
+                                <div class="col-12 col-md-4">
+                                  <label class="small"><b>Nombre</b></label>
+                                  <input formControlName="nombre" class="form-control" type="text">
+                                </div>
+
+                                <div class="col-12 col-md-4">
+                                  <label class="small"><b>Email</b></label>
+                                  <input formControlName="email" class="form-control" type="email">
+                                </div>
+
+                                <div class="col-12 col-md-4">
+                                  <label class="small"><b>Teléfono</b></label>
+                                  <input formControlName="telefono" class="form-control" type="text">
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                  <label class="small"><b>Dirección</b></label>
+                                  <input formControlName="direccion" class="form-control" type="text">
+                                </div>
+
+                                <div class="col-12 col-md-3">
+                                  <label class="small"><b>Código postal</b></label>
+                                  <input formControlName="codigoPostal" class="form-control" type="text">
+                                </div>
+
+                                <div class="col-12 d-flex justify-content-end align-items-end gap-2">
+                                  <button type="button" class="btn btn-outline-secondary" (click)="onCancelEditSede()" [disabled]="isUpdatingSede()">
+                                    Cancelar
+                                  </button>
+                                  <button type="button" class="btn bg-blue text-white" (click)="onUpdateSede(empresa.id)" [disabled]="editSedeForm.invalid || isUpdatingSede()">
+                                    {{ isUpdatingSede() ? 'Guardando...' : 'Guardar sede' }}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        </li>
+                      }
+                    </ul>
+                  } @else {
+                    <div class="text-muted">
+                      Esta empresa no tiene sedes registradas.
+                    </div>
+                  }
+                }
               </div>
+            </td>
+          </tr>
+        }
 
-              <ul class="list-group" *ngIf="loadingSedesEmpresaId() !== empresa.id && getSedes(empresa.id).length > 0">
-                <li class="list-group-item" *ngFor="let sede of getSedes(empresa.id)">
-                  <div class="d-flex justify-content-between align-items-start gap-3">
-                    <div>
-                      <div class="fw-semibold">{{ sede.nombre }}</div>
-                      <small class="text-muted d-block">{{ sede.direccion }}</small>
-                    </div>
+        @if (isEditing(empresa.id)) {
+          <tr>
+            <td colspan="5" class="bg-white text-start">
+              <div class="bg-light border shadow-sm rounded p-3" [formGroup]="editEmpresaForm">
+                <h6 class="text-primary mb-3">Editar empresa: <b>{{empresa.nombre}}</b></h6>
 
-                    <div class="d-flex gap-2">
-                      <button type="button" class="btn btn-outline-primary btn-sm" (click)="onStartEditSede(empresa.id, sede)">
-                        <i class="bi bi-pencil"></i> Editar
-                      </button>
-                      <button type="button" class="btn btn-sm"
-                              [ngClass]="sede.activa ? 'btn-outline-danger' : 'btn-outline-success'"
-                              (click)="onToggleSede(empresa.id, sede)"
-                              [disabled]="isDeletingSede() || isActivatingSede() || (!empresa.activa && !sede.activa)"
-                              [title]="(!empresa.activa && !sede.activa) ? 'Debe activar la empresa primero' : ''">
-                        <i class="bi" [ngClass]="sede.activa ? 'bi-power' : 'bi-check-circle'"></i>
-                        {{ sede.activa ? 'Desactivar' : 'Activar' }}
-                      </button>
-                    </div>
+                <div class="row g-3">
+                  <div class="col-12 col-md-4">
+                    <label class="small"><b>Nombre</b></label>
+                    <input formControlName="nombre" class="form-control" type="text">
                   </div>
 
-                  <div class="border rounded p-3 mt-3 shadow-sm bg-light" *ngIf="isEditingSede(empresa.id, sede.id)" [formGroup]="editSedeForm">
-                    <h6 class="mb-3">Editar sede</h6>
-
-                    <div class="row g-3">
-                      <div class="col-12 col-md-4">
-                        <label class="small"><b>Nombre</b></label>
-                        <input formControlName="nombre" class="form-control" type="text">
-                      </div>
-
-                      <div class="col-12 col-md-4">
-                        <label class="small"><b>Email</b></label>
-                        <input formControlName="email" class="form-control" type="email">
-                      </div>
-
-                      <div class="col-12 col-md-4">
-                        <label class="small"><b>Teléfono</b></label>
-                        <input formControlName="telefono" class="form-control" type="text">
-                      </div>
-
-                      <div class="col-12 col-md-6">
-                        <label class="small"><b>Dirección</b></label>
-                        <input formControlName="direccion" class="form-control" type="text">
-                      </div>
-
-                      <div class="col-12 col-md-3">
-                        <label class="small"><b>Código postal</b></label>
-                        <input formControlName="codigoPostal" class="form-control" type="text">
-                      </div>
-
-                      <div class="col-12 d-flex justify-content-end align-items-end gap-2">
-                        <button type="button" class="btn btn-outline-secondary" (click)="onCancelEditSede()" [disabled]="isUpdatingSede()">
-                          Cancelar
-                        </button>
-                        <button type="button" class="btn bg-blue text-white" (click)="onUpdateSede(empresa.id)" [disabled]="editSedeForm.invalid || isUpdatingSede()">
-                          {{ isUpdatingSede() ? 'Guardando...' : 'Guardar sede' }}
-                        </button>
-                      </div>
-                    </div>
+                  <div class="col-12 col-md-4">
+                    <label class="small"><b>Razón social</b></label>
+                    <input formControlName="razonSocial" class="form-control" type="text">
                   </div>
-                </li>
-              </ul>
 
-              <div class="text-muted" *ngIf="loadingSedesEmpresaId() !== empresa.id && getSedes(empresa.id).length === 0">
-                Esta empresa no tiene sedes registradas.
-              </div>
-            </div>
-          </td>
-        </tr>
+                  <div class="col-12 col-md-4">
+                    <label class="small"><b>CIF</b></label>
+                    <input formControlName="cif" class="form-control" type="text">
+                  </div>
 
-        <tr *ngIf="isEditing(empresa.id)">
-          <td colspan="5" class="bg-white text-start">
-            <div class="border rounded p-3 shadow-sm bg-light" [formGroup]="editEmpresaForm">
-              <h6 class="mb-3 text-primary">Editar empresa: <b>{{empresa.nombre}}</b></h6>
-
-              <div class="row g-3">
-                <div class="col-12 col-md-4">
-                  <label class="small"><b>Nombre</b></label>
-                  <input formControlName="nombre" class="form-control" type="text">
-                </div>
-
-                <div class="col-12 col-md-4">
-                  <label class="small"><b>Razón social</b></label>
-                  <input formControlName="razonSocial" class="form-control" type="text">
-                </div>
-
-                <div class="col-12 col-md-4">
-                  <label class="small"><b>CIF</b></label>
-                  <input formControlName="cif" class="form-control" type="text">
-                </div>
-
-                <div class="col-12 d-flex justify-content-end align-items-end gap-2">
-                  <button type="button" class="btn btn-outline-secondary" (click)="onCancelEdit()" [disabled]="isUpdating()">
-                    Cancelar
-                  </button>
-                  <button type="button" class="btn bg-blue text-white" (click)="onUpdate()" [disabled]="editEmpresaForm.invalid || isUpdating()">
-                    {{ isUpdating() ? 'Guardando...' : 'Guardar cambios' }}
-                  </button>
+                  <div class="col-12 d-flex justify-content-end align-items-end gap-2">
+                    <button type="button" class="btn btn-outline-secondary" (click)="onCancelEdit()" [disabled]="isUpdating()">
+                      Cancelar
+                    </button>
+                    <button type="button" class="btn bg-blue text-white" (click)="onUpdate()" [disabled]="editEmpresaForm.invalid || isUpdating()">
+                      {{ isUpdating() ? 'Guardando...' : 'Guardar cambios' }}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </td>
-        </tr>
-      </ng-container>
+            </td>
+          </tr>
+        }
+      }
       </tbody>
     </table>
 
-    <app-pagination [pag]="pag" (paginacion)="onPaginate($event)"></app-pagination>
+    <app-pagination [pag]="pag()" (paginacion)="onPaginate($event)"></app-pagination>
   </div>
 </div>
