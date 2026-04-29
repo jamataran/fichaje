@@ -9,8 +9,8 @@ export interface Sede {
   provincia: string;
   pais: string;
   activa: boolean;
-  latitud?: number;
-  longitud?: number;
+  latitud?: number | null;
+  longitud?: number | null;
 }
 
 export interface SedeCreate {
@@ -23,8 +23,8 @@ export interface SedeCreate {
   provincia: string;
   pais: string;
   activa: boolean;
-  latitud?: number;
-  longitud?: number;
+  latitud?: number | null;
+  longitud?: number | null;
 }
 
 export interface SedeUpdate {
@@ -37,4 +37,6 @@ export interface SedeUpdate {
   provincia: string;
   pais: string;
   activa: boolean;
+  latitud?: number | null;
+  longitud?: number | null;
 }

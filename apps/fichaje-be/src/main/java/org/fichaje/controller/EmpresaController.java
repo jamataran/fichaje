@@ -40,7 +40,6 @@ public class EmpresaController {
 
     @Operation(summary = "Crea una nueva empresa")
     @PostMapping
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<EmpresaDTO> newEmpresa(@Valid @RequestBody EmpresaCreateDTO empresaDto) {
         EmpresaDTO empresaGuardada = service.save(empresaDto);
 
@@ -55,28 +54,24 @@ public class EmpresaController {
 
     @Operation(summary = "Devuelve una lista paginada de empresas")
     @GetMapping
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<Page<EmpresaDTO>> list(Pageable pageable) {
         return ResponseEntity.ok(service.findAll(pageable));
     }
 
     @Operation(summary = "Devuelve una lista de todas las empresas")
     @GetMapping("/list")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<List<EmpresaDTO>> listAll() {
         return ResponseEntity.ok(service.findAllList());
     }
 
     @Operation(summary = "Edita una empresa existente")
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<EmpresaDTO> editEmpresa(@PathVariable Long id, @Valid @RequestBody EmpresaDTO empresa) {
         return ResponseEntity.of(service.update(empresa, id));
     }
 
     @Operation(summary = "Elimina una empresa")
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
@@ -84,7 +79,6 @@ public class EmpresaController {
 
     @Operation(summary = "Activa una empresa")
     @PatchMapping("/{id}/activar")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> activarEmpresa(@PathVariable Long id) {
         service.activar(id);
         return ResponseEntity.ok().build();
@@ -92,14 +86,12 @@ public class EmpresaController {
 
     @Operation(summary = "Lista los parámetros de una empresa")
     @GetMapping("/{id}/parametros")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<List<EmpresaParametroDTO>> listParametros(@PathVariable Long id) {
         return ResponseEntity.ok(parametroService.findByEmpresaId(id));
     }
 
     @Operation(summary = "Añade un parámetro a una empresa")
     @PostMapping("/{id}/parametros")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<EmpresaParametroDTO> addParametro(@PathVariable Long id, @Valid @RequestBody EmpresaParametroDTO dto) {
         EmpresaParametroDTO saved = parametroService.save(id, dto);
         URI location = ServletUriComponentsBuilder
@@ -112,14 +104,12 @@ public class EmpresaController {
 
     @Operation(summary = "Edita un parámetro de una empresa")
     @PutMapping("/{id}/parametros/{parametroId}")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<EmpresaParametroDTO> updateParametro(@PathVariable Long id, @PathVariable Long parametroId, @Valid @RequestBody EmpresaParametroDTO dto) {
         return ResponseEntity.ok(parametroService.update(id, parametroId, dto));
     }
 
     @Operation(summary = "Elimina un parámetro de una empresa")
     @DeleteMapping("/{id}/parametros/{parametroId}")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> deleteParametro(@PathVariable Long id, @PathVariable Long parametroId) {
         parametroService.delete(id, parametroId);
         return ResponseEntity.noContent().build();
@@ -134,7 +124,7 @@ public class EmpresaController {
 
     @Operation(summary = "Añade una sede a una empresa")
     @PostMapping("/{empresaId}/sedes")
-    @PreAuthorize("hasRole('SUPER_ADMIN') or (hasRole('RRHH') and #empresaId == authentication.principal.empresaId)")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public ResponseEntity<SedeDTO> addSede(@PathVariable Long empresaId, @Valid @RequestBody SedeDTO dto) {
         SedeDTO saved = sedeService.save(empresaId, dto);
         URI location = ServletUriComponentsBuilder

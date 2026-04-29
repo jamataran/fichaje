@@ -1,6 +1,6 @@
 <div class="container-fluid mt-3">
 
-  <h3 class="mb-4 text-center selected bg-waves rounded p-3">Gestión de Sedes - {{ nombreEmpresa }}</h3>
+  <h3 class="mb-4 text-center bg-waves rounded p-3">Gestión de Sedes</h3>
 
   <form class="my-3 mx-0 bg-light px-4 pt-3 pb-2 rounded shadow-sm" [formGroup]="sedeForm" (ngSubmit)="onCreate()" novalidate>
     <h5 class="mb-3">Crear nueva sede</h5>
@@ -9,11 +9,17 @@
       <div class="col-12 col-md-6 col-lg-4 mb-3">
         <label class="small"><b>Nombre *</b></label>
         <input formControlName="nombre" class="form-control" type="text" placeholder="Ej: Oficina Central">
+        @if (sedeForm.get('nombre')?.touched && sedeForm.get('nombre')?.invalid) {
+          <small class="text-danger">El nombre es obligatorio</small>
+        }
       </div>
 
       <div class="col-12 col-md-6 col-lg-4 mb-3">
         <label class="small"><b>Email *</b></label>
         <input formControlName="email" class="form-control" type="email">
+        @if (sedeForm.get('email')?.touched && sedeForm.get('email')?.invalid) {
+          <small class="text-danger">Email inválido o vacío</small>
+        }
       </div>
 
       <div class="col-12 col-md-6 col-lg-4 mb-3">
@@ -24,26 +30,48 @@
       <div class="col-12 col-md-6 col-lg-6 mb-3">
         <label class="small"><b>Dirección *</b></label>
         <input formControlName="direccion" class="form-control" type="text">
+        @if (sedeForm.get('direccion')?.touched && sedeForm.get('direccion')?.invalid) {
+          <small class="text-danger">La dirección es obligatoria</small>
+        }
       </div>
 
       <div class="col-12 col-md-6 col-lg-3 mb-3">
         <label class="small"><b>Código postal *</b></label>
         <input formControlName="codigoPostal" class="form-control" type="text">
+        @if (sedeForm.get('codigoPostal')?.touched && sedeForm.get('codigoPostal')?.invalid) {
+          <small class="text-danger">El CP es obligatorio</small>
+        }
       </div>
 
       <div class="col-12 col-md-6 col-lg-3 mb-3">
         <label class="small"><b>Localidad *</b></label>
         <input formControlName="localidad" class="form-control" type="text">
+        @if (sedeForm.get('localidad')?.touched && sedeForm.get('localidad')?.invalid) {
+          <small class="text-danger">La localidad es obligatoria</small>
+        }
       </div>
 
       <div class="col-12 col-md-6 col-lg-3 mb-3">
         <label class="small"><b>Provincia *</b></label>
         <input formControlName="provincia" class="form-control" type="text">
+        @if (sedeForm.get('provincia')?.touched && sedeForm.get('provincia')?.invalid) {
+          <small class="text-danger">La provincia es obligatoria</small>
+        }
       </div>
 
       <div class="col-12 col-md-6 col-lg-3 mb-3">
         <label class="small"><b>País *</b></label>
         <input formControlName="pais" class="form-control" type="text">
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <label class="small"><b>Latitud</b></label>
+        <input formControlName="latitud" class="form-control" type="number" step="any">
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-3 mb-3">
+        <label class="small"><b>Longitud</b></label>
+        <input formControlName="longitud" class="form-control" type="number" step="any">
       </div>
 
       <div class="col-12 col-md-6 col-lg-3 mb-3 d-flex align-items-end">
@@ -54,8 +82,12 @@
       </div>
 
       <div class="col-12 col-md-6 col-lg-3 mb-3 d-flex align-items-end justify-content-end">
-        <button type="submit" class="btn bg-blue text-white w-100 shadow-sm" [disabled]="sedeForm.invalid || isCreating()">
-          {{ isCreating() ? 'Guardando...' : 'Crear sede' }}
+        <button type="submit" class="btn bg-blue text-white w-100 shadow-sm" [disabled]="isCreating()">
+          @if (isCreating()) {
+            <span class="spinner-border spinner-border-sm me-1"></span> Guardando...
+          } @else {
+            Crear sede
+          }
         </button>
       </div>
     </div>
@@ -76,7 +108,7 @@
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngFor="let sede of listaSedes">
+          @for (sede of listaSedes(); track sede.id) {
             <tr [class.table-primary]="isEditing(sede.id)">
               <td class="text-start">
                 <div class="fw-semibold">{{ sede.nombre }}</div>
@@ -91,65 +123,77 @@
               </td>
               <td>
                 <div class="d-flex gap-2 justify-content-center">
-                  <button type="button" class="btn btn-outline-primary btn-sm" (click)="onStartEdit(sede)">
+                  <button type="button" class="btn btn-outline-primary btn-sm" (click)="onStartEdit(sede)" title="Editar">
                     <i class="bi bi-pencil"></i>
                   </button>
-                  <button type="button" class="btn btn-outline-danger btn-sm" (click)="onDeactivate(sede)">
-                    <i class="bi bi-trash"></i>
+                  <button type="button" class="btn btn-sm"
+                          [class.btn-outline-danger]="sede.activa"
+                          [class.btn-outline-success]="!sede.activa"
+                          (click)="onToggleSede(sede)"
+                          [disabled]="isDeactivatingSede() || isActivatingSede()"
+                          [title]="sede.activa ? 'Desactivar' : 'Activar'">
+                    <i class="bi" [class.bi-power]="sede.activa" [class.bi-check-circle]="!sede.activa"></i>
                   </button>
                 </div>
               </td>
             </tr>
 
-            <tr *ngIf="isEditing(sede.id)">
-              <td colspan="5" class="bg-white text-start">
-                <div class="border rounded p-3 shadow-sm bg-light" [formGroup]="editSedeForm">
-                  <h6 class="mb-3 text-primary">Editar sede: <b>{{ sede.nombre }}</b></h6>
-                  
-                  <div class="row g-3">
-                    <div class="col-12 col-md-4">
-                      <label class="small"><b>Nombre</b></label>
-                      <input formControlName="nombre" class="form-control" type="text">
-                    </div>
-                    <div class="col-12 col-md-4">
-                      <label class="small"><b>Email</b></label>
-                      <input formControlName="email" class="form-control" type="email">
-                    </div>
-                    <div class="col-12 col-md-4">
-                      <label class="small"><b>Teléfono</b></label>
-                      <input formControlName="telefono" class="form-control" type="text">
-                    </div>
-                    <div class="col-12 col-md-6">
-                      <label class="small"><b>Dirección</b></label>
-                      <input formControlName="direccion" class="form-control" type="text">
-                    </div>
-                    <div class="col-12 col-md-3">
-                      <label class="small"><b>Código postal</b></label>
-                      <input formControlName="codigoPostal" class="form-control" type="text">
-                    </div>
-                    <div class="col-12 col-md-3">
-                      <div class="form-check mt-4">
-                        <input formControlName="activa" class="form-check-input" type="checkbox" [id]="'edit-activa-sede-' + sede.id">
-                        <label class="form-check-label" [for]="'edit-activa-sede-' + sede.id">Activa</label>
+            @if (isEditing(sede.id)) {
+              <tr>
+                <td colspan="5" class="bg-white text-start">
+                  <div class="border rounded p-3 shadow-sm bg-light" [formGroup]="editSedeForm">
+                    <h6 class="mb-3 text-primary">Editar sede: <b>{{ sede.nombre }}</b></h6>
+
+                    <div class="row g-3">
+                      <div class="col-12 col-md-4">
+                        <label class="small"><b>Nombre</b></label>
+                        <input formControlName="nombre" class="form-control" type="text">
+                      </div>
+                      <div class="col-12 col-md-4">
+                        <label class="small"><b>Email</b></label>
+                        <input formControlName="email" class="form-control" type="email">
+                      </div>
+                      <div class="col-12 col-md-4">
+                        <label class="small"><b>Teléfono</b></label>
+                        <input formControlName="telefono" class="form-control" type="text">
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="small"><b>Dirección</b></label>
+                        <input formControlName="direccion" class="form-control" type="text">
+                      </div>
+                      <div class="col-12 col-md-3">
+                        <label class="small"><b>Código postal</b></label>
+                        <input formControlName="codigoPostal" class="form-control" type="text">
+                      </div>
+                      <div class="col-12 col-md-3">
+                        <div class="form-check mt-4">
+                          <input formControlName="activa" class="form-check-input" type="checkbox" [id]="'edit-activa-sede-' + sede.id">
+                          <label class="form-check-label" [for]="'edit-activa-sede-' + sede.id">Activa</label>
+                        </div>
+                      </div>
+
+                      <div class="col-12 d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-outline-secondary" (click)="onCancelEdit()" [disabled]="isUpdating()">
+                          Cancelar
+                        </button>
+                        <button type="button" class="btn bg-blue text-white" (click)="onUpdate()" [disabled]="isUpdating()">
+                          @if (isUpdating()) {
+                            <span class="spinner-border spinner-border-sm me-1"></span> Guardando...
+                          } @else {
+                            Guardar cambios
+                          }
+                        </button>
                       </div>
                     </div>
-
-                    <div class="col-12 d-flex justify-content-end gap-2">
-                      <button type="button" class="btn btn-outline-secondary" (click)="onCancelEdit()" [disabled]="isUpdating()">
-                        Cancelar
-                      </button>
-                      <button type="button" class="btn bg-blue text-white" (click)="onUpdate()" [disabled]="editSedeForm.invalid || isUpdating()">
-                        {{ isUpdating() ? 'Guardando...' : 'Guardar cambios' }}
-                      </button>
-                    </div>
                   </div>
-                </div>
-              </td>
+                </td>
+              </tr>
+            }
+          } @empty {
+            <tr>
+              <td colspan="5" class="py-4 text-muted">No hay sedes registradas para esta empresa.</td>
             </tr>
-          </ng-container>
-          <tr *ngIf="listaSedes.length === 0">
-            <td colspan="5" class="py-4 text-muted">No hay sedes registradas para esta empresa.</td>
-          </tr>
+          }
         </tbody>
       </table>
     </div>

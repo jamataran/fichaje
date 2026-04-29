@@ -24,8 +24,12 @@ export class SedesService {
     );
   }
 
+  public getSedesByEmpresa(empresaId: number): Observable<Sede[]> {
+    return this.httpClient.get<Sede[]>(environment.apiURL + `/empresas/${empresaId}/sedes`);
+  }
+
   public create(empresaId: number, model: SedeCreate): Observable<Sede> {
-    return this.httpClient.post<Sede>(this.endPoint + `/empresa/${empresaId}`, model);
+    return this.httpClient.post<Sede>(environment.apiURL + `/empresas/${empresaId}/sedes`, model);
   }
 
   public update(id: number, model: SedeUpdate): Observable<Sede> {
@@ -34,5 +38,9 @@ export class SedesService {
 
   public deactivate(id: number): Observable<any> {
     return this.httpClient.patch<any>(this.endPoint + `/${id}/desactivar`, {});
+  }
+
+  public activate(id: number): Observable<any> {
+    return this.httpClient.patch<any>(this.endPoint + `/${id}/activar`, {});
   }
 }

@@ -25,6 +25,7 @@ public class MainSecurity {
 	private final String RRHH = "RRHH";
 	private final String USER = "USER";
 	private final String SUPER_ADMIN = "SUPER_ADMIN";
+	private final String ADMIN = "ADMIN";
 
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -78,9 +79,9 @@ public class MainSecurity {
 						.requestMatchers("/vacaciones/listFiltered").hasRole(USER)
 						.requestMatchers("/vacaciones/**").hasRole(RRHH)
 						.requestMatchers("/empresas/list").hasRole(SUPER_ADMIN)
-						.requestMatchers("/empresas/*/sedes").hasAnyRole(SUPER_ADMIN, RRHH)
+						.requestMatchers("/empresas/*/sedes").hasAnyRole(SUPER_ADMIN, RRHH, ADMIN)
 						.requestMatchers("/empresas/**").hasAnyRole(SUPER_ADMIN)
-						.requestMatchers("/sedes/**").hasAnyRole(SUPER_ADMIN, RRHH)
+						.requestMatchers("/sedes/**").hasAnyRole(SUPER_ADMIN, ADMIN)
 						.requestMatchers("/auth/nuevo").hasRole(RRHH)
 						.requestMatchers("/auth/login").permitAll()
 						.requestMatchers("/apikey/**").hasRole(RRHH)

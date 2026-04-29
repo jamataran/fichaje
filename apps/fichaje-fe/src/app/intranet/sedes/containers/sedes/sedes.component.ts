@@ -1,9 +1,9 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, signal, inject } from '@angular/core';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Popup } from 'src/app/shared/helper/popup';
 import { Sede, SedeCreate, SedeUpdate } from '../../model/sede.model';
 import { SedesService } from '../../service/sedes.service';
-import { EmpresasService } from '../../../empresas/service/empresas.service';
 import { TokenService } from 'src/app/core/auth/service/token.service';
 import { EmpleadosService } from 'src/app/intranet/empleados/service/empleados.service';
 
@@ -11,77 +11,89 @@ import { EmpleadosService } from 'src/app/intranet/empleados/service/empleados.s
   selector: 'app-sedes',
   templateUrl: './sedes.component.html',
   styleUrls: ['./sedes.component.css'],
-  standalone: false
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule]
 })
 export class SedesComponent implements OnInit {
+  private sedesService = inject(SedesService);
+  private empleadosService = inject(EmpleadosService);
+  private tokenService = inject(TokenService);
+  private fb = inject(FormBuilder).nonNullable;
 
-  listaSedes: Sede[] = [];
-  empresaId: number | null = null;
-  nombreEmpresa: string = '';
+  listaSedes = signal<Sede[]>([]);
+  empresaId = signal<number | null>(null);
+  nombreEmpresa = signal<string>('');
 
   isCreating = signal(false);
   isUpdating = signal(false);
-  isDeactivating = signal(false);
+  isActivatingSede = signal(false);
+  isDeactivatingSede = signal(false);
   editingSedeId = signal<number | null>(null);
 
-  // Formularios Reactivos
-  sedeForm: FormGroup;
-  editSedeForm: FormGroup;
+  // Formularios Reactivos Tipados con validaciones que coinciden con el backend
+  sedeForm = this.fb.group({
+    nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s.,'&()-]+$/)]],
+    email: ['', [Validators.required, Validators.email]],
+    telefono: ['', [Validators.pattern(/^[+]?[0-9\s()]{6,20}$/)]],
+    direccion: ['', [Validators.required]],
+    codigoPostal: ['', [Validators.required, Validators.pattern(/^[0-9]{5}$/)]],
+    localidad: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s.,'()-]+$/)]],
+    provincia: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s.,'()-]+$/)]],
+    pais: ['España', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s.,'()-]+$/)]],
+    latitud: [null as number | null],
+    longitud: [null as number | null],
+    activa: [true]
+  });
 
-  constructor(
-    private sedesService: SedesService,
-    private empresasService: EmpresasService,
-    private empleadosService: EmpleadosService,
-    private tokenService: TokenService,
-    private fb: FormBuilder
-  ) {
-    this.sedeForm = this.initSedeForm();
-    this.editSedeForm = this.initSedeForm();
-  }
+  editSedeForm = this.fb.group({
+    nombre: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s.,'&()-]+$/)]],
+    email: ['', [Validators.required, Validators.email]],
+    telefono: ['', [Validators.pattern(/^[+]?[0-9\s()]{6,20}$/)]],
+    direccion: ['', [Validators.required]],
+    codigoPostal: ['', [Validators.required, Validators.pattern(/^[0-9]{5}$/)]],
+    localidad: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s.,'()-]+$/)]],
+    provincia: ['', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s.,'()-]+$/)]],
+    pais: ['España', [Validators.required, Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s.,'()-]+$/)]],
+    latitud: [null as number | null],
+    longitud: [null as number | null],
+    activa: [true]
+  });
 
   ngOnInit(): void {
-    this.empresaId = this.tokenService.getEmpresaId();
+    this.empresaId.set(this.tokenService.getEmpresaId());
     this.cargarDatos();
   }
 
-  private initSedeForm(): FormGroup {
-    return this.fb.group({
-      nombre: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      telefono: [''],
-      direccion: ['', Validators.required],
-      codigoPostal: ['', Validators.required],
-      localidad: ['', Validators.required],
-      provincia: ['', Validators.required],
-      pais: ['España', Validators.required],
-      latitud: [null],
-      longitud: [null],
-      activa: [true]
-    });
-  }
-
   cargarDatos(): void {
-    // Cargar mi empresa para tener el nombre desde el perfil del usuario
     this.empleadosService.getMyUsuario().subscribe({
       next: (usuario) => {
         if (usuario.empresas && usuario.empresas.length > 0) {
           const empresa = usuario.empresas[0];
-          this.nombreEmpresa = empresa.nombre;
-          if (!this.empresaId) this.empresaId = empresa.id;
+          this.nombreEmpresa.set(empresa.nombre);
+          if (!this.empresaId()) {
+            this.empresaId.set(empresa.id);
+            this.listarSedes(); // Listar cuando tengamos el ID
+          }
         }
       },
       error: () => {
-        Popup.toastDanger('Error', 'No se pudo cargar la información de la empresa desde el perfil');
+        Popup.toastDanger('Error', 'No se pudo cargar la información de la empresa');
       }
     });
 
-    this.listarSedes();
+    // Intento inicial con el ID del token si existe
+    if (this.empresaId()) {
+      this.listarSedes();
+    }
   }
 
   listarSedes(): void {
-    this.sedesService.getMisSedes().subscribe({
+    const id = this.empresaId();
+    if (!id) return;
+
+    this.sedesService.getSedesByEmpresa(id).subscribe({
       next: (sedes) => {
-        this.listaSedes = sedes ?? [];
+        this.listaSedes.set(sedes ?? []);
       },
       error: (err) => {
         Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudieron cargar las sedes');
@@ -90,14 +102,25 @@ export class SedesComponent implements OnInit {
   }
 
   onCreate(): void {
-    if (this.sedeForm.invalid || !this.empresaId) {
+    const idEmpresa = this.empresaId();
+    if (this.sedeForm.invalid || !idEmpresa) {
+      this.sedeForm.markAllAsTouched();
+      Popup.toastDanger('Error', 'Por favor, revisa los campos del formulario. El CP debe tener 5 dígitos.');
       return;
     }
 
-    const payload: SedeCreate = this.sedeForm.value;
+    const rawValue = this.sedeForm.getRawValue();
+    const payload: any = {
+      ...rawValue,
+      empresaId: idEmpresa,
+      latitud: rawValue.latitud || null,
+      longitud: rawValue.longitud || null,
+      telefono: rawValue.telefono || null
+    };
+
     this.isCreating.set(true);
 
-    this.sedesService.create(this.empresaId, payload).subscribe({
+    this.sedesService.create(idEmpresa, payload).subscribe({
       next: () => {
         this.isCreating.set(false);
         Popup.toastSucess('', 'Sede creada correctamente');
@@ -106,8 +129,9 @@ export class SedesComponent implements OnInit {
       },
       error: (err) => {
         this.isCreating.set(false);
-        const msg = err?.error?.mensaje || err?.error?.message || 'No se pudo crear la sede';
+        const msg = err?.error?.mensaje || err?.error?.message || 'Error 400: Datos inválidos. Revisa el CP (5 dígitos) y el formato del nombre.';
         Popup.toastDanger('Error', msg);
+        console.error('Error 400 details:', err.error);
       }
     });
   }
@@ -137,10 +161,11 @@ export class SedesComponent implements OnInit {
   onUpdate(): void {
     const sedeId = this.editingSedeId();
     if (!sedeId || this.editSedeForm.invalid) {
+      this.editSedeForm.markAllAsTouched();
       return;
     }
 
-    const payload: SedeUpdate = this.editSedeForm.value;
+    const payload: SedeUpdate = this.editSedeForm.getRawValue();
     this.isUpdating.set(true);
 
     this.sedesService.update(sedeId, payload).subscribe({
@@ -158,27 +183,50 @@ export class SedesComponent implements OnInit {
     });
   }
 
-  onDeactivate(sede: Sede): void {
-    Popup.dangerConfirmBox(
-      `¿Desea desactivar la sede ${sede.nombre}?`,
-      'Esta operación no se puede deshacer',
-      'SI',
-      'NO',
-      () => this.deactivateSede(sede.id)
-    );
+  onToggleSede(sede: Sede): void {
+    if (sede.activa) {
+      Popup.dangerConfirmBox(
+        `¿Desea desactivar la sede ${sede.nombre}?`,
+        'Los empleados no podrán fichar en esta sede temporalmente.',
+        'DESACTIVAR',
+        'CANCELAR',
+        () => this.deactivateSede(sede)
+      );
+    } else {
+      this.activateSede(sede);
+    }
   }
 
-  private deactivateSede(id: number): void {
-    this.isDeactivating.set(true);
-    this.sedesService.deactivate(id).subscribe({
+  private deactivateSede(sede: Sede): void {
+    this.isDeactivatingSede.set(true);
+    this.sedesService.deactivate(sede.id).subscribe({
       next: () => {
-        this.isDeactivating.set(false);
+        this.isDeactivatingSede.set(false);
+        this.listaSedes.update(sedes =>
+          sedes.map(s => s.id === sede.id ? { ...s, activa: false } : s)
+        );
         Popup.toastWarning('', 'Sede desactivada');
-        this.listarSedes();
       },
       error: (err) => {
-        this.isDeactivating.set(false);
+        this.isDeactivatingSede.set(false);
         Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo desactivar la sede');
+      }
+    });
+  }
+
+  private activateSede(sede: Sede): void {
+    this.isActivatingSede.set(true);
+    this.sedesService.activate(sede.id).subscribe({
+      next: () => {
+        this.isActivatingSede.set(false);
+        this.listaSedes.update(sedes =>
+          sedes.map(s => s.id === sede.id ? { ...s, activa: true } : s)
+        );
+        Popup.toastSucess('', 'Sede activada');
+      },
+      error: (err) => {
+        this.isActivatingSede.set(false);
+        Popup.toastDanger('Error', err?.error?.mensaje ?? 'No se pudo activar la sede');
       }
     });
   }
