@@ -18,5 +18,8 @@ public interface EmpresaRepository
 	Optional<Empresa> findById(Long id);
 
 	@EntityGraph(attributePaths = {"sedes", "parametros"})
+	Optional<Empresa> findByCif(String cif);
+
+	@EntityGraph(attributePaths = {"sedes", "parametros"})
 	Page<Empresa> findAll(Pageable pageable);
 }
