@@ -94,36 +94,11 @@ public class DataInitializer implements CommandLineRunner {
                 empresaService.save(empresaDTO);
                 log.info("Empresa por defecto creada con éxito.");
 
-                linkAdminToEmpresa();
             } catch (Exception e) {
                 log.error("Error al crear la empresa por defecto: {}", e.getMessage());
             }
         } else {
             log.info("La empresa por defecto con CIF {} ya existe.", cif);
-            linkAdminToEmpresa();
-        }
-    }
-
-    private void linkAdminToEmpresa() {
-        String adminNumero = "fichajesPi000";
-        Optional<Usuario> adminOpt = usuarioRepository.findByNumero(adminNumero);
-        Optional<Empresa> empresaOpt = empresaRepository.findByCif(cif);
-
-        if (adminOpt.isPresent() && empresaOpt.isPresent()) {
-            Usuario admin = adminOpt.get();
-            Empresa empresa = empresaOpt.get();
-
-            if (admin.getEmpresas() == null) {
-                admin.setEmpresas(new HashSet<>());
-            }
-
-            if (!admin.getEmpresas().contains(empresa)) {
-                admin.getEmpresas().add(empresa);
-                usuarioRepository.save(admin);
-                log.info("Usuario administrador {} vinculado a la empresa {}", adminNumero, cif);
-            }
-        } else {
-            log.warn("No se pudo vincular el admin a la empresa: Admin o Empresa no encontrados.");
         }
     }
 }
