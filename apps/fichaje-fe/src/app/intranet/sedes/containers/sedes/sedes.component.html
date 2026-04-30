@@ -126,6 +126,9 @@
                   <button type="button" class="btn btn-outline-primary btn-sm" (click)="onStartEdit(sede)" title="Editar">
                     <i class="bi bi-pencil"></i>
                   </button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="onManageParams(sede)" title="Gestionar Parámetros">
+                    <i class="bi bi-gear"></i>
+                  </button>
                   <button type="button" class="btn btn-sm"
                           [class.btn-outline-danger]="sede.activa"
                           [class.btn-outline-success]="!sede.activa"
@@ -137,6 +140,80 @@
                 </div>
               </td>
             </tr>
+
+            @if (isManagingParams(sede.id)) {
+              <tr>
+                <td colspan="5" class="bg-white text-start">
+                  <div class="border rounded p-3 shadow-sm bg-light">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <h6 class="text-primary mb-0">Parámetros de: <b>{{ sede.nombre }}</b></h6>
+                      <button type="button" class="btn-close" (click)="onManageParams(sede)"></button>
+                    </div>
+
+                    <div class="row g-3 mb-4" [formGroup]="paramForm">
+                      <div class="col-12 col-md-5">
+                        <label class="small"><b>Clave</b></label>
+                        <input formControlName="clave" class="form-control" type="text" placeholder="Ej: RADIO_GEOFENCE">
+                      </div>
+                      <div class="col-12 col-md-5">
+                        <label class="small"><b>Valor</b></label>
+                        <input formControlName="valor" class="form-control" type="text" placeholder="Ej: 50">
+                      </div>
+                      <div class="col-12 col-md-2 d-flex align-items-end gap-2">
+                        <button type="button" class="btn bg-blue text-white w-100" (click)="onSaveParam()" [disabled]="isSavingParam()">
+                          {{ editingParamId() ? 'Actualizar' : 'Añadir' }}
+                        </button>
+                        @if (editingParamId()) {
+                          <button type="button" class="btn btn-outline-secondary" (click)="onCancelParamEdit()">
+                            <i class="bi bi-x-lg"></i>
+                          </button>
+                        }
+                      </div>
+                    </div>
+
+                    @if (isLoadingParams()) {
+                      <div class="text-center py-3">
+                        <span class="spinner-border spinner-border-sm text-primary"></span> Cargando parámetros...
+                      </div>
+                    } @else {
+                      <div class="table-responsive">
+                        <table class="table table-sm table-bordered bg-white">
+                          <thead class="table-light">
+                            <tr>
+                              <th>Clave</th>
+                              <th>Valor</th>
+                              <th class="text-center" style="width: 100px;">Acciones</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for (param of listaParametros(); track param.id) {
+                              <tr>
+                                <td><code>{{ param.clave }}</code></td>
+                                <td>{{ param.valor }}</td>
+                                <td class="text-center">
+                                  <div class="d-flex gap-2 justify-content-center">
+                                    <button type="button" class="btn btn-link btn-sm p-0" (click)="onStartEditParam(param)" title="Editar">
+                                      <i class="bi bi-pencil text-primary"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-link btn-sm p-0" (click)="onDeleteParam(param)" title="Eliminar">
+                                      <i class="bi bi-trash text-danger"></i>
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            } @empty {
+                              <tr>
+                                <td colspan="3" class="text-center text-muted small py-2">No hay parámetros configurados</td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
 
             @if (isEditing(sede.id)) {
               <tr>

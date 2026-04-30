@@ -11,6 +11,19 @@ export interface Sede {
   activa: boolean;
   latitud?: number | null;
   longitud?: number | null;
+  parametros?: SedeParametro[];
+}
+
+export interface SedeParametro {
+  id: number;
+  sedeId: number;
+  clave: string;
+  valor: string;
+}
+
+export interface SedeParametroCreate {
+  clave: string;
+  valor: string;
 }
 
 export interface SedeCreate {

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Sede, SedeCreate, SedeUpdate } from '../model/sede.model';
+import { Sede, SedeCreate, SedeUpdate, SedeParametro, SedeParametroCreate } from '../model/sede.model';
 import { EmpleadosService } from '../../empleados/service/empleados.service';
 import { map } from 'rxjs/operators';
 
@@ -42,5 +42,22 @@ export class SedesService {
 
   public activate(id: number): Observable<any> {
     return this.httpClient.patch<any>(this.endPoint + `/${id}/activar`, {});
+  }
+
+  // Parameter methods
+  public listParametros(sedeId: number): Observable<SedeParametro[]> {
+    return this.httpClient.get<SedeParametro[]>(this.endPoint + `/${sedeId}/parametros`);
+  }
+
+  public addParametro(sedeId: number, model: SedeParametroCreate): Observable<SedeParametro> {
+    return this.httpClient.post<SedeParametro>(this.endPoint + `/${sedeId}/parametros`, model);
+  }
+
+  public updateParametro(sedeId: number, parametroId: number, model: SedeParametroCreate): Observable<SedeParametro> {
+    return this.httpClient.put<SedeParametro>(this.endPoint + `/${sedeId}/parametros/${parametroId}`, model);
+  }
+
+  public deleteParametro(sedeId: number, parametroId: number): Observable<any> {
+    return this.httpClient.delete<any>(this.endPoint + `/${sedeId}/parametros/${parametroId}`);
   }
 }
