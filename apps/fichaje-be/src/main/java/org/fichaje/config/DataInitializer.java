@@ -25,45 +25,49 @@ public class DataInitializer implements CommandLineRunner {
     private final EmpresaRepository empresaRepository;
     private final UsuarioRepository usuarioRepository;
 
-    @Value("${fichaje.default-empresa.nombre}")
+    @Value("${fichaje.default-empresa.nombre:}")
     private String nombre;
 
-    @Value("${fichaje.default-empresa.razon-social}")
+    @Value("${fichaje.default-empresa.razon-social:}")
     private String razonSocial;
 
-    @Value("${fichaje.default-empresa.cif}")
+    @Value("${fichaje.default-empresa.cif:}")
     private String cif;
 
-    @Value("${fichaje.default-empresa.email}")
+    @Value("${fichaje.default-empresa.email:}")
     private String email;
 
-    @Value("${fichaje.default-empresa.telefono}")
+    @Value("${fichaje.default-empresa.telefono:}")
     private String telefono;
 
-    @Value("${fichaje.default-empresa.direccion}")
+    @Value("${fichaje.default-empresa.direccion:}")
     private String direccion;
 
-    @Value("${fichaje.default-empresa.codigo-postal}")
+    @Value("${fichaje.default-empresa.codigo-postal:}")
     private String codigoPostal;
 
-    @Value("${fichaje.default-empresa.localidad}")
+    @Value("${fichaje.default-empresa.localidad:}")
     private String localidad;
 
-    @Value("${fichaje.default-empresa.provincia}")
+    @Value("${fichaje.default-empresa.provincia:}")
     private String provincia;
 
-    @Value("${fichaje.default-empresa.pais}")
+    @Value("${fichaje.default-empresa.pais:}")
     private String pais;
 
-    @Value("${fichaje.default-empresa.latitud}")
+    @Value("${fichaje.default-empresa.latitud:0.0}")
     private Double latitud;
 
-    @Value("${fichaje.default-empresa.longitud}")
+    @Value("${fichaje.default-empresa.longitud:0.0}")
     private Double longitud;
 
     @Override
     @Transactional
     public void run(String... args) {
+        if (cif == null || cif.isEmpty() || nombre == null || nombre.isEmpty()) {
+            log.debug("DataInitializer: No se han proporcionado los datos de la empresa por defecto (CIF/Nombre). Saltando inicialización.");
+            return;
+        }
         log.info("Iniciando DataInitializer...");
         initializeDefaultEmpresa();
     }
@@ -72,7 +76,7 @@ public class DataInitializer implements CommandLineRunner {
         Optional<Empresa> empresaOpt = empresaRepository.findByCif(cif);
 
         if (empresaOpt.isEmpty()) {
-            log.info("No se encontró la empresa por defecto con CIF {}. Creándola...", cif);
+            log.debug("No se encontró la empresa por defecto con CIF {}. Creándola...", cif);
 
             EmpresaCreateDTO empresaDTO = EmpresaCreateDTO.builder()
                     .nombre(nombre)
@@ -92,13 +96,13 @@ public class DataInitializer implements CommandLineRunner {
 
             try {
                 empresaService.save(empresaDTO);
-                log.info("Empresa por defecto creada con éxito.");
+                log.debug("Empresa por defecto creada con éxito.");
 
             } catch (Exception e) {
                 log.error("Error al crear la empresa por defecto: {}", e.getMessage());
             }
         } else {
-            log.info("La empresa por defecto con CIF {} ya existe.", cif);
+            log.debug("La empresa por defecto con CIF {} ya existe.", cif);
         }
     }
 }
