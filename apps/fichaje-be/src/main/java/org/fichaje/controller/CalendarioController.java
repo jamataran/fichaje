@@ -67,7 +67,7 @@ public class CalendarioController
 		Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
 		boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
 
-		Specification<Calendario> spec = Specification.where(null);
+		Specification<Calendario> spec = Specification.where((Specification<Calendario>) null);
 		if (currentEmpresaId != null) {
 			spec = spec.and(specifications.hasEmpresa(currentEmpresaId));
 		} else if (!isSuperAdmin) {

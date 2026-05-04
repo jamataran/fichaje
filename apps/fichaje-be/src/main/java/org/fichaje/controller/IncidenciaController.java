@@ -75,7 +75,7 @@ public class IncidenciaController
 		}
 
 		Specification<Incidencia> spec = Specification
-				.where(dto.getUsuarioNombre() == null ? null
+				.where(dto.getUsuarioNombre() == null ? (Specification<Incidencia>) null
 						: specifications.nombreUsuarioContains(
 								dto.getUsuarioNombre()))
 				.and(dto.getUsuarioEmail() == null ? null
@@ -143,7 +143,7 @@ public class IncidenciaController
 		}
 
 		Specification<Incidencia> spec = Specification
-				.where(dto.getUsuarioNombre() == null ? null
+				.where(dto.getUsuarioNombre() == null ? (Specification<Incidencia>) null
 						: specifications.nombreUsuarioContains(
 								dto.getUsuarioNombre()))
 				.and(dto.getUsuarioEmail() == null ? null

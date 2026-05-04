@@ -140,7 +140,7 @@ public class VacacionesController
 		}
 
 		Specification<Vacaciones> spec = Specification
-				.where(dto.getUsuarioNombre() == null ? null
+				.where(dto.getUsuarioNombre() == null ? (Specification<Vacaciones>) null
 						: specifications.nombreUsuarioContains(
 								dto.getUsuarioNombre()))
 				.and(dto.getUsuarioNumero() == null ? null
@@ -215,7 +215,7 @@ public class VacacionesController
 		}
 
 		Specification<Vacaciones> spec = Specification
-				.where(dto.getUsuarioNombre() == null ? null
+				.where(dto.getUsuarioNombre() == null ? (Specification<Vacaciones>) null
 						: specifications.nombreUsuarioContains(
 								dto.getUsuarioNombre()))
 				.and(dto.getUsuarioNumero() == null ? null

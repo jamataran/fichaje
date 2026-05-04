@@ -15,6 +15,10 @@ import org.fichaje.provider.db.entity.enums.TipoFichaje;
 import org.fichaje.service.FichajeService;
 import org.fichaje.service.UsuarioService;
 
+import org.fichaje.provider.db.repository.EmpresaRepository;
+import org.fichaje.util.SecurityUtils;
+import org.springframework.transaction.annotation.Transactional;
+
 @Component
 public class FichajeDtoConverter {
 
@@ -22,6 +26,8 @@ public class FichajeDtoConverter {
 	private UsuarioService service;
 	@Autowired
 	private FichajeService fichajeService;
+	@Autowired
+	private EmpresaRepository empresaRepository;
 
 	public FichajeDto inverseTransform(Fichaje f) {
 
@@ -43,6 +49,7 @@ public class FichajeDtoConverter {
 		return f;
 	}
 
+	@Transactional
 	public FichajeDtoReqRes fichar(FichajeDtoReqRes fichajeDto) {
 
 		fichajeDto.setHora(LocalTime.now());
@@ -52,13 +59,20 @@ public class FichajeDtoConverter {
 
 		Usuario usuario = fichaje.getUsuario();
 		if (usuario != null) {
-			boolean workingState = usuario.getWorking();
+			// Aislamiento Multi-empresa
+			Long empresaId = SecurityUtils.getCurrentEmpresaId();
+			if (empresaId != null) {
+				empresaRepository.findById(empresaId).ifPresent(fichaje::setEmpresa);
+			} else if (usuario.getEmpresas() != null && !usuario.getEmpresas().isEmpty()) {
+				fichaje.setEmpresa(usuario.getEmpresas().iterator().next());
+			}
+
+			boolean workingState = usuario.getWorking() != null && usuario.getWorking();
 			if (workingState)
 				fichaje.setTipo(TipoFichaje.SALIDA.toString());
-//				fichaje.setTipo("SALIDA");
 			else
 				fichaje.setTipo(TipoFichaje.ENTRADA.toString());
-//				fichaje.setTipo("ENTRADA");
+
 			usuario.setWorking(!workingState);
 			StringBuilder sb = new StringBuilder();
 			sb.append(fichaje.getDia());
@@ -68,14 +82,14 @@ public class FichajeDtoConverter {
 			sb.append(" - ");
 			sb.append(fichaje.getTipo());
 			usuario.setUltimoFichaje(sb.toString());
+
 			service.save(usuario);
 			fichaje.setUsuario(usuario);
 			fichajeService.save(fichaje);
-			fichajeDto
-					.setNombreUsuario(fichaje.getUsuario().getNombreEmpleado());
+
+			fichajeDto.setNombreUsuario(usuario.getNombreEmpleado());
 			fichajeDto.setHora(fichaje.getHora());
-			fichajeDto.setTipo(
-					fichaje.getUsuario().getWorking() ? "entrada" : "salida");
+			fichajeDto.setTipo(usuario.getWorking() ? "entrada" : "salida");
 
 			return fichajeDto;
 		}

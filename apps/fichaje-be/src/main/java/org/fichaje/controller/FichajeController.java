@@ -33,6 +33,8 @@ import io.swagger.v3.oas.annotations.Operation;
 
 import org.fichaje.util.SecurityUtils;
 
+import org.fichaje.dto.entity.Mensaje;
+
 @RestController
 @RequestMapping("/fichaje")
 //@CrossOrigin(origins = "http://localhost:4200")
@@ -50,9 +52,14 @@ public class FichajeController
 	public ResponseEntity<?> nuevoFichajeNow(
 			@RequestBody FichajeDtoReqRes fichajeDto) {
 		System.out.println("Fichaje");
+		FichajeDtoReqRes result = dtoConverter.fichar(fichajeDto);
+		if (result == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new Mensaje("No se ha podido realizar el fichaje: Usuario no encontrado o sin empresa asignada"));
+		}
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
-				.body(dtoConverter.fichar(fichajeDto));
+				.body(result);
 
 	}
 
@@ -76,7 +83,7 @@ public class FichajeController
 		}
 
 		Specification<Fichaje> spec = Specification
-				.where(dto.getNombreUsuario() == null ? null
+				.where(dto.getNombreUsuario() == null ? (Specification<Fichaje>) null
 						: specifications.nombreUsuarioContains(
 								dto.getNombreUsuario()))
 				.and(dto.getNumeroUsuario() == null ? null
@@ -136,7 +143,7 @@ public class FichajeController
 		}
 
 		Specification<Fichaje> spec = Specification
-				.where(dto.getNombreUsuario() == null ? null
+				.where(dto.getNombreUsuario() == null ? (Specification<Fichaje>) null
 						: specifications.nombreUsuarioContains(
 								dto.getNombreUsuario()))
 				.and(dto.getNumeroUsuario() == null ? null

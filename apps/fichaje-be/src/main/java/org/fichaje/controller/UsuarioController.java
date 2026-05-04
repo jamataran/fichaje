@@ -82,7 +82,7 @@ public class UsuarioController
 	}
 
 	private Specification<Usuario> createSpec(UsuarioDtoFilter dto) {
-		Specification<Usuario> spec = Specification.where((root, query, criteriaBuilder) -> null);
+		Specification<Usuario> spec = Specification.where((Specification<Usuario>) null);
 		if (dto == null) return spec;
 
 		if (dto.getNombreEmpleado() != null) {

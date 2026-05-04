@@ -59,6 +59,11 @@ export class HomeComponent implements OnInit {
   fichar(): void {
     if (this.isLoading) return;
 
+    if (!this.dto.numeroUsuario) {
+      Popup.toastDanger('Error', 'No se ha podido identificar al usuario. Por favor, recargue la página.');
+      return;
+    }
+
     this.isLoading = true;
     this.service.now(this.dto).subscribe(
       data => {

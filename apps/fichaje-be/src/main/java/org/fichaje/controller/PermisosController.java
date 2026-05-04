@@ -164,7 +164,7 @@ public class PermisosController
 		}
 
 		Specification<Permiso> spec = Specification
-				.where(dto.getUsuarioNombre() == null ? null
+				.where(dto.getUsuarioNombre() == null ? (Specification<Permiso>) null
 						: specifications.nombreUsuarioContains(
 								dto.getUsuarioNombre()))
 				.and(dto.getUsuarioNumero() == null ? null
@@ -242,7 +242,7 @@ public class PermisosController
 		}
 
 		Specification<Permiso> spec = Specification
-				.where(dto.getUsuarioNombre() == null ? null
+				.where(dto.getUsuarioNombre() == null ? (Specification<Permiso>) null
 						: specifications.nombreUsuarioContains(
 								dto.getUsuarioNombre()))
 				.and(dto.getUsuarioNumero() == null ? null
