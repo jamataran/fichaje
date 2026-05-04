@@ -66,23 +66,4 @@ public final class UsuarioSpecifications extends UserSpecificationImpl<Usuario> 
 				.lessThanOrEqualTo(root.get("horasGeneradas"), h);
 	}
 
-	public Specification<Usuario> hasEmpresa(Long empresaId) {
-		return (root, query, builder) -> {
-			if (empresaId == null) return null;
-			query.distinct(true);
-			Join<Object, Object> empresasJoin = root.join("empresas");
-			return builder.equal(empresasJoin.get("id"), empresaId);
-		};
 	}
-
-	public Specification<Usuario> hasSede(Long sedeId) {
-		return (root, query, builder) -> {
-			if (sedeId == null) return null;
-			query.distinct(true);
-			Join<Object, Object> sedesJoin = root.join("sedes");
-			return builder.equal(sedesJoin.get("id"), sedeId);
-		};
-	}
-
-
-}

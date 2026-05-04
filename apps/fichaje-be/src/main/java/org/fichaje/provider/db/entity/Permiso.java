@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "permisos")
-public class Permiso {
+public class Permiso implements TenantEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

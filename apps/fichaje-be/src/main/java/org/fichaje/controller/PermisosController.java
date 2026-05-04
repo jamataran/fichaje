@@ -36,6 +36,8 @@ import org.fichaje.provider.db.specifications.PermisoSpecifications;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+import org.fichaje.util.SecurityUtils;
+
 @RestController
 @RequestMapping("/permiso")
 //@CrossOrigin(origins = "http://localhost:4200")
@@ -50,8 +52,6 @@ public class PermisosController
 	NotificationService notificationService;
 	@Autowired
 	PermisoSpecifications specifications;
-	@Autowired
-    SecurityService securityService;
 
 	@PostMapping("/create")
 	public ResponseEntity<?> newPermiso(@RequestBody PermisoDto dto) {
@@ -85,6 +85,14 @@ public class PermisosController
 	@PutMapping("/aprobar/{id}")
 	public ResponseEntity<?> aprobar(@PathVariable Long id) {
 		return service.findById(id).map(d -> {
+			Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+			boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+			if (!isSuperAdmin && currentEmpresaId != null && d.getEmpresa() != null &&
+					!d.getEmpresa().getId().equals(currentEmpresaId)) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+			}
+
 			d.setAprobado(true);
 			d.setEstado(EstadosPeticion.APROBADO.toString());
 
@@ -108,6 +116,14 @@ public class PermisosController
 	@PutMapping("/denegar/{id}")
 	public ResponseEntity<?> denegar(@PathVariable Long id) {
 		return service.findById(id).map(d -> {
+			Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+			boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+			if (!isSuperAdmin && currentEmpresaId != null && d.getEmpresa() != null &&
+					!d.getEmpresa().getId().equals(currentEmpresaId)) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+			}
+
 			d.setAprobado(false);
 			d.setEstado(EstadosPeticion.DENEGADO.toString());
 
@@ -135,13 +151,16 @@ public class PermisosController
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
 			@RequestParam(defaultValue = "id") String order,
-			@RequestParam(defaultValue = "true") boolean asc,
-			@RequestHeader("authorization") String token) {
+			@RequestParam(defaultValue = "true") boolean asc) {
 
-		RrhhDto tokenUser = securityService.rrhhInfo(token);
-		// Si NO es RRHH, filtrar por número de usuario
-		if (!tokenUser.isRrhh()) {
-			dto.setUsuarioNumero(tokenUser.getNumber());
+		Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+		String currentUserNumber = SecurityUtils.getCurrentUserNumber();
+		boolean isRrhh = SecurityUtils.isRRHH();
+		boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+		// Si NO es RRHH ni SuperAdmin, filtrar por número de usuario
+		if (!isRrhh && !isSuperAdmin) {
+			dto.setUsuarioNumero(currentUserNumber);
 		}
 
 		Specification<Permiso> spec = Specification
@@ -180,11 +199,14 @@ public class PermisosController
 								dto.getDescripcion()))
 				.and(dto.getEstado() == null ? null
 						: specifications.estadoContains(
-								dto.getEstado()))
-//				.and(dto.getAprobado() == null ? null
-//						: specifications.isAprobada(
-//								dto.getAprobado()))
-		;
+								dto.getEstado()));
+
+		// Aislamiento Multi-empresa
+		if (currentEmpresaId != null) {
+			spec = spec.and(specifications.hasEmpresa(currentEmpresaId));
+		} else if (!isSuperAdmin) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
 
 		Page<Permiso> entities = service.pagesAndSpec(
 				spec,
@@ -207,13 +229,16 @@ public class PermisosController
 	@Operation(summary = "Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
 	@PostMapping("/listFiltered")
 	public ResponseEntity<List<Permiso>> filteredList(
-			@RequestBody PermisoDtoFilter dto,
-			@RequestHeader("authorization") String token) {
+			@RequestBody PermisoDtoFilter dto) {
 
-		RrhhDto tokenUser = securityService.rrhhInfo(token);
-		// Si NO es RRHH, filtrar por número de usuario
-		if (!tokenUser.isRrhh()) {
-			dto.setUsuarioNumero(tokenUser.getNumber());
+		Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+		String currentUserNumber = SecurityUtils.getCurrentUserNumber();
+		boolean isRrhh = SecurityUtils.isRRHH();
+		boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+		// Si NO es RRHH ni SuperAdmin, filtrar por número de usuario
+		if (!isRrhh && !isSuperAdmin) {
+			dto.setUsuarioNumero(currentUserNumber);
 		}
 
 		Specification<Permiso> spec = Specification
@@ -252,11 +277,14 @@ public class PermisosController
 								dto.getDescripcion()))
 				.and(dto.getEstado() == null ? null
 						: specifications.estadoContains(
-								dto.getEstado()))
-//				.and(dto.getAprobado() == null ? null
-//						: specifications.isAprobada(
-//								dto.getAprobado()))
-		;
+								dto.getEstado()));
+
+		// Aislamiento Multi-empresa
+		if (currentEmpresaId != null) {
+			spec = spec.and(specifications.hasEmpresa(currentEmpresaId));
+		} else if (!isSuperAdmin) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
 
 		List<Permiso> entities = service.filterAndList(spec);
 

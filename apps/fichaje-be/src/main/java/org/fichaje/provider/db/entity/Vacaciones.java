@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Vacaciones {
+public class Vacaciones implements TenantEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

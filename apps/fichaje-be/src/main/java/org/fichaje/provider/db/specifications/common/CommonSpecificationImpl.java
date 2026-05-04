@@ -38,5 +38,21 @@ public class CommonSpecificationImpl<E> implements SpecificationTemplate<E> {
 						SpecificationHelper.contains(expression));
 	}
 
+	@Override
+	public Specification<E> hasEmpresa(Long empresaId) {
+		return (root, query, builder) -> {
+			if (empresaId == null) return null;
+			return builder.equal(root.get("empresa").get("id"), empresaId);
+		};
+	}
+
+	@Override
+	public Specification<E> hasSede(Long sedeId) {
+		return (root, query, builder) -> {
+			if (sedeId == null) return null;
+			return builder.equal(root.join("usuario").join("sedes").get("id"), sedeId);
+		};
+	}
+
 
 }

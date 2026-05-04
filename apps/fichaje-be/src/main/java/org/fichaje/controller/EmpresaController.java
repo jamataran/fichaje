@@ -22,6 +22,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+import org.fichaje.util.SecurityUtils;
+
 @RestController
 @RequestMapping("/empresas")
 public class EmpresaController {
@@ -38,8 +40,18 @@ public class EmpresaController {
         this.sedeService = sedeService;
     }
 
+    private void validateEmpresaAccess(Long empresaId) {
+        Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+        boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+        if (!isSuperAdmin && (currentEmpresaId == null || !currentEmpresaId.equals(empresaId))) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes acceso a esta empresa");
+        }
+    }
+
     @Operation(summary = "Crea una nueva empresa")
     @PostMapping
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<EmpresaDTO> newEmpresa(@Valid @RequestBody EmpresaCreateDTO empresaDto) {
         EmpresaDTO empresaGuardada = service.save(empresaDto);
 
@@ -54,24 +66,35 @@ public class EmpresaController {
 
     @Operation(summary = "Devuelve una lista paginada de empresas")
     @GetMapping
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<Page<EmpresaDTO>> list(Pageable pageable) {
         return ResponseEntity.ok(service.findAll(pageable));
     }
 
     @Operation(summary = "Devuelve una lista de todas las empresas")
     @GetMapping("/list")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<List<EmpresaDTO>> listAll() {
         return ResponseEntity.ok(service.findAllList());
+    }
+
+    @Operation(summary = "Obtiene una empresa por su ID")
+    @GetMapping("/{id}")
+    public ResponseEntity<EmpresaDTO> getEmpresa(@PathVariable Long id) {
+        validateEmpresaAccess(id);
+        return ResponseEntity.ok(service.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 
     @Operation(summary = "Edita una empresa existente")
     @PutMapping("/{id}")
     public ResponseEntity<EmpresaDTO> editEmpresa(@PathVariable Long id, @Valid @RequestBody EmpresaDTO empresa) {
+        validateEmpresaAccess(id);
         return ResponseEntity.of(service.update(empresa, id));
     }
 
     @Operation(summary = "Elimina una empresa")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
@@ -79,6 +102,7 @@ public class EmpresaController {
 
     @Operation(summary = "Activa una empresa")
     @PatchMapping("/{id}/activar")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> activarEmpresa(@PathVariable Long id) {
         service.activar(id);
         return ResponseEntity.ok().build();
@@ -87,12 +111,14 @@ public class EmpresaController {
     @Operation(summary = "Lista los parámetros de una empresa")
     @GetMapping("/{id}/parametros")
     public ResponseEntity<List<EmpresaParametroDTO>> listParametros(@PathVariable Long id) {
+        validateEmpresaAccess(id);
         return ResponseEntity.ok(parametroService.findByEmpresaId(id));
     }
 
     @Operation(summary = "Añade un parámetro a una empresa")
     @PostMapping("/{id}/parametros")
     public ResponseEntity<EmpresaParametroDTO> addParametro(@PathVariable Long id, @Valid @RequestBody EmpresaParametroDTO dto) {
+        validateEmpresaAccess(id);
         EmpresaParametroDTO saved = parametroService.save(id, dto);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -105,27 +131,30 @@ public class EmpresaController {
     @Operation(summary = "Edita un parámetro de una empresa")
     @PutMapping("/{id}/parametros/{parametroId}")
     public ResponseEntity<EmpresaParametroDTO> updateParametro(@PathVariable Long id, @PathVariable Long parametroId, @Valid @RequestBody EmpresaParametroDTO dto) {
+        validateEmpresaAccess(id);
         return ResponseEntity.ok(parametroService.update(id, parametroId, dto));
     }
 
     @Operation(summary = "Elimina un parámetro de una empresa")
     @DeleteMapping("/{id}/parametros/{parametroId}")
     public ResponseEntity<?> deleteParametro(@PathVariable Long id, @PathVariable Long parametroId) {
+        validateEmpresaAccess(id);
         parametroService.delete(id, parametroId);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Lista las sedes de una empresa")
     @GetMapping("/{empresaId}/sedes")
-    @PreAuthorize("hasRole('SUPER_ADMIN') or (hasRole('RRHH') and #empresaId == authentication.principal.empresaId)")
     public ResponseEntity<List<SedeDTO>> listSedes(@PathVariable Long empresaId) {
+        validateEmpresaAccess(empresaId);
         return ResponseEntity.ok(sedeService.findByEmpresaId(empresaId));
     }
 
     @Operation(summary = "Añade una sede a una empresa")
     @PostMapping("/{empresaId}/sedes")
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or hasRole('ADMIN')")
     public ResponseEntity<SedeDTO> addSede(@PathVariable Long empresaId, @Valid @RequestBody SedeDTO dto) {
+        validateEmpresaAccess(empresaId);
         SedeDTO saved = sedeService.save(empresaId, dto);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()

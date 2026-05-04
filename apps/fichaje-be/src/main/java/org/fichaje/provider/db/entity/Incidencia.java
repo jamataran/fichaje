@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "incidencias")
-public class Incidencia {
+public class Incidencia implements TenantEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

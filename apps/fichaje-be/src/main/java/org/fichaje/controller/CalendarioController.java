@@ -24,6 +24,10 @@ import org.fichaje.service.DiaLaborableService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+import org.fichaje.util.SecurityUtils;
+import org.fichaje.provider.db.specifications.CalendarioSpecifications;
+import org.springframework.data.jpa.domain.Specification;
+
 @RestController
 @RequestMapping("/calendario")
 //@CrossOrigin(origins = "http://localhost:4200")
@@ -36,6 +40,8 @@ public class CalendarioController
 	DiaController diaController;
 	@Autowired
 	DiaLaborableService diaService;
+	@Autowired
+	CalendarioSpecifications specifications;
 
 	@Operation(summary = "Crea un nuevo calendario")
 	@PostMapping("/create")
@@ -58,12 +64,37 @@ public class CalendarioController
 	@Operation(summary = "Devuelve una lista de DTO de calendarios")
 	@GetMapping("/list/dto")
 	public ResponseEntity<List<CalendarioDto>> listDto() {
+		Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+		boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+		Specification<Calendario> spec = Specification.where(null);
+		if (currentEmpresaId != null) {
+			spec = spec.and(specifications.hasEmpresa(currentEmpresaId));
+		} else if (!isSuperAdmin) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
+
 		return ResponseEntity
 				.status(HttpStatus.OK)
-				.body(service.list().stream()
+				.body(service.filterAndList(spec).stream()
 						.map(c -> dtoConverter.inverseTransform(c))
 						.collect(Collectors.toList()));
 
+	}
+
+	@Override
+	@GetMapping("/{id}")
+	public ResponseEntity<?> getById(@PathVariable Long id) {
+		return service.findById(id).map(c -> {
+			Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+			boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+			if (!isSuperAdmin && currentEmpresaId != null && c.getSede() != null &&
+					!c.getSede().getEmpresa().getId().equals(currentEmpresaId)) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+			}
+			return ResponseEntity.ok(c);
+		}).orElse(ResponseEntity.notFound().build());
 	}
 
 	@Operation(summary = "Edita un calendario")
@@ -72,6 +103,14 @@ public class CalendarioController
 			@PathVariable Long id) {
 
 		return service.findById(id).map(c -> {
+			Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+			boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+			if (!isSuperAdmin && currentEmpresaId != null && c.getSede() != null &&
+					!c.getSede().getEmpresa().getId().equals(currentEmpresaId)) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+			}
+
 			c.setId(editar.getId());
 			c.setYear(editar.getYear());
 			c.setNombre(editar.getNombre());

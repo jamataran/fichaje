@@ -30,6 +30,8 @@ import org.fichaje.provider.db.specifications.IncidenciaSpecifications;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+import org.fichaje.util.SecurityUtils;
+
 @RestController
 @RequestMapping("/incidencia")
 //@CrossOrigin(origins = "http://localhost:4200")
@@ -62,6 +64,16 @@ public class IncidenciaController
 			@RequestParam(defaultValue = "id") String order,
 			@RequestParam(defaultValue = "true") boolean asc) {
 
+		Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+		String currentUserNumber = SecurityUtils.getCurrentUserNumber();
+		boolean isRrhh = SecurityUtils.isRRHH();
+		boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+		// Si NO es RRHH ni SuperAdmin, filtrar por su número de usuario
+		if (!isRrhh && !isSuperAdmin) {
+			dto.setUsuarioNumero(currentUserNumber);
+		}
+
 		Specification<Incidencia> spec = Specification
 				.where(dto.getUsuarioNombre() == null ? null
 						: specifications.nombreUsuarioContains(
@@ -90,6 +102,13 @@ public class IncidenciaController
 				.and(dto.getDiaHasta() == null ? null
 						: specifications.diaHasta(
 								dto.getDiaHasta()));
+
+		// Aislamiento Multi-empresa
+		if (currentEmpresaId != null) {
+			spec = spec.and(specifications.hasEmpresa(currentEmpresaId));
+		} else if (!isSuperAdmin) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
 
 		Page<Incidencia> entities = service.pagesAndSpec(
 				spec,
@@ -113,6 +132,16 @@ public class IncidenciaController
 	@PostMapping("/listFiltered")
 	public ResponseEntity<List<Incidencia>> filteredList(@RequestBody IncidenciaDtoFilter dto) {
 
+		Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+		String currentUserNumber = SecurityUtils.getCurrentUserNumber();
+		boolean isRrhh = SecurityUtils.isRRHH();
+		boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+		// Si NO es RRHH ni SuperAdmin, filtrar por su número de usuario
+		if (!isRrhh && !isSuperAdmin) {
+			dto.setUsuarioNumero(currentUserNumber);
+		}
+
 		Specification<Incidencia> spec = Specification
 				.where(dto.getUsuarioNombre() == null ? null
 						: specifications.nombreUsuarioContains(
@@ -142,6 +171,13 @@ public class IncidenciaController
 						: specifications.diaHasta(
 								dto.getDiaHasta()));
 
+		// Aislamiento Multi-empresa
+		if (currentEmpresaId != null) {
+			spec = spec.and(specifications.hasEmpresa(currentEmpresaId));
+		} else if (!isSuperAdmin) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
+
 		List<Incidencia> entities = service.filterAndList(spec);
 
 		return ResponseEntity
@@ -155,6 +191,13 @@ public class IncidenciaController
 			@PathVariable Long id) {
 
 		return service.findById(id).map(d -> {
+			Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+			boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+			if (!isSuperAdmin && currentEmpresaId != null && d.getEmpresa() != null &&
+					!d.getEmpresa().getId().equals(currentEmpresaId)) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+			}
 
 			dtoConverter.transformEdit(d, editar);
 			return ResponseEntity.ok(service.save(d));
@@ -167,6 +210,8 @@ public class IncidenciaController
 	@Operation(summary = "Obtiene el número de incidencias de los últimos 12 meses")
 	@GetMapping("/count")
 	public ResponseEntity<?> countLast12Months() {
+		// Aquí deberíamos filtrar por empresaId también, pero el service parece que no lo soporta aún.
+		// FIXME: Los métodos estadísticos del service deberían recibir el empresaId.
 		ChartDataDto result = service.numberOfIncidenciasLast12Months();
 		return ResponseEntity.ok(result);
 	}

@@ -33,6 +33,8 @@ import org.fichaje.provider.db.specifications.VacacionesSpecifications;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+import org.fichaje.util.SecurityUtils;
+
 @RestController
 @RequestMapping("/vacaciones")
 //@CrossOrigin(origins = "http://localhost:4200")
@@ -47,8 +49,6 @@ public class VacacionesController
 	NotificationService notificationService;
 	@Autowired
 	VacacionesSpecifications specifications;
-	@Autowired
-    SecurityService securityService;
 
 	@PostMapping("/create")
 	public ResponseEntity<?> newVacaciones(@RequestBody VacacionesDto dto) {
@@ -127,13 +127,16 @@ public class VacacionesController
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
 			@RequestParam(defaultValue = "id") String order,
-			@RequestParam(defaultValue = "true") boolean asc,
-			@RequestHeader("authorization") String token) {
+			@RequestParam(defaultValue = "true") boolean asc) {
 
-		RrhhDto tokenUser = securityService.rrhhInfo(token);
-		// Si NO es RRHH, filtrar por número de usuario
-		if (!tokenUser.isRrhh()) {
-			dto.setUsuarioNumero(tokenUser.getNumber());
+		Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+		String currentUserNumber = SecurityUtils.getCurrentUserNumber();
+		boolean isRrhh = SecurityUtils.isRRHH();
+		boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+		// Si NO es RRHH ni SuperAdmin, filtrar por número de usuario
+		if (!isRrhh && !isSuperAdmin) {
+			dto.setUsuarioNumero(currentUserNumber);
 		}
 
 		Specification<Vacaciones> spec = Specification
@@ -171,6 +174,13 @@ public class VacacionesController
 						: specifications.inicioHasta(
 								dto.getFinHasta()));
 
+		// Aislamiento Multi-empresa
+		if (currentEmpresaId != null) {
+			spec = spec.and(specifications.hasEmpresa(currentEmpresaId));
+		} else if (!isSuperAdmin) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
+
 		Page<Vacaciones> entities = service.pagesAndSpec(
 				spec,
 				PageRequest.of(page, size, Sort.by(order)));
@@ -192,13 +202,16 @@ public class VacacionesController
 	@Operation(summary = "Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
 	@PostMapping("/listFiltered")
 	public ResponseEntity<List<Vacaciones>> filteredList(
-			@RequestBody VacacionesDtoFilter dto,
-			@RequestHeader("authorization") String token) {
+			@RequestBody VacacionesDtoFilter dto) {
 
-		RrhhDto tokenUser = securityService.rrhhInfo(token);
-		// Si NO es RRHH, filtrar por número de usuario
-		if (!tokenUser.isRrhh()) {
-			dto.setUsuarioNumero(tokenUser.getNumber());
+		Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+		String currentUserNumber = SecurityUtils.getCurrentUserNumber();
+		boolean isRrhh = SecurityUtils.isRRHH();
+		boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+		// Si NO es RRHH ni SuperAdmin, filtrar por número de usuario
+		if (!isRrhh && !isSuperAdmin) {
+			dto.setUsuarioNumero(currentUserNumber);
 		}
 
 		Specification<Vacaciones> spec = Specification
@@ -232,6 +245,13 @@ public class VacacionesController
 				.and(dto.getFinHasta() == null ? null
 						: specifications.inicioHasta(
 								dto.getFinHasta()));
+
+		// Aislamiento Multi-empresa
+		if (currentEmpresaId != null) {
+			spec = spec.and(specifications.hasEmpresa(currentEmpresaId));
+		} else if (!isSuperAdmin) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
 
 		List<Vacaciones> entities = service.filterAndList(spec);
 

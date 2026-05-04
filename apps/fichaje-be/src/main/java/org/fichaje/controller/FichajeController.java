@@ -31,6 +31,8 @@ import org.fichaje.provider.db.specifications.FichajeSpecifications;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+import org.fichaje.util.SecurityUtils;
+
 @RestController
 @RequestMapping("/fichaje")
 //@CrossOrigin(origins = "http://localhost:4200")
@@ -61,30 +63,16 @@ public class FichajeController
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
 			@RequestParam(defaultValue = "id") String order,
-			@RequestParam(defaultValue = "true") boolean asc,
-			@RequestHeader(value = "authorization", required = false) String token) {
+			@RequestParam(defaultValue = "true") boolean asc) {
 
-		// Obtener usuario autenticado desde Spring Security (funciona con JWT o API Key)
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentUserNumber = authentication.getName();
-		
-		// Si se proporciona token JWT, usar la lógica de rrhhInfo
-		if (token != null && !token.isEmpty()) {
-			RrhhDto tokenUser = securityService.rrhhInfo(token);
-			// rrhhInfo() devuelve true cuando el usuario ES RRHH
-			// Si NO es RRHH, debe filtrar por su número de usuario
-			if (!tokenUser.isRrhh()) {
-				dto.setNumeroUsuario(tokenUser.getNumber());
-			}
-		} else {
-			// Si no hay token JWT (usando API Key), verificar roles desde Authentication
-			boolean isRrhh = authentication.getAuthorities().stream()
-					.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_RRHH"));
-			
-			// Si NO es RRHH, solo puede ver sus propios fichajes
-			if (!isRrhh) {
-				dto.setNumeroUsuario(currentUserNumber);
-			}
+		Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+		String currentUserNumber = SecurityUtils.getCurrentUserNumber();
+		boolean isRrhh = SecurityUtils.isRRHH();
+		boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+		// Si NO es RRHH ni SuperAdmin, solo puede ver sus propios fichajes
+		if (!isRrhh && !isSuperAdmin) {
+			dto.setNumeroUsuario(currentUserNumber);
 		}
 
 		Specification<Fichaje> spec = Specification
@@ -109,6 +97,14 @@ public class FichajeController
 				.and(dto.getDiaHasta() == null ? null
 						: specifications.diaMenorQue(
 								dto.getDiaHasta()));
+
+		// Aislamiento Multi-empresa: Siempre filtrar por la empresa del token (salvo superadmin sin empresa seleccionada)
+		if (currentEmpresaId != null) {
+			spec = spec.and(specifications.hasEmpresa(currentEmpresaId));
+		} else if (!isSuperAdmin) {
+			// Si no es superadmin y no hay empresaId en el token, no debería ver nada o solo lo suyo si aplica
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
 
 		Page<Fichaje> entities = service.pagesAndSpec(
 				spec,
@@ -127,30 +123,16 @@ public class FichajeController
 	@Operation(summary = "Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
 	@PostMapping("/listFiltered")
 	public ResponseEntity<List<Fichaje>> filteredList(
-			@RequestBody FichajeDto dto,
-			@RequestHeader(value = "authorization", required = false) String token) {
+			@RequestBody FichajeDto dto) {
 
-		// Obtener usuario autenticado desde Spring Security (funciona con JWT o API Key)
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentUserNumber = authentication.getName();
-		
-		// Si se proporciona token JWT, usar la lógica de rrhhInfo
-		if (token != null && !token.isEmpty()) {
-			RrhhDto tokenUser = securityService.rrhhInfo(token);
-			// rrhhInfo() devuelve true cuando el usuario ES RRHH
-			// Si NO es RRHH, debe filtrar por su número de usuario
-			if (!tokenUser.isRrhh()) {
-				dto.setNumeroUsuario(tokenUser.getNumber());
-			}
-		} else {
-			// Si no hay token JWT (usando API Key), verificar roles desde Authentication
-			boolean isRrhh = authentication.getAuthorities().stream()
-					.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_RRHH"));
-			
-			// Si NO es RRHH, solo puede ver sus propios fichajes
-			if (!isRrhh) {
-				dto.setNumeroUsuario(currentUserNumber);
-			}
+		Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+		String currentUserNumber = SecurityUtils.getCurrentUserNumber();
+		boolean isRrhh = SecurityUtils.isRRHH();
+		boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+		// Si NO es RRHH ni SuperAdmin, solo puede ver sus propios fichajes
+		if (!isRrhh && !isSuperAdmin) {
+			dto.setNumeroUsuario(currentUserNumber);
 		}
 
 		Specification<Fichaje> spec = Specification
@@ -175,6 +157,13 @@ public class FichajeController
 				.and(dto.getDiaHasta() == null ? null
 						: specifications.diaMenorQue(
 								dto.getDiaHasta()));
+
+		// Aislamiento Multi-empresa
+		if (currentEmpresaId != null) {
+			spec = spec.and(specifications.hasEmpresa(currentEmpresaId));
+		} else if (!isSuperAdmin) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+		}
 
 		List<Fichaje> entities = service.filterAndList(spec);
 
