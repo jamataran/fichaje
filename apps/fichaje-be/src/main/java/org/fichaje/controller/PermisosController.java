@@ -163,43 +163,32 @@ public class PermisosController
 			dto.setUsuarioNumero(currentUserNumber);
 		}
 
-		Specification<Permiso> spec = Specification
-				.where(dto.getUsuarioNombre() == null ? (Specification<Permiso>) null
-						: specifications.nombreUsuarioContains(
-								dto.getUsuarioNombre()))
-				.and(dto.getUsuarioNumero() == null ? null
-						: specifications.numeroUsuarioContains(
-								dto.getUsuarioNumero()))
-				.and(dto.getUsuarioDni() == null ? null
-						: specifications.dniUsuarioContains(
-								dto.getUsuarioDni()))
-				.and(dto.getUsuarioEmail() == null ? null
-						: specifications.emailUsuarioContains(
-								dto.getUsuarioEmail()))
-				.and(dto.getDiaDesde() == null ? null
-						: specifications.diaDesde(
-								dto.getDiaDesde()))
-				.and(dto.getDiaHasta() == null ? null
-						: specifications.diaHasta(
-								dto.getDiaHasta()))
-				.and(dto.getHoraInicioDesde() == null ? null
-						: specifications.horaInicioDesde(
-								dto.getHoraInicioDesde()))
-				.and(dto.getHoraInicioHasta() == null ? null
-						: specifications.horaInicioHasta(
-								dto.getHoraInicioHasta()))
-				.and(dto.getHoraFinDesde() == null ? null
-						: specifications.horaFinDesde(
-								dto.getHoraFinDesde()))
-				.and(dto.getHoraFinHasta() == null ? null
-						: specifications.horaFinHasta(
-								dto.getHoraFinHasta()))
-				.and(dto.getDescripcion() == null ? null
-						: specifications.descripcionContains(
-								dto.getDescripcion()))
-				.and(dto.getEstado() == null ? null
-						: specifications.estadoContains(
-								dto.getEstado()));
+		Specification<Permiso> spec = (root, query, cb) -> cb.conjunction();
+
+		if (dto.getUsuarioNombre() != null)
+			spec = spec.and(specifications.nombreUsuarioContains(dto.getUsuarioNombre()));
+		if (dto.getUsuarioNumero() != null)
+			spec = spec.and(specifications.numeroUsuarioContains(dto.getUsuarioNumero()));
+		if (dto.getUsuarioDni() != null)
+			spec = spec.and(specifications.dniUsuarioContains(dto.getUsuarioDni()));
+		if (dto.getUsuarioEmail() != null)
+			spec = spec.and(specifications.emailUsuarioContains(dto.getUsuarioEmail()));
+		if (dto.getDiaDesde() != null)
+			spec = spec.and(specifications.diaDesde(dto.getDiaDesde()));
+		if (dto.getDiaHasta() != null)
+			spec = spec.and(specifications.diaHasta(dto.getDiaHasta()));
+		if (dto.getHoraInicioDesde() != null)
+			spec = spec.and(specifications.horaInicioDesde(dto.getHoraInicioDesde()));
+		if (dto.getHoraInicioHasta() != null)
+			spec = spec.and(specifications.horaInicioHasta(dto.getHoraInicioHasta()));
+		if (dto.getHoraFinDesde() != null)
+			spec = spec.and(specifications.horaFinDesde(dto.getHoraFinDesde()));
+		if (dto.getHoraFinHasta() != null)
+			spec = spec.and(specifications.horaFinHasta(dto.getHoraFinHasta()));
+		if (dto.getDescripcion() != null)
+			spec = spec.and(specifications.descripcionContains(dto.getDescripcion()));
+		if (dto.getEstado() != null)
+			spec = spec.and(specifications.estadoContains(dto.getEstado()));
 
 		// Aislamiento Multi-empresa
 		if (currentEmpresaId != null) {

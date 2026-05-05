@@ -1,5 +1,6 @@
 package org.fichaje.provider.db.specifications.common;
 
+import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
 public class CommonSpecificationImpl<E> implements SpecificationTemplate<E> {
@@ -7,34 +8,30 @@ public class CommonSpecificationImpl<E> implements SpecificationTemplate<E> {
 	SpecificationHelper helper;
 
 	@Override
-	public Specification<E> nombreUsuarioContains(
-			String expression) {
+	public Specification<E> nombreUsuarioContains(String expression) {
 		return (root, query, builder) -> builder
-				.like(root.join("usuario").get("nombreEmpleado"),
+				.like(root.join("usuario", JoinType.LEFT).get("nombreEmpleado"),
 						SpecificationHelper.contains(expression));
 	}
 
 	@Override
-	public Specification<E> numeroUsuarioContains(
-			String expression) {
+	public Specification<E> numeroUsuarioContains(String expression) {
 		return (root, query, builder) -> builder
-				.like(root.join("usuario").get("numero"),
+				.like(root.join("usuario", JoinType.LEFT).get("numero"),
 						SpecificationHelper.contains(expression));
 	}
 
 	@Override
-	public Specification<E> dniUsuarioContains(
-			String expression) {
+	public Specification<E> dniUsuarioContains(String expression) {
 		return (root, query, builder) -> builder
-				.like(root.join("usuario").get("dni"),
+				.like(root.join("usuario", JoinType.LEFT).get("dni"),
 						SpecificationHelper.contains(expression));
 	}
 
 	@Override
-	public Specification<E> emailUsuarioContains(
-			String expression) {
+	public Specification<E> emailUsuarioContains(String expression) {
 		return (root, query, builder) -> builder
-				.like(root.join("usuario").get("email"),
+				.like(root.join("usuario", JoinType.LEFT).get("email"),
 						SpecificationHelper.contains(expression));
 	}
 

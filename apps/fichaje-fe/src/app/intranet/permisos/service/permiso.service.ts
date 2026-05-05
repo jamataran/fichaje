@@ -25,7 +25,11 @@ export class PermisoService implements DataCsv, ChartDataService {
     order: string,
     asc: boolean): Observable<any> {
 
-    return this.httpClient.post<any[]>(this.endPoint + `/pagesFiltered?page=${page}&size=${size}&order=${order}&asc=${asc}`, dto)
+    const payload = Object.fromEntries(
+      Object.entries(dto).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
+    )
+
+    return this.httpClient.post<any[]>(this.endPoint + `/pagesFiltered?page=${page}&size=${size}&order=${order}&asc=${asc}`, payload)
   }
 
   public detail(id: number): Observable<Permiso> {

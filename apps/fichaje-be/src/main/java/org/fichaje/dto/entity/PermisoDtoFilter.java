@@ -5,6 +5,7 @@ import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public class PermisoDtoFilter {
 	private LocalTime horaFinDesde;
 	@JsonFormat(pattern = "HH:mm")
 	private LocalTime horaFinHasta;
-	@JsonFormat(pattern = "HH:mm")
+
 	private String descripcion;
 	private String estado;
 
