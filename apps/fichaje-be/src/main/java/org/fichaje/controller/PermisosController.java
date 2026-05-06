@@ -69,6 +69,21 @@ public class PermisosController
 		Permiso permiso = dtoConverter.transform(dto);
 
 		if (permiso != null) {
+			// Aislamiento Multi-empresa: Asignar la empresa del usuario al permiso
+			if (permiso.getUsuario() != null && !permiso.getUsuario().getEmpresas().isEmpty()) {
+				// Si el usuario pertenece a empresas, asignamos la primera (o la actual si tuviéramos el contexto)
+				// En este sistema, parece que se espera que el permiso pertenezca a la misma empresa que el usuario.
+				Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+				if (currentEmpresaId != null) {
+					permiso.setEmpresa(permiso.getUsuario().getEmpresas().stream()
+							.filter(e -> e.getId().equals(currentEmpresaId))
+							.findFirst()
+							.orElse(permiso.getUsuario().getEmpresas().iterator().next()));
+				} else {
+					permiso.setEmpresa(permiso.getUsuario().getEmpresas().iterator().next());
+				}
+			}
+
 			return ResponseEntity
 					.status(HttpStatus.CREATED)
 					.body(service.save(permiso));

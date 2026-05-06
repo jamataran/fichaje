@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import org.fichaje.dto.entity.ChartDataDto;
 import org.fichaje.dto.interfaces.IUsuarioDtoEstadistica;
+import org.fichaje.exception.BusinessException;
 import org.fichaje.provider.db.entity.Permiso;
 import org.fichaje.provider.db.entity.Usuario;
 import org.fichaje.provider.db.repository.PermisoRepository;
@@ -17,6 +18,22 @@ import org.fichaje.provider.db.repository.PermisoRepository;
 @Service
 @Transactional
 public class PermisoService extends CommonServiceImpl<Permiso, PermisoRepository> {
+
+	@Override
+	public Permiso save(Permiso entity) {
+		// Validar solapamiento de permisos para el mismo usuario y día
+		if (entity.getUsuario() != null && entity.getDia() != null) {
+			List<Permiso> existentes = repository.findByUsuarioAndDia(entity.getUsuario(), entity.getDia());
+			boolean solapa = existentes.stream().anyMatch(p -> 
+				(entity.getHoraInicio().isBefore(p.getHoraFin()) && entity.getHoraFin().isAfter(p.getHoraInicio()))
+			);
+			
+			if (solapa) {
+				throw new BusinessException("Ya existe un permiso que se solapa con el horario solicitado para este día.");
+			}
+		}
+		return super.save(entity);
+	}
 
 	public List<Permiso> findByUsuarioAprobado(Usuario usuario) {
 		return repository.findByUsuarioAndAprobadoTrue(usuario);

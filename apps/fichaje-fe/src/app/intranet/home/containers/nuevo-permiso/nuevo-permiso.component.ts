@@ -47,7 +47,13 @@ export class NuevoPermisoComponent implements OnInit {
       },
       err => {
         console.log(err)
-        Popup.toastDanger('Error', err.error.mensaje);
+        let msg = 'Error al guardar el permiso';
+        if (err.error && err.error.detail) {
+          msg = err.error.detail;
+        } else if (err.error && err.error.mensaje) {
+          msg = err.error.mensaje;
+        }
+        Popup.toastDanger('Error', msg);
       }
     )
   }
