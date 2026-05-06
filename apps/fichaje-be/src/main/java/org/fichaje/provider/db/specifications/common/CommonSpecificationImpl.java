@@ -4,7 +4,7 @@ import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
 public class CommonSpecificationImpl<E> implements SpecificationTemplate<E> {
-	
+
 	SpecificationHelper helper;
 
 	@Override

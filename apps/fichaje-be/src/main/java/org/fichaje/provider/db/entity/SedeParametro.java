@@ -2,6 +2,7 @@ package org.fichaje.provider.db.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Getter
 @Setter
@@ -16,6 +17,7 @@ public class SedeParametro {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "sede_id", nullable = false)
 	private Sede sede;

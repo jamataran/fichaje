@@ -2,6 +2,7 @@ package org.fichaje.provider.db.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -32,12 +33,15 @@ public class Empresa {
 	@Column(columnDefinition = "boolean default false")
 	private boolean activa;
 
+	@JsonIgnore
 	@ManyToMany(mappedBy = "empresas")
 	private List<Usuario> usuarios;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<EmpresaParametro> parametros;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "empresa", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Sede> sedes;
 }

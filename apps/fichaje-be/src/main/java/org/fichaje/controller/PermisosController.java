@@ -164,7 +164,6 @@ public class PermisosController
 		}
 
 		Specification<Permiso> spec = (root, query, cb) -> cb.conjunction();
-
 		if (dto.getUsuarioNombre() != null)
 			spec = spec.and(specifications.nombreUsuarioContains(dto.getUsuarioNombre()));
 		if (dto.getUsuarioNumero() != null)
