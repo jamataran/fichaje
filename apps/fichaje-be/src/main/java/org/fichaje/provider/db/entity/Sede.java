@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Getter
 @Setter
 @Builder
@@ -21,6 +23,7 @@ public class Sede {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "empresa_id", nullable = false)
 	private Empresa empresa;
@@ -55,9 +58,11 @@ public class Sede {
 	@Column(columnDefinition = "boolean default true")
 	private boolean activa;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "sede", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<SedeParametro> parametros;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "sede", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Calendario> calendarios;
 }

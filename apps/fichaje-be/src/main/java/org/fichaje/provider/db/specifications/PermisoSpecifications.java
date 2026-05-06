@@ -6,12 +6,49 @@ import java.time.LocalTime;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import org.fichaje.dto.entity.PermisoDtoFilter;
 import org.fichaje.provider.db.entity.Permiso;
 import org.fichaje.provider.db.specifications.common.CommonSpecificationImpl;
 import org.fichaje.provider.db.specifications.common.SpecificationHelper;
 
 @Component
 public final class PermisoSpecifications extends CommonSpecificationImpl<Permiso> {
+
+	public Specification<Permiso> buildSpecification(PermisoDtoFilter dto, Long currentEmpresaId, boolean isSuperAdmin) {
+		Specification<Permiso> spec = (root, query, cb) -> cb.conjunction();
+
+		if (dto.getUsuarioNombre() != null)
+			spec = spec.and(nombreUsuarioContains(dto.getUsuarioNombre()));
+		if (dto.getUsuarioNumero() != null)
+			spec = spec.and(numeroUsuarioContains(dto.getUsuarioNumero()));
+		if (dto.getUsuarioDni() != null)
+			spec = spec.and(dniUsuarioContains(dto.getUsuarioDni()));
+		if (dto.getUsuarioEmail() != null)
+			spec = spec.and(emailUsuarioContains(dto.getUsuarioEmail()));
+		if (dto.getDiaDesde() != null)
+			spec = spec.and(diaDesde(dto.getDiaDesde()));
+		if (dto.getDiaHasta() != null)
+			spec = spec.and(diaHasta(dto.getDiaHasta()));
+		if (dto.getHoraInicioDesde() != null)
+			spec = spec.and(horaInicioDesde(dto.getHoraInicioDesde()));
+		if (dto.getHoraInicioHasta() != null)
+			spec = spec.and(horaInicioHasta(dto.getHoraInicioHasta()));
+		if (dto.getHoraFinDesde() != null)
+			spec = spec.and(horaFinDesde(dto.getHoraFinDesde()));
+		if (dto.getHoraFinHasta() != null)
+			spec = spec.and(horaFinHasta(dto.getHoraFinHasta()));
+		if (dto.getDescripcion() != null)
+			spec = spec.and(descripcionContains(dto.getDescripcion()));
+		if (dto.getEstado() != null)
+			spec = spec.and(estadoContains(dto.getEstado()));
+
+		// Aislamiento Multi-empresa
+		if (currentEmpresaId != null) {
+			spec = spec.and(hasEmpresa(currentEmpresaId));
+		}
+
+		return spec;
+	}
 
 	public Specification<Permiso> diaDesde(LocalDate dia) {
 		return (root, query, builder) -> builder
