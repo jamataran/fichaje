@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, SkipSelf } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ChartDataService } from 'src/app/shared/interfaces/ChartDataService';
 import { DataCsv } from 'src/app/shared/interfaces/dataCsv';
@@ -13,52 +13,59 @@ import { environment } from 'src/environments/environment';
 })
 export class PermisoService implements DataCsv, ChartDataService {
 
-  //endPoint = 'http://localhost:8080/permiso'
-  endPoint = environment.apiURL + '/permiso';
-
-  constructor(private httpClient: HttpClient) { }
+  private readonly http = inject(HttpClient);
+  private readonly endPoint = `${environment.apiURL}/permiso`;
 
   getElements(
     dto: PermisoDto,
     page: number,
     size: number,
     order: string,
-    asc: boolean): Observable<any> {
-
+    asc: boolean
+  ): Observable<any> {
     const payload = Object.fromEntries(
       Object.entries(dto).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
-    )
+    );
 
-    return this.httpClient.post<any[]>(this.endPoint + `/pagesFiltered?page=${page}&size=${size}&order=${order}&asc=${asc}`, payload)
-  }
+    const params = {
+      page: page.toString(),
+      size: size.toString(),
+      order,
+      asc: asc.toString()
+    };
 
-  public detail(id: number): Observable<Permiso> {
-    return this.httpClient.get<Permiso>(this.endPoint + `/${id}`)
-  }
-
-  public delete(id: number): Observable<any> {
-    return this.httpClient.delete<any>(this.endPoint + `/${id}`)
-  }
-
-  public aprobar(id: number): Observable<any> {
-    return this.httpClient.put<any>(this.endPoint + `/aprobar/${id}`, null)
+    return this.http.post<any>(`${this.endPoint}/pagesFiltered`, payload, { params });
   }
 
-  public denegar(id: number): Observable<any> {
-    return this.httpClient.put<any>(this.endPoint + `/denegar/${id}`, null)
-  }
-  getCsvData(dto: PermisoDto): Observable<any> {
-    return this.httpClient.post<any[]>(this.endPoint + `/listFiltered`, dto)
-  }
-  public create(permiso: NuevoPermiso): Observable<any> {
-    return this.httpClient.post<any>(this.endPoint + "/create", permiso)
+  detail(id: number): Observable<Permiso> {
+    return this.http.get<Permiso>(`${this.endPoint}/${id}`);
   }
 
-  public getChartData(): Observable<any> {
-    return this.httpClient.get<any[]>(this.endPoint + `/count`)
-  }
-  public getUserTableData(): Observable<any> {
-    return this.httpClient.get<any[]>(this.endPoint + `/count/users`)
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.endPoint}/${id}`);
   }
 
+  aprobar(id: number): Observable<Permiso> {
+    return this.http.put<Permiso>(`${this.endPoint}/aprobar/${id}`, null);
+  }
+
+  denegar(id: number): Observable<Permiso> {
+    return this.http.put<Permiso>(`${this.endPoint}/denegar/${id}`, null);
+  }
+
+  getCsvData(dto: PermisoDto): Observable<any[]> {
+    return this.http.post<any[]>(`${this.endPoint}/listFiltered`, dto);
+  }
+
+  create(permiso: NuevoPermiso): Observable<Permiso> {
+    return this.http.post<Permiso>(`${this.endPoint}/create`, permiso);
+  }
+
+  getChartData(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.endPoint}/count`);
+  }
+
+  getUserTableData(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.endPoint}/count/users`);
+  }
 }

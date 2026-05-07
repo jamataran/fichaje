@@ -1,23 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { TokenService } from 'src/app/core/auth/service/token.service';
-import { Pagination } from 'src/app/shared/components/pagination/model/pagination.model';
-import { PermisoDto } from '../../model/permisoDto';
-import { PermisoService } from '../../service/permiso.service';
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { PermisosListaComponent } from '../../components/permisos-lista/permisos-lista.component';
 
 @Component({
-    selector: 'app-permisos',
-    templateUrl: './permisos.component.html',
-    styleUrls: ['./permisos.component.css'],
-    standalone: false
+  selector: 'app-permisos',
+  templateUrl: './permisos.component.html',
+  styleUrls: ['./permisos.component.css'],
+  standalone: true,
+  imports: [PermisosListaComponent, RouterLink]
 })
-export class PermisosComponent implements OnInit {
-
-
-  constructor(
-  ) { }
-
-  ngOnInit(): void {
-  }
-
-}
+export class PermisosComponent {}

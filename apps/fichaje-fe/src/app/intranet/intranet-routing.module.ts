@@ -20,10 +20,9 @@ const routes: Routes = [
         , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
       },
       {
-        path: 'permisos', loadChildren: () => import('./permisos/permisos.module').then(m => m.PermisosModule)
+        path: 'permisos', loadChildren: () => import('./permisos/permisos.routes').then(m => m.PERMISOS_ROUTES)
         , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
-      },
-      {
+      },      {
         path: 'calendario', loadChildren: () => import('./calendario/calendario.module').then(m => m.CalendarioModule)
         , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
       },

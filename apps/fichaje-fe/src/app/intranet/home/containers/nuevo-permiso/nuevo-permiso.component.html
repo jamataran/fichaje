@@ -8,37 +8,40 @@
 
       <div class="col-12 d-flex align-items-end justify-content-end mb-3">
         <div class="form-group w-100">
-          <label for="dia"><b><i class="bi bi-person"></i>Día:</b></label>
+          <label for="dia"><b><i class="bi bi-calendar"></i>Día:</b></label>
           <div class="input-group ">
-            <input type="date" class="form-control" name="dia" id="dia" [(ngModel)]="dia" required>
+            <input type="date" class="form-control" name="dia" id="dia" 
+              [ngModel]="dia()" (ngModelChange)="dia.set($event)" required>
           </div>
         </div>
       </div>
 
       <div class="col-12 d-flex align-items-end justify-content-end mb-3">
         <div class="form-group w-100">
-          <label for="hora-ini"><b><i class="bi bi-person"></i>Hora inicio:</b></label>
+          <label for="hora-ini"><b><i class="bi bi-clock"></i>Hora inicio:</b></label>
           <div class="input-group ">
-            <input type="time" class="form-control" name="hora-ini" id="hora-ini" [(ngModel)]="horaInicio" required>
+            <input type="time" class="form-control" name="hora-ini" id="hora-ini" 
+              [ngModel]="horaInicio()" (ngModelChange)="horaInicio.set($event)" required>
           </div>
         </div>
       </div>
 
       <div class="col-12 d-flex align-items-end justify-content-end mb-3">
         <div class="form-group w-100">
-          <label for="hora-fin"><b><i class="bi bi-person"></i>Hora fin:</b></label>
+          <label for="hora-fin"><b><i class="bi bi-clock-fill"></i>Hora fin:</b></label>
           <div class="input-group ">
-            <input type="time" class="form-control" name="hora-fin" id="hora-fin" [(ngModel)]="horaFin" required>
+            <input type="time" class="form-control" name="hora-fin" id="hora-fin" 
+              [ngModel]="horaFin()" (ngModelChange)="horaFin.set($event)" required>
           </div>
         </div>
       </div>
 
       <div class="col-12 d-flex align-items-end justify-content-end mb-3">
         <div class="form-group w-100">
-          <label for="descripcion"><b><i class="bi bi-person"></i>Descripción:</b></label>
+          <label for="descripcion"><b><i class="bi bi-chat-left-text"></i>Descripción:</b></label>
           <div class="input-group ">
-            <input type="text" class="form-control" name="descripcion" id="descripcion" [(ngModel)]="descripcion"
-              required>
+            <input type="text" class="form-control" name="descripcion" id="descripcion" 
+              [ngModel]="descripcion()" (ngModelChange)="descripcion.set($event)" required>
           </div>
         </div>
       </div>
@@ -54,7 +57,7 @@
       </div>
 
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
-        <app-boton-volver class="w-100" routerLink="/intranet/home/permisos/{{numeroUsuario}}"></app-boton-volver>
+        <app-boton-volver class="w-100" [routerLink]="['/intranet/home/permisos', numeroUsuario()]"></app-boton-volver>
       </div>
 
     </div>
