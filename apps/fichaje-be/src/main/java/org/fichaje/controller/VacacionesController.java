@@ -139,40 +139,38 @@ public class VacacionesController
 			dto.setUsuarioNumero(currentUserNumber);
 		}
 
-		Specification<Vacaciones> spec = Specification
-				.where(dto.getUsuarioNombre() == null ? (Specification<Vacaciones>) null
-						: specifications.nombreUsuarioContains(
-								dto.getUsuarioNombre()))
-				.and(dto.getUsuarioNumero() == null ? null
-						: specifications.numeroUsuarioContains(
-								dto.getUsuarioNumero()))
-				.and(dto.getUsuarioDni() == null ? null
-						: specifications.dniUsuarioContains(
-								dto.getUsuarioDni()))
-				.and(dto.getUsuarioEmail() == null ? null
-						: specifications.emailUsuarioContains(
-								dto.getUsuarioEmail()))
-				.and(dto.getConsumidas() == null ? null
-						: specifications.areConsumidas(
-								dto.getConsumidas()))
-//				.and(dto.getAprobado() == null ? null
-//						: specifications.areAprobadas(
-//								dto.getAprobado()))
-				.and(dto.getEstado() == null ? null
-						: specifications.estadoContains(
-								dto.getEstado()))
-				.and(dto.getInicioDesde() == null ? null
-						: specifications.inicioDesde(
-								dto.getInicioDesde()))
-				.and(dto.getInicioHasta() == null ? null
-						: specifications.inicioHasta(
-								dto.getInicioHasta()))
-				.and(dto.getFinDesde() == null ? null
-						: specifications.inicioDesde(
-								dto.getFinDesde()))
-				.and(dto.getFinHasta() == null ? null
-						: specifications.inicioHasta(
-								dto.getFinHasta()));
+		Specification<Vacaciones> spec = (root, query, cb) -> cb.conjunction();
+
+		if (dto.getUsuarioNombre() != null) {
+			spec = spec.and(specifications.nombreUsuarioContains(dto.getUsuarioNombre()));
+		}
+		if (dto.getUsuarioNumero() != null) {
+			spec = spec.and(specifications.numeroUsuarioContains(dto.getUsuarioNumero()));
+		}
+		if (dto.getUsuarioDni() != null) {
+			spec = spec.and(specifications.dniUsuarioContains(dto.getUsuarioDni()));
+		}
+		if (dto.getUsuarioEmail() != null) {
+			spec = spec.and(specifications.emailUsuarioContains(dto.getUsuarioEmail()));
+		}
+		if (dto.getConsumidas() != null) {
+			spec = spec.and(specifications.areConsumidas(dto.getConsumidas()));
+		}
+		if (dto.getEstado() != null) {
+			spec = spec.and(specifications.estadoContains(dto.getEstado()));
+		}
+		if (dto.getInicioDesde() != null) {
+			spec = spec.and(specifications.inicioDesde(dto.getInicioDesde()));
+		}
+		if (dto.getInicioHasta() != null) {
+			spec = spec.and(specifications.inicioHasta(dto.getInicioHasta()));
+		}
+		if (dto.getFinDesde() != null) {
+			spec = spec.and(specifications.finDesde(dto.getFinDesde()));
+		}
+		if (dto.getFinHasta() != null) {
+			spec = spec.and(specifications.finHasta(dto.getFinHasta()));
+		}
 
 		// Aislamiento Multi-empresa
 		if (currentEmpresaId != null) {
@@ -183,12 +181,7 @@ public class VacacionesController
 
 		Page<Vacaciones> entities = service.pagesAndSpec(
 				spec,
-				PageRequest.of(page, size, Sort.by(order)));
-
-		if (!asc)
-			entities = service.pagesAndSpec(
-					spec,
-					PageRequest.of(page, size, Sort.by(order).descending()));
+				PageRequest.of(page, size, asc ? Sort.by(order).ascending() : Sort.by(order).descending()));
 
 //		Page<VacacionesDto> entitiesDto = entities
 //				.map(usu -> dtoConverter.inverseTransform(usu));
@@ -214,37 +207,41 @@ public class VacacionesController
 			dto.setUsuarioNumero(currentUserNumber);
 		}
 
-		Specification<Vacaciones> spec = Specification
-				.where(dto.getUsuarioNombre() == null ? (Specification<Vacaciones>) null
-						: specifications.nombreUsuarioContains(
-								dto.getUsuarioNombre()))
-				.and(dto.getUsuarioNumero() == null ? null
-						: specifications.numeroUsuarioContains(
-								dto.getUsuarioNumero()))
-				.and(dto.getUsuarioDni() == null ? null
-						: specifications.dniUsuarioContains(
-								dto.getUsuarioDni()))
-				.and(dto.getUsuarioEmail() == null ? null
-						: specifications.emailUsuarioContains(
-								dto.getUsuarioEmail()))
-				.and(dto.getConsumidas() == null ? null
-						: specifications.areConsumidas(
-								dto.getConsumidas()))
-				.and(dto.getAprobado() == null ? null
-						: specifications.areAprobadas(
-								dto.getAprobado()))
-				.and(dto.getInicioDesde() == null ? null
-						: specifications.inicioDesde(
-								dto.getInicioDesde()))
-				.and(dto.getInicioHasta() == null ? null
-						: specifications.inicioHasta(
-								dto.getInicioHasta()))
-				.and(dto.getFinDesde() == null ? null
-						: specifications.inicioDesde(
-								dto.getFinDesde()))
-				.and(dto.getFinHasta() == null ? null
-						: specifications.inicioHasta(
-								dto.getFinHasta()));
+		Specification<Vacaciones> spec = (root, query, cb) -> cb.conjunction();
+
+		if (dto.getUsuarioNombre() != null) {
+			spec = spec.and(specifications.nombreUsuarioContains(dto.getUsuarioNombre()));
+		}
+		if (dto.getUsuarioNumero() != null) {
+			spec = spec.and(specifications.numeroUsuarioContains(dto.getUsuarioNumero()));
+		}
+		if (dto.getUsuarioDni() != null) {
+			spec = spec.and(specifications.dniUsuarioContains(dto.getUsuarioDni()));
+		}
+		if (dto.getUsuarioEmail() != null) {
+			spec = spec.and(specifications.emailUsuarioContains(dto.getUsuarioEmail()));
+		}
+		if (dto.getConsumidas() != null) {
+			spec = spec.and(specifications.areConsumidas(dto.getConsumidas()));
+		}
+		if (dto.getAprobado() != null) {
+			spec = spec.and(specifications.areAprobadas(dto.getAprobado()));
+		}
+		if (dto.getEstado() != null) {
+			spec = spec.and(specifications.estadoContains(dto.getEstado()));
+		}
+		if (dto.getInicioDesde() != null) {
+			spec = spec.and(specifications.inicioDesde(dto.getInicioDesde()));
+		}
+		if (dto.getInicioHasta() != null) {
+			spec = spec.and(specifications.inicioHasta(dto.getInicioHasta()));
+		}
+		if (dto.getFinDesde() != null) {
+			spec = spec.and(specifications.finDesde(dto.getFinDesde()));
+		}
+		if (dto.getFinHasta() != null) {
+			spec = spec.and(specifications.finHasta(dto.getFinHasta()));
+		}
 
 		// Aislamiento Multi-empresa
 		if (currentEmpresaId != null) {

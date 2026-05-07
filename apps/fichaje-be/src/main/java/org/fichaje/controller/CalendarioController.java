@@ -67,9 +67,9 @@ public class CalendarioController
 		Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
 		boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
 
-		Specification<Calendario> spec = Specification.where((Specification<Calendario>) null);
+		Specification<Calendario> spec = null;
 		if (currentEmpresaId != null) {
-			spec = spec.and(specifications.hasEmpresa(currentEmpresaId));
+			spec = Specification.where(spec).and(specifications.hasEmpresa(currentEmpresaId));
 		} else if (!isSuperAdmin) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 		}

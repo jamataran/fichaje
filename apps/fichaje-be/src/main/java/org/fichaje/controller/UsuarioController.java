@@ -84,46 +84,46 @@ public class UsuarioController
 	private Specification<Usuario> createSpec(UsuarioDtoFilter dto) {
 		if (dto == null) return null;
 
-		Specification<Usuario> spec = null;
+		Specification<Usuario> spec = (root, query, cb) -> cb.conjunction();
 
 		if (dto.getNombreEmpleado() != null) {
-			spec = Specification.where(spec).and(specifications.nombreUsuarioContains(dto.getNombreEmpleado()));
+			spec = spec.and(specifications.nombreUsuarioContains(dto.getNombreEmpleado()));
 		}
 		if (dto.getEmail() != null) {
-			spec = Specification.where(spec).and(specifications.emailUsuarioContains(dto.getEmail()));
+			spec = spec.and(specifications.emailUsuarioContains(dto.getEmail()));
 		}
 		if (dto.getNumero() != null) {
-			spec = Specification.where(spec).and(specifications.numeroUsuarioContains(dto.getNumero()));
+			spec = spec.and(specifications.numeroUsuarioContains(dto.getNumero()));
 		}
 		if (dto.getDni() != null) {
-			spec = Specification.where(spec).and(specifications.dniUsuarioContains(dto.getDni()));
+			spec = spec.and(specifications.dniUsuarioContains(dto.getDni()));
 		}
 		if (dto.getWorking() != null) {
-			spec = Specification.where(spec).and(specifications.isWorking(dto.getWorking()));
+			spec = spec.and(specifications.isWorking(dto.getWorking()));
 		}
 		if (dto.getEnVacaciones() != null) {
-			spec = Specification.where(spec).and(specifications.isEnVacaciones(dto.getEnVacaciones()));
+			spec = spec.and(specifications.isEnVacaciones(dto.getEnVacaciones()));
 		}
 		if (dto.getDeBaja() != null) {
-			spec = Specification.where(spec).and(specifications.isDeBaja(dto.getDeBaja()));
+			spec = spec.and(specifications.isDeBaja(dto.getDeBaja()));
 		}
 		if (dto.getDiasVacacionesDesde() != null) {
-			spec = Specification.where(spec).and(specifications.diasDesde(dto.getDiasVacacionesDesde()));
+			spec = spec.and(specifications.diasDesde(dto.getDiasVacacionesDesde()));
 		}
 		if (dto.getDiasVacacionesHasta() != null) {
-			spec = Specification.where(spec).and(specifications.diasHasta(dto.getDiasVacacionesHasta()));
+			spec = spec.and(specifications.diasHasta(dto.getDiasVacacionesHasta()));
 		}
 		if (dto.getHorasGeneradasDesde() != null) {
-			spec = Specification.where(spec).and(specifications.horasDesde(dto.getHorasGeneradasDesde()));
+			spec = spec.and(specifications.horasDesde(dto.getHorasGeneradasDesde()));
 		}
 		if (dto.getHorasGeneradasHasta() != null) {
-			spec = Specification.where(spec).and(specifications.horasHasta(dto.getHorasGeneradasHasta()));
+			spec = spec.and(specifications.horasHasta(dto.getHorasGeneradasHasta()));
 		}
 		if (dto.getEmpresaId() != null) {
-			spec = Specification.where(spec).and(specifications.hasEmpresa(dto.getEmpresaId()));
+			spec = spec.and(specifications.hasEmpresa(dto.getEmpresaId()));
 		}
 		if (dto.getSedeId() != null) {
-			spec = Specification.where(spec).and(specifications.hasSede(dto.getSedeId()));
+			spec = spec.and(specifications.hasSede(dto.getSedeId()));
 		}
 		return spec;
 	}

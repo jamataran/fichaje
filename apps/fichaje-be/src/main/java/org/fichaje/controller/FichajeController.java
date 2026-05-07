@@ -82,28 +82,29 @@ public class FichajeController
 			dto.setNumeroUsuario(currentUserNumber);
 		}
 
-		Specification<Fichaje> spec = Specification
-				.where(dto.getNombreUsuario() == null ? (Specification<Fichaje>) null
-						: specifications.nombreUsuarioContains(
-								dto.getNombreUsuario()))
-				.and(dto.getNumeroUsuario() == null ? null
-						: specifications.numeroUsuarioContains(
-								dto.getNumeroUsuario()))
-				.and(dto.getTipo() == null ? null
-						: specifications.tipoContains(
-								dto.getTipo()))
-				.and(dto.getHoraDesde() == null ? null
-						: specifications.horaMayorQue(
-								dto.getHoraDesde()))
-				.and(dto.getHoraHasta() == null ? null
-						: specifications.horaMenorQue(
-								dto.getHoraHasta()))
-				.and(dto.getDiaDesde() == null ? null
-						: specifications.diaMayorQue(
-								dto.getDiaDesde()))
-				.and(dto.getDiaHasta() == null ? null
-						: specifications.diaMenorQue(
-								dto.getDiaHasta()));
+		Specification<Fichaje> spec = (root, query, cb) -> cb.conjunction();
+
+		if (dto.getNombreUsuario() != null) {
+			spec = spec.and(specifications.nombreUsuarioContains(dto.getNombreUsuario()));
+		}
+		if (dto.getNumeroUsuario() != null) {
+			spec = spec.and(specifications.numeroUsuarioContains(dto.getNumeroUsuario()));
+		}
+		if (dto.getTipo() != null) {
+			spec = spec.and(specifications.tipoContains(dto.getTipo()));
+		}
+		if (dto.getHoraDesde() != null) {
+			spec = spec.and(specifications.horaMayorQue(dto.getHoraDesde()));
+		}
+		if (dto.getHoraHasta() != null) {
+			spec = spec.and(specifications.horaMenorQue(dto.getHoraHasta()));
+		}
+		if (dto.getDiaDesde() != null) {
+			spec = spec.and(specifications.diaMayorQue(dto.getDiaDesde()));
+		}
+		if (dto.getDiaHasta() != null) {
+			spec = spec.and(specifications.diaMenorQue(dto.getDiaHasta()));
+		}
 
 		// Aislamiento Multi-empresa: Siempre filtrar por la empresa del token (salvo superadmin sin empresa seleccionada)
 		if (currentEmpresaId != null) {
@@ -115,12 +116,7 @@ public class FichajeController
 
 		Page<Fichaje> entities = service.pagesAndSpec(
 				spec,
-				PageRequest.of(page, size, Sort.by(order)));
-
-		if (!asc)
-			entities = service.pagesAndSpec(
-					spec,
-					PageRequest.of(page, size, Sort.by(order).descending()));
+				PageRequest.of(page, size, asc ? Sort.by(order).ascending() : Sort.by(order).descending()));
 
 		return ResponseEntity
 				.status(HttpStatus.OK)
@@ -142,28 +138,29 @@ public class FichajeController
 			dto.setNumeroUsuario(currentUserNumber);
 		}
 
-		Specification<Fichaje> spec = Specification
-				.where(dto.getNombreUsuario() == null ? (Specification<Fichaje>) null
-						: specifications.nombreUsuarioContains(
-								dto.getNombreUsuario()))
-				.and(dto.getNumeroUsuario() == null ? null
-						: specifications.numeroUsuarioContains(
-								dto.getNumeroUsuario()))
-				.and(dto.getTipo() == null ? null
-						: specifications.tipoContains(
-								dto.getTipo()))
-				.and(dto.getHoraDesde() == null ? null
-						: specifications.horaMayorQue(
-								dto.getHoraDesde()))
-				.and(dto.getHoraHasta() == null ? null
-						: specifications.horaMenorQue(
-								dto.getHoraHasta()))
-				.and(dto.getDiaDesde() == null ? null
-						: specifications.diaMayorQue(
-								dto.getDiaDesde()))
-				.and(dto.getDiaHasta() == null ? null
-						: specifications.diaMenorQue(
-								dto.getDiaHasta()));
+		Specification<Fichaje> spec = (root, query, cb) -> cb.conjunction();
+
+		if (dto.getNombreUsuario() != null) {
+			spec = spec.and(specifications.nombreUsuarioContains(dto.getNombreUsuario()));
+		}
+		if (dto.getNumeroUsuario() != null) {
+			spec = spec.and(specifications.numeroUsuarioContains(dto.getNumeroUsuario()));
+		}
+		if (dto.getTipo() != null) {
+			spec = spec.and(specifications.tipoContains(dto.getTipo()));
+		}
+		if (dto.getHoraDesde() != null) {
+			spec = spec.and(specifications.horaMayorQue(dto.getHoraDesde()));
+		}
+		if (dto.getHoraHasta() != null) {
+			spec = spec.and(specifications.horaMenorQue(dto.getHoraHasta()));
+		}
+		if (dto.getDiaDesde() != null) {
+			spec = spec.and(specifications.diaMayorQue(dto.getDiaDesde()));
+		}
+		if (dto.getDiaHasta() != null) {
+			spec = spec.and(specifications.diaMenorQue(dto.getDiaHasta()));
+		}
 
 		// Aislamiento Multi-empresa
 		if (currentEmpresaId != null) {

@@ -29,10 +29,8 @@ public class CommonServiceImpl<E, R extends JpaRepository<E, Long> & JpaSpecific
 
 	@Override
 	public List<E> filterAndList(Specification<E> s) {
-		if (s == null) {
-			return repository.findAll();
-		}
-		return repository.findAll(s);
+		Specification<E> spec = (s == null) ? (root, query, cb) -> cb.conjunction() : s;
+		return repository.findAll(spec);
 	}
 
 	@Override
@@ -57,9 +55,7 @@ public class CommonServiceImpl<E, R extends JpaRepository<E, Long> & JpaSpecific
 
 	@Override
 	public Page<E> pagesAndSpec(Specification<E> s, Pageable pageable) {
-		if (s == null) {
-			return repository.findAll(pageable);
-		}
-		return repository.findAll(s, pageable);
+		Specification<E> spec = (s == null) ? (root, query, cb) -> cb.conjunction() : s;
+		return repository.findAll(spec, pageable);
 	}
 }

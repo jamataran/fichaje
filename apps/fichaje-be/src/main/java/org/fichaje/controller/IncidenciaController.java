@@ -74,34 +74,35 @@ public class IncidenciaController
 			dto.setUsuarioNumero(currentUserNumber);
 		}
 
-		Specification<Incidencia> spec = Specification
-				.where(dto.getUsuarioNombre() == null ? (Specification<Incidencia>) null
-						: specifications.nombreUsuarioContains(
-								dto.getUsuarioNombre()))
-				.and(dto.getUsuarioEmail() == null ? null
-						: specifications.emailUsuarioContains(
-								dto.getUsuarioEmail()))
-				.and(dto.getUsuarioNumero() == null ? null
-						: specifications.numeroUsuarioContains(
-								dto.getUsuarioNumero()))
-				.and(dto.getUsuarioDni() == null ? null
-						: specifications.dniUsuarioContains(
-								dto.getUsuarioDni()))
-				.and(dto.getExplicacion() == null ? null
-						: specifications.explicacionContains(
-								dto.getExplicacion()))
-				.and(dto.getResumen() == null ? null
-						: specifications.resumenContains(
-								dto.getResumen()))
-				.and(dto.getResuelta() == null ? null
-						: specifications.isResuelta(
-								dto.getResuelta()))
-				.and(dto.getDiaDesde() == null ? null
-						: specifications.diaDesde(
-								dto.getDiaDesde()))
-				.and(dto.getDiaHasta() == null ? null
-						: specifications.diaHasta(
-								dto.getDiaHasta()));
+		Specification<Incidencia> spec = (root, query, cb) -> cb.conjunction();
+
+		if (dto.getUsuarioNombre() != null) {
+			spec = spec.and(specifications.nombreUsuarioContains(dto.getUsuarioNombre()));
+		}
+		if (dto.getUsuarioEmail() != null) {
+			spec = spec.and(specifications.emailUsuarioContains(dto.getUsuarioEmail()));
+		}
+		if (dto.getUsuarioNumero() != null) {
+			spec = spec.and(specifications.numeroUsuarioContains(dto.getUsuarioNumero()));
+		}
+		if (dto.getUsuarioDni() != null) {
+			spec = spec.and(specifications.dniUsuarioContains(dto.getUsuarioDni()));
+		}
+		if (dto.getExplicacion() != null) {
+			spec = spec.and(specifications.explicacionContains(dto.getExplicacion()));
+		}
+		if (dto.getResumen() != null) {
+			spec = spec.and(specifications.resumenContains(dto.getResumen()));
+		}
+		if (dto.getResuelta() != null) {
+			spec = spec.and(specifications.isResuelta(dto.getResuelta()));
+		}
+		if (dto.getDiaDesde() != null) {
+			spec = spec.and(specifications.diaDesde(dto.getDiaDesde()));
+		}
+		if (dto.getDiaHasta() != null) {
+			spec = spec.and(specifications.diaHasta(dto.getDiaHasta()));
+		}
 
 		// Aislamiento Multi-empresa
 		if (currentEmpresaId != null) {
@@ -112,12 +113,7 @@ public class IncidenciaController
 
 		Page<Incidencia> entities = service.pagesAndSpec(
 				spec,
-				PageRequest.of(page, size, Sort.by(order)));
-
-		if (!asc)
-			entities = service.pagesAndSpec(
-					spec,
-					PageRequest.of(page, size, Sort.by(order).descending()));
+				PageRequest.of(page, size, asc ? Sort.by(order).ascending() : Sort.by(order).descending()));
 
 //		Page<VacacionesDto> entitiesDto = entities
 //				.map(usu -> dtoConverter.inverseTransform(usu));
@@ -142,34 +138,35 @@ public class IncidenciaController
 			dto.setUsuarioNumero(currentUserNumber);
 		}
 
-		Specification<Incidencia> spec = Specification
-				.where(dto.getUsuarioNombre() == null ? (Specification<Incidencia>) null
-						: specifications.nombreUsuarioContains(
-								dto.getUsuarioNombre()))
-				.and(dto.getUsuarioEmail() == null ? null
-						: specifications.emailUsuarioContains(
-								dto.getUsuarioEmail()))
-				.and(dto.getUsuarioNumero() == null ? null
-						: specifications.numeroUsuarioContains(
-								dto.getUsuarioNumero()))
-				.and(dto.getUsuarioDni() == null ? null
-						: specifications.dniUsuarioContains(
-								dto.getUsuarioDni()))
-				.and(dto.getExplicacion() == null ? null
-						: specifications.explicacionContains(
-								dto.getExplicacion()))
-				.and(dto.getResumen() == null ? null
-						: specifications.resumenContains(
-								dto.getResumen()))
-				.and(dto.getResuelta() == null ? null
-						: specifications.isResuelta(
-								dto.getResuelta()))
-				.and(dto.getDiaDesde() == null ? null
-						: specifications.diaDesde(
-								dto.getDiaDesde()))
-				.and(dto.getDiaHasta() == null ? null
-						: specifications.diaHasta(
-								dto.getDiaHasta()));
+		Specification<Incidencia> spec = (root, query, cb) -> cb.conjunction();
+
+		if (dto.getUsuarioNombre() != null) {
+			spec = spec.and(specifications.nombreUsuarioContains(dto.getUsuarioNombre()));
+		}
+		if (dto.getUsuarioEmail() != null) {
+			spec = spec.and(specifications.emailUsuarioContains(dto.getUsuarioEmail()));
+		}
+		if (dto.getUsuarioNumero() != null) {
+			spec = spec.and(specifications.numeroUsuarioContains(dto.getUsuarioNumero()));
+		}
+		if (dto.getUsuarioDni() != null) {
+			spec = spec.and(specifications.dniUsuarioContains(dto.getUsuarioDni()));
+		}
+		if (dto.getExplicacion() != null) {
+			spec = spec.and(specifications.explicacionContains(dto.getExplicacion()));
+		}
+		if (dto.getResumen() != null) {
+			spec = spec.and(specifications.resumenContains(dto.getResumen()));
+		}
+		if (dto.getResuelta() != null) {
+			spec = spec.and(specifications.isResuelta(dto.getResuelta()));
+		}
+		if (dto.getDiaDesde() != null) {
+			spec = spec.and(specifications.diaDesde(dto.getDiaDesde()));
+		}
+		if (dto.getDiaHasta() != null) {
+			spec = spec.and(specifications.diaHasta(dto.getDiaHasta()));
+		}
 
 		// Aislamiento Multi-empresa
 		if (currentEmpresaId != null) {
