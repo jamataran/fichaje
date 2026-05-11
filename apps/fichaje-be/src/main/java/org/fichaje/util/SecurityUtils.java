@@ -1,9 +1,12 @@
 package org.fichaje.util;
 
+import org.fichaje.provider.db.entity.TenantEntity;
 import org.fichaje.provider.db.entity.UsuarioPrincipal;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 @Component
 public class SecurityUtils {
@@ -49,5 +52,15 @@ public class SecurityUtils {
                     .anyMatch(a -> a.getAuthority().equals("ROLE_SUPER_ADMIN"));
         }
         return false;
+    }
+
+    public static void checkTenantAccess(Object entity) {
+        if (entity instanceof TenantEntity tenantEntity) {
+            Long currentEmpresaId = getCurrentEmpresaId();
+            if (!isSuperAdmin() && currentEmpresaId != null && tenantEntity.getEmpresa() != null &&
+                    !tenantEntity.getEmpresa().getId().equals(currentEmpresaId)) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes acceso a este recurso");
+            }
+        }
     }
 }
