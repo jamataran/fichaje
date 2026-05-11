@@ -92,7 +92,7 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
         return repository.existsByEmail(email);
     }
 
-    public void sumarVacacionesPlantilla(int dias) {
+    public void sumVacacionesPlantilla(int dias) {
         Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
         boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
 
@@ -111,6 +111,63 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
             u.setDiasVacaciones(u.getDiasVacaciones() + dias);
             save(u);
         });
+    }
+
+    public Usuario updateUsuario(Long id, UsuarioDtoEdit editar) {
+        Usuario usuario = repository.findById(id).orElseThrow(() -> new UsuarioNotFoundException(id));
+        checkIsolation(usuario);
+        usuario = usuarioDtoConverter.transformEdit(usuario, editar);
+        return save(usuario);
+    }
+
+    public Usuario updatePassword(Long id, UsuarioDtoEditPassword editar) {
+        Usuario usuario = repository.findById(id).orElseThrow(() -> new UsuarioNotFoundException(id));
+        checkIsolation(usuario);
+
+        String currentUserNumber = SecurityUtils.getCurrentUserNumber();
+        boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+        boolean isAdmin = SecurityUtils.isAdmin();
+        boolean isSelf = usuario.getNumero().equals(currentUserNumber);
+
+        if (isSelf || isAdmin || isSuperAdmin) {
+            usuario = usuarioDtoConverter.transformEditPassword(usuario, editar);
+            return save(usuario);
+        } else {
+            throw new BusinessException("No tienes permisos para cambiar la contraseña de este usuario");
+        }
+    }
+
+    public UsuarioDTO miUsuario() {
+        String currentUserNumber = SecurityUtils.getCurrentUserNumber();
+        Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+
+        if (currentUserNumber == null) {
+            throw new BusinessException("Usuario no autenticado");
+        }
+
+        Usuario usuario = repository.findByNumero(currentUserNumber)
+                .orElseThrow(() -> new UsuarioNotFoundException(currentUserNumber));
+
+        return usuarioDtoConverter.inverseTransformForSession(usuario, currentEmpresaId);
+    }
+
+    private void checkIsolation(Usuario usuario) {
+        Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+        boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+        if (!isSuperAdmin && currentEmpresaId != null) {
+            boolean belongsToEmpresa = usuario.getEmpresas().stream()
+                    .anyMatch(e -> e.getId().equals(currentEmpresaId));
+            if (!belongsToEmpresa) {
+                throw new BusinessException("No tienes acceso a este usuario");
+            }
+        }
+    }
+
+    public UsuarioDTO getUsuarioById(Long id) {
+        Usuario usuario = repository.findById(id).orElseThrow(() -> new UsuarioNotFoundException(id));
+        checkIsolation(usuario);
+        return usuarioDtoConverter.inverseTransform(usuario);
     }
 
     /**

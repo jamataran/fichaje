@@ -27,13 +27,6 @@ import org.fichaje.util.SecurityUtils;
 public class UsuarioController
 		extends CommonController<Usuario, UsuarioService> {
 
-	private final UsuarioDtoConverter dtoConverter;
-
-	public UsuarioController(UsuarioService service, UsuarioDtoConverter dtoConverter) {
-		this.service = service;
-		this.dtoConverter = dtoConverter;
-	}
-
 	@Operation(summary = "Punto único de obtención de usuarios: permite listado, paginación y filtrado mediante query params")
 	@GetMapping
 	public ResponseEntity<Page<UsuarioDTO>> list(
@@ -46,96 +39,31 @@ public class UsuarioController
 	@Override
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getById(@PathVariable Long id) {
-		return service.findById(id).map(usuario -> {
-			Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
-			boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
-
-			if (!isSuperAdmin && currentEmpresaId != null) {
-				boolean belongsToEmpresa = usuario.getEmpresas().stream()
-						.anyMatch(e -> e.getId().equals(currentEmpresaId));
-				if (!belongsToEmpresa) {
-					return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-				}
-			}
-			return ResponseEntity.ok(dtoConverter.inverseTransform(usuario));
-		}).orElse(ResponseEntity.notFound().build());
+		return ResponseEntity.ok(service.getUsuarioById(id));
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<?> editUser(@RequestBody UsuarioDtoEdit editar,
 			@PathVariable Long id) {
-
-		return service.findById(id).map(d -> {
-			Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
-			boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
-
-			if (!isSuperAdmin && currentEmpresaId != null) {
-				boolean belongsToEmpresa = d.getEmpresas().stream()
-						.anyMatch(e -> e.getId().equals(currentEmpresaId));
-				if (!belongsToEmpresa) {
-					return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-				}
-			}
-
-			dtoConverter.transformEdit(d, editar);
-			return ResponseEntity.ok(service.save(d));
-		}).orElseGet(() -> {
-			return ResponseEntity.notFound().build();
-		});
+		return ResponseEntity.ok(service.updateUsuario(id, editar));
 	}
 
 	@PutMapping("password/{id}")
 	public ResponseEntity<?> editUserPassword(@RequestBody UsuarioDtoEditPassword editar,
 			@PathVariable Long id) {
-
-		Usuario usuario = service.findById(id).orElse(null);
-		if (usuario == null) {
-			return ResponseEntity.notFound().build();
-		}
-
-		Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
-		String currentUserNumber = SecurityUtils.getCurrentUserNumber();
-		boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
-
-		// Isolation check
-		if (!isSuperAdmin && currentEmpresaId != null) {
-			boolean belongsToEmpresa = usuario.getEmpresas().stream()
-					.anyMatch(e -> e.getId().equals(currentEmpresaId));
-			if (!belongsToEmpresa) {
-				return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-			}
-		}
-
-		// Self-edit or Admin/SuperAdmin check
-		boolean isSelf = usuario.getNumero().equals(currentUserNumber);
-		boolean isAdmin = SecurityUtils.isAdmin();
-
-		if (isSelf || isAdmin || isSuperAdmin) {
-			usuario = dtoConverter.transformEditPassword(usuario, editar);
-			return ResponseEntity.ok(service.save(usuario));
-		} else {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN)
-					.body(new Mensaje("No tienes permisos para cambiar la contraseña de este usuario"));
-		}
+		return ResponseEntity.ok(service.updatePassword(id, editar));
 	}
 
 	@PutMapping("/suma_vacaciones_plantilla/{dias}")
 	public ResponseEntity<?> sumarVacacionesPlantilla(@PathVariable int dias) {
-		service.sumarVacacionesPlantilla(dias);
+		service.sumVacacionesPlantilla(dias);
 		return ResponseEntity.ok().build();
 	}
 
 	@Operation(summary = "Usuario obtiene la información de su usario")
 	@GetMapping("/miusuario")
-	public ResponseEntity<?> getYourUser() {
-		UsuarioPrincipal principal = (UsuarioPrincipal) SecurityContextHolder
-				.getContext()
-				.getAuthentication()
-				.getPrincipal();
-
-		return ResponseEntity.ok(
-				service.getMiUsuario(principal.getUsername(), principal.getEmpresaId())
-		);
+	public ResponseEntity<UsuarioDTO> getYourUser() {
+		return ResponseEntity.ok(service.miUsuario());
 	}
 
 	@Operation(summary = "Asigna una sede a un usuario")
