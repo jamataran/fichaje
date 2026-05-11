@@ -14,11 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DiaDto {
 
-//	private Date dia;
-//	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss", timezone = "Europe/Madrid")
-//	private Date horaInicio;
-//	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss",timezone="Europe/Madrid" )
-//	private Date horaFin;
+	private Long id;
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate dia;
 	@JsonFormat(pattern = "HH:mm")

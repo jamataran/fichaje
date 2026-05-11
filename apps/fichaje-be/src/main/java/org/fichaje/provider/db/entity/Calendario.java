@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "calendarios")
-public class Calendario {
+public class Calendario implements TenantEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,4 +47,15 @@ public class Calendario {
 	@ManyToOne
 	@JoinColumn(name = "sede_id")
 	private Sede sede;
+
+	@Override
+	public Empresa getEmpresa() {
+		return (sede != null) ? sede.getEmpresa() : null;
+	}
+
+	@Override
+	public void setEmpresa(Empresa empresa) {
+		// La empresa se establece a través de la sede.
+		// Este metodo se deja vacío o se podría implementar si fuera necesario vincular a una sede por defecto.
+	}
 }
