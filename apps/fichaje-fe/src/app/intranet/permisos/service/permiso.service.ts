@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ChartDataService } from 'src/app/shared/interfaces/ChartDataService';
 import { DataCsv } from 'src/app/shared/interfaces/dataCsv';
-import { NuevoPermiso } from '../../home/models/nuevoPermiso';
+import { NuevoPermiso } from '../model/nuevoPermiso';
 import { Permiso } from '../model/permiso';
 import { PermisoDto } from '../model/permisoDto';
 import { environment } from 'src/environments/environment';

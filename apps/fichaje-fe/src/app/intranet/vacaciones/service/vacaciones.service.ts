@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DataCsv } from 'src/app/shared/interfaces/dataCsv';
-import { NuevasVacaciones } from '../../home/models/nuevasVacaciones';
+import { NuevasVacaciones } from '../models/nuevasVacaciones';
 import { Vacaciones } from '../models/vacaciones';
 import { VacacionesDto } from '../models/vacacionesDto';
 import { environment } from 'src/environments/environment';

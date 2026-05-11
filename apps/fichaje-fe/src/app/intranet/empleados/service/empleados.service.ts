@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DataCsv } from 'src/app/shared/interfaces/dataCsv';
-import { Password } from '../../home/models/password';
+import { Password } from '../model/password';
 import { Empleado } from '../model/empleado';
 import { EmpleadoDto } from '../model/empleadoDto'
 import { environment } from 'src/environments/environment';

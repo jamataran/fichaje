@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TokenService } from 'src/app/core/auth/service/token.service';
 import { PermisoService } from 'src/app/intranet/permisos/service/permiso.service';
-import { NuevoPermiso } from '../../models/nuevoPermiso';
+import { NuevoPermiso } from 'src/app/intranet/permisos/model/nuevoPermiso';
 import { Popup } from 'src/app/shared/helper/popup';
 import { SharedModule } from 'src/app/shared/shared.module';
 

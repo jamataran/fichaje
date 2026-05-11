@@ -2,7 +2,7 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TokenService } from 'src/app/core/auth/service/token.service';
 import { VacacionesService } from 'src/app/intranet/vacaciones/service/vacaciones.service';
-import { NuevasVacaciones } from '../../models/nuevasVacaciones';
+import { NuevasVacaciones } from 'src/app/intranet/vacaciones/models/nuevasVacaciones';
 import { Popup } from 'src/app/shared/helper/popup';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

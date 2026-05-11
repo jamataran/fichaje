@@ -1,9 +1,7 @@
 export class Password {
-
-  password: string
+  password: string;
 
   constructor(password: string) {
-    this.password = password
+    this.password = password;
   }
-
 }

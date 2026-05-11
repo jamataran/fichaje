@@ -41,6 +41,9 @@ const routes: Routes = [
         path: 'sedes', loadChildren: () => import('./sedes/sedes.module').then(m => m.SedesModule)
         , canActivate: [GuardService], data: { expectedRol: ['rrhh'] }
       },
+      {
+        path: 'cuenta', loadChildren: () => import('./cuenta/cuenta.routes').then(m => m.CUENTA_ROUTES)
+      },
       { path: 'home', loadChildren: () => import('./home/home.routes').then(m => m.HOME_ROUTES) },
     ]
   }
