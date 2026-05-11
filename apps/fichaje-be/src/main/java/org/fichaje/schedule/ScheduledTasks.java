@@ -119,7 +119,7 @@ public class ScheduledTasks {
 							/////////////////////////////////////////////////////
 							// comentar para realizar pruebas y que el fichaje que guarde no repita key con
 							///////////////////////////////////////////////////// los generados con mockaroo
-							fichajeDtoToFichaje.fichar(fichaje);
+							fichajeService.fichar(fichaje);
 							/////////////////////////////////////////////////////
 
 							generaIncidencia(diaLaborable, u, Incidencias.FICHAJE_IMPAR);
