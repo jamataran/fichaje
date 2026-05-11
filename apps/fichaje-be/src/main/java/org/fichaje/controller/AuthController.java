@@ -47,14 +47,17 @@ public class AuthController {
 	}
 
 	@PostMapping("/nuevo")
-	public ResponseEntity<?> nuevo(
+	public ResponseEntity<Mensaje> nuevo(
 			@Valid @RequestBody UsuarioDTO nuevoUsuario,
 			BindingResult bindingResult) {
 
-        final ResponseEntity<Mensaje> BAD_REQUEST = validarUsuario(nuevoUsuario, bindingResult);
-        if (BAD_REQUEST != null) return BAD_REQUEST;
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(new Mensaje("Campos mal puestos o email inválido."));
+		}
 
-		usuarioService.createNewUser(nuevoUsuario);
+		usuarioService.validateAndRegister(nuevoUsuario);
 
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
@@ -63,13 +66,14 @@ public class AuthController {
 
 
     @PostMapping("/login")
-	public ResponseEntity<JwtDto> login(
+	public ResponseEntity<?> login(
 			@Valid @RequestBody LoginUsuario loginUsuario,
 			BindingResult bindingResult) {
 
 		if (bindingResult.hasErrors()) {
-			return new ResponseEntity(new Mensaje("campos mal puestos"),
-					HttpStatus.BAD_REQUEST);
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(new Mensaje("campos mal puestos"));
 		}
 
 		Authentication authentication = authenticationManager.authenticate(
@@ -78,17 +82,18 @@ public class AuthController {
 						loginUsuario.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = jwtProvider.generateToken(authentication);
-		JwtDto jwtDto = new JwtDto(jwt);
-		return ResponseEntity.status(HttpStatus.OK).body(jwtDto);
+		return ResponseEntity.ok(new JwtDto(jwt));
 	}
 
 	@PostMapping("/empresa")
-	public ResponseEntity<JwtDto> authByEmpresa(
+	public ResponseEntity<?> authByEmpresa(
 			@Valid @RequestBody AuthEmpresaRequest request,
 			BindingResult bindingResult) {
 
 		if (bindingResult.hasErrors()) {
-			return new ResponseEntity(new Mensaje("empresaId es obligatorio"), HttpStatus.BAD_REQUEST);
+			return ResponseEntity
+					.status(HttpStatus.BAD_REQUEST)
+					.body(new Mensaje("empresaId es obligatorio"));
 		}
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -100,44 +105,5 @@ public class AuthController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		return ResponseEntity.ok(securityService.getEmpresasForAuthenticatedUser(authentication));
 	}
-
-    private ResponseEntity<Mensaje> validarUsuario(UsuarioDTO nuevoUsuario, BindingResult bindingResult) {
-        // Validar que los campos requeridos no están en blanco
-        if (nuevoUsuario.getDni().isBlank() ||
-                nuevoUsuario.getEmail().isBlank() ||
-                nuevoUsuario.getNombreEmpleado().isBlank() ||
-                nuevoUsuario.getNumero().isBlank()) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new Mensaje("Los campos nombre, numero, email o dni no pueden estar en blanco"));
-        }
-
-        // Validar formato de email y otros campos
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new Mensaje("Campos mal puestos o email inválido."));
-        }
-
-        // Validar que no existan duplicados
-        if (usuarioService.existsByNumero(nuevoUsuario.getNumero())) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new Mensaje("Ya existe el número de empleado."));
-        }
-
-        if (usuarioService.existsByDni(nuevoUsuario.getDni())) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new Mensaje("Ya existe el dni del empleado."));
-        }
-
-        if (usuarioService.existsByEmail(nuevoUsuario.getEmail())) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new Mensaje("Email en uso."));
-        }
-        return null;
-    }
 
 }

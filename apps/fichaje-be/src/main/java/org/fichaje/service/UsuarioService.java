@@ -116,8 +116,43 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
     public Usuario updateUsuario(Long id, UsuarioDtoEdit editar) {
         Usuario usuario = repository.findById(id).orElseThrow(() -> new UsuarioNotFoundException(id));
         checkIsolation(usuario);
-        usuario = usuarioDtoConverter.transformEdit(usuario, editar);
-        return save(usuario);
+
+        String currentUserNumber = SecurityUtils.getCurrentUserNumber();
+        boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+        boolean isAdmin = SecurityUtils.isAdmin();
+        boolean isSelf = usuario.getNumero().equals(currentUserNumber);
+
+        if (isSelf || isAdmin || isSuperAdmin) {
+            usuario = usuarioDtoConverter.transformEdit(usuario, editar);
+            return save(usuario);
+        } else {
+            throw new BusinessException("No tienes permisos para editar este usuario");
+        }
+    }
+
+    public Usuario validateAndRegister(UsuarioDTO nuevoUsuario) {
+        // Validar que los campos requeridos no están en blanco
+        if (nuevoUsuario.getDni() == null || nuevoUsuario.getDni().isBlank() ||
+                nuevoUsuario.getEmail() == null || nuevoUsuario.getEmail().isBlank() ||
+                nuevoUsuario.getNombreEmpleado() == null || nuevoUsuario.getNombreEmpleado().isBlank() ||
+                nuevoUsuario.getNumero() == null || nuevoUsuario.getNumero().isBlank()) {
+            throw new BusinessException("Los campos nombre, numero, email o dni no pueden estar en blanco");
+        }
+
+        // Validar que no existan duplicados
+        if (existsByNumero(nuevoUsuario.getNumero())) {
+            throw new BusinessException("Ya existe el número de empleado.");
+        }
+
+        if (existsByDni(nuevoUsuario.getDni())) {
+            throw new BusinessException("Ya existe el dni del empleado.");
+        }
+
+        if (existsByEmail(nuevoUsuario.getEmail())) {
+            throw new BusinessException("Email en uso.");
+        }
+
+        return createNewUser(nuevoUsuario);
     }
 
     public Usuario updatePassword(Long id, UsuarioDtoEditPassword editar) {
