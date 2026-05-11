@@ -3,11 +3,11 @@
   <div class="dashboard-header">
     <div>
       <h1 class="dashboard-title">Bienvenido</h1>
-      <p class="dashboard-subtitle">{{ model.nombreEmpleado }}</p>
+      <p class="dashboard-subtitle">{{ model().nombreEmpleado }}</p>
     </div>
     <div class="header-time">
       <span class="time-label">Hora actual</span>
-      <span class="time-value">{{ getCurrentTime() }}</span>
+      <span class="time-value">{{ currentTime() }}</span>
     </div>
   </div>
 
@@ -35,11 +35,11 @@
           <button
             class="btn btn-fichar btn-lg mt-4"
             (click)="fichar()"
-            [disabled]="isLoading">
-            <span *ngIf="!isLoading">
+            [disabled]="isLoading()">
+            <span *ngIf="!isLoading()">
               <i class="bi bi-check-lg me-2"></i>Fichar
             </span>
-            <span *ngIf="isLoading">
+            <span *ngIf="isLoading()">
               <span class="spinner-border spinner-border-sm me-2"></span>Registrando...
             </span>
           </button>
@@ -55,14 +55,14 @@
       <div class="card-body">
         <div class="status-item">
           <span class="status-label">Último Fichaje</span>
-          <span class="status-value">{{ model.ultimoFichaje || 'Sin registros' }}</span>
+          <span class="status-value">{{ model().ultimoFichaje || 'Sin registros' }}</span>
         </div>
         <div class="status-divider"></div>
         <div class="status-item">
           <span class="status-label">Estado</span>
-          <div class="status-badge" [ngClass]="{ 'working': model.working, 'off-duty': !model.working }">
-            <i class="bi" [ngClass]="model.working ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
-            {{ model.working ? 'En el trabajo' : 'Fuera del trabajo' }}
+          <div class="status-badge" [ngClass]="{ 'working': model().working, 'off-duty': !model().working }">
+            <i class="bi" [ngClass]="model().working ? 'bi-check-circle-fill' : 'bi-x-circle-fill'"></i>
+            {{ model().working ? 'En el trabajo' : 'Fuera del trabajo' }}
           </div>
         </div>
       </div>
@@ -74,10 +74,10 @@
         <h5 class="card-title">Vacaciones</h5>
       </div>
       <div class="card-body">
-        <div class="stat-number">{{ model.diasVacaciones }}</div>
+        <div class="stat-number">{{ model().diasVacaciones }}</div>
         <div class="stat-label">Días disponibles</div>
         <div class="progress mt-3" style="height: 4px;">
-          <div class="progress-bar" [style.width.%]="(model.diasVacaciones || 0) / 30 * 100" style="background: linear-gradient(90deg, #0ea5e9, #22c55e);"></div>
+          <div class="progress-bar" [style.width.%]="(model().diasVacaciones || 0) / 30 * 100" style="background: linear-gradient(90deg, #0ea5e9, #22c55e);"></div>
         </div>
       </div>
     </div>
@@ -87,7 +87,7 @@
         <h5 class="card-title">Horas Generadas</h5>
       </div>
       <div class="card-body">
-        <div class="stat-number">{{ model.horasGeneradas | number:'1.1-1' }}</div>
+        <div class="stat-number">{{ model().horasGeneradas | number:'1.1-1' }}</div>
         <div class="stat-label">Horas acumuladas</div>
       </div>
     </div>
@@ -100,11 +100,11 @@
       <div class="card-body">
         <div class="info-item">
           <span class="info-label">Número de Empleado</span>
-          <span class="info-value">{{ model.numero }}</span>
+          <span class="info-value">{{ model().numero }}</span>
         </div>
         <div class="info-item">
           <span class="info-label">Correo Electrónico</span>
-          <span class="info-value">{{ model.email }}</span>
+          <span class="info-value">{{ model().email }}</span>
         </div>
       </div>
     </div>
