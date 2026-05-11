@@ -1,128 +1,113 @@
 package org.fichaje.config.security.jwt;
 
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.jsonwebtoken.security.SecurityException;
+import lombok.extern.slf4j.Slf4j;
+import org.fichaje.provider.db.entity.UsuarioPrincipal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import org.fichaje.provider.db.entity.UsuarioPrincipal;
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SecurityException;
-import io.jsonwebtoken.UnsupportedJwtException;
-
+/**
+ * Proveedor de tokens JWT.
+ * Maneja la generación, validación y extracción de datos de los tokens.
+ */
+@Slf4j
 @Component
 public class JwtProvider {
-	private final static Logger logger = LoggerFactory.getLogger(JwtProvider.class);
 
-	@Value("${jwt.secret}")
-	private String secret;
+    @Value("${jwt.secret}")
+    private String secret;
 
-	@Value("${jwt.expiration}")
-	private int expiration;
+    @Value("${jwt.expiration}")
+    private int expiration;
 
-	public String generateToken(Authentication authentication) {
-		UsuarioPrincipal usuarioPrincipal = (UsuarioPrincipal) authentication.getPrincipal();
-		List<String> roles = usuarioPrincipal.getAuthorities().stream()
-				.map(GrantedAuthority::getAuthority)
-				.collect(Collectors.toList());
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = Base64.getDecoder().decode(secret.getBytes(StandardCharsets.UTF_8));
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
-		return Jwts.builder()
-				.subject(usuarioPrincipal.getUsername())
-				.claim("roles", roles)
-				.claim("nombre", sanitizeString(usuarioPrincipal.getNombre()))
-				.claim("id", usuarioPrincipal.getId())
-				.issuedAt(new Date())
-				.expiration(new Date(new Date().getTime() + expiration))
-				.signWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret)))
-				.compact();
-	}
+    public String generateToken(Authentication authentication) {
+        return generateToken(authentication, null);
+    }
 
-	public String generateToken(Authentication authentication, Long empresaId) {
-		UsuarioPrincipal usuarioPrincipal = (UsuarioPrincipal) authentication.getPrincipal();
-		List<String> roles = usuarioPrincipal.getAuthorities().stream()
-				.map(GrantedAuthority::getAuthority)
-				.collect(Collectors.toList());
+    public String generateToken(Authentication authentication, Long empresaId) {
+        UsuarioPrincipal usuarioPrincipal = (UsuarioPrincipal) authentication.getPrincipal();
+        List<String> roles = usuarioPrincipal.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
 
-		return Jwts.builder()
-				.subject(usuarioPrincipal.getUsername())
-				.claim("roles", roles)
-				.claim("nombre", sanitizeString(usuarioPrincipal.getNombre()))
-				.claim("id", usuarioPrincipal.getId())
-				.claim("empresaId", empresaId)
-				.issuedAt(new Date())
-				.expiration(new Date(new Date().getTime() + expiration))
-				.signWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret)))
-				.compact();
-	}
+        JwtBuilder builder = Jwts.builder()
+                .subject(usuarioPrincipal.getUsername())
+                .claim("roles", roles)
+                .claim("nombre", sanitizeString(usuarioPrincipal.getNombre()))
+                .claim("id", usuarioPrincipal.getId())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expiration * 1000L))
+                .signWith(getSigningKey());
 
-	public String getSubjectFromToken(String token) {
-		return Jwts.parser().verifyWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret))).build().parseClaimsJws(token).getBody()
-				.getSubject();
-	}
+        if (empresaId != null) {
+            builder.claim("empresaId", empresaId);
+        }
 
-	public Long getEmpresaIdFromToken(String token) {
-		Object empresaId = Jwts.parser()
-				.verifyWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret)))
-				.build()
-				.parseClaimsJws(token)
-				.getBody()
-				.get("empresaId");
+        return builder.compact();
+    }
 
-		if (empresaId == null) {
-			return null;
-		}
+    public String getSubjectFromToken(String token) {
+        return parseClaims(token).getSubject();
+    }
 
-		if (empresaId instanceof Number number) {
-			return number.longValue();
-		}
+    public Long getEmpresaIdFromToken(String token) {
+        Object empresaId = parseClaims(token).get("empresaId");
+        if (empresaId instanceof Number number) {
+            return number.longValue();
+        }
+        return null;
+    }
 
-		try {
-			return Long.parseLong(String.valueOf(empresaId));
-		} catch (NumberFormatException e) {
-			return null;
-		}
-	}
+    private Claims parseClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
 
-	public boolean validateToken(String token) {
-		try {
-			Jwts.parser().verifyWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret))).build().parseClaimsJws(token);
-			return true;
-		} catch (MalformedJwtException e) {
-			logger.error("token mal formado");
-		} catch (UnsupportedJwtException e) {
-			logger.error("token no soportado");
-		} catch (ExpiredJwtException e) {
-			logger.error("token expirado");
-		} catch (IllegalArgumentException e) {
-			logger.error("token vacío");
-		} catch (SecurityException e) {
-			logger.error("fail en la firma");
-		}
-		return false;
-	}
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token);
+            return true;
+        } catch (MalformedJwtException e) {
+            log.error("Token JWT mal formado");
+        } catch (UnsupportedJwtException e) {
+            log.error("Token JWT no soportado");
+        } catch (ExpiredJwtException e) {
+            log.error("Token JWT expirado");
+        } catch (IllegalArgumentException e) {
+            log.error("Token JWT vacío");
+        } catch (SecurityException e) {
+            log.error("Fallo en la firma del token JWT");
+        }
+        return false;
+    }
 
-	private String sanitizeString(String input) {
-
-		String acentos = "ÃÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛãàáäâèéëêìíïîòóöôùúüûÑñÇç";
-		String original = "AAAAAEEEEIIIIOOOOUUUUaaaaaeeeeiiiioooouuuunncc";
-
-		for (int i = 0; i < acentos.length(); i++) {
-			input = input.replace(acentos.charAt(i), original.charAt(i));
-		}
-
-		return input;
-
-	}
-
+    /**
+     * Normaliza y limpia una cadena de texto (elimina acentos y caracteres especiales).
+     */
+    private String sanitizeString(String input) {
+        if (input == null) return "";
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        return normalized.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")
+                         .replace("Ñ", "N")
+                         .replace("ñ", "n");
+    }
 }
