@@ -16,7 +16,7 @@ const routes: Routes = [
         , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
       },
       {
-        path: 'fichajes', loadChildren: () => import('./fichajes/fichajes.module').then(m => m.FichajesModule)
+        path: 'fichajes', loadChildren: () => import('./fichajes/fichajes.routes').then(m => m.FICHAJES_ROUTES)
         , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
       },
       {

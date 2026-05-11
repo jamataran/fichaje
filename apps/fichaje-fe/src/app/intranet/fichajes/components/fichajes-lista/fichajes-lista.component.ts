@@ -1,34 +1,41 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, signal, inject } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TokenService } from 'src/app/core/auth/service/token.service';
 import { Pagination } from 'src/app/shared/components/pagination/model/pagination.model';
 import { FichajeDto } from '../../model/fichajeDto';
 import { FichajeService } from '../../service/fichaje.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @Component({
-    selector: 'app-fichajes-lista',
-    templateUrl: './fichajes-lista.component.html',
-    styleUrls: ['./fichajes-lista.component.css'],
-    standalone: false
+  selector: 'app-fichajes-lista',
+  templateUrl: './fichajes-lista.component.html',
+  styleUrls: ['./fichajes-lista.component.css'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink, SharedModule]
 })
 export class FichajesListaComponent implements OnInit {
+  public readonly service = inject(FichajeService);
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly tokenService = inject(TokenService);
 
-  headers = [
+  readonly headers = [
     "dia",
     "hora",
     "tipo",
     "usuario.nombreEmpleado",
     "usuario.numero",
     "origen"
-  ]
+  ];
 
-  //paginación
-  order = 'id'
-  asc = false
+  // State Signals
+  listaElementos = signal<any[]>([]);
+  order = signal<string>('id');
+  asc = signal<boolean>(false);
+  isAdmin = signal<boolean>(false);
 
-  listaElementos: Array<any> = []
-
-  pag: Pagination = {
+  pag = signal<Pagination>({
     totalPages: [],
     page: 0,
     isFirst: false,
@@ -36,9 +43,9 @@ export class FichajesListaComponent implements OnInit {
     size: 15,
     sizeLimit: 100,
     listPagesLimits: 4,
-  }
+  });
 
-  dto: FichajeDto = {
+  dto = signal<FichajeDto>({
     diaDesde: '',
     diaHasta: '',
     horaDesde: '',
@@ -47,98 +54,77 @@ export class FichajesListaComponent implements OnInit {
     dia: '',
     origen: null,
     tipo: '',
-
     numeroUsuario: '',
     nombreUsuario: '',
-  }
-
-
-  isAdmin: boolean = false;
-
-  constructor(
-    public service: FichajeService,
-    private activatedRoute: ActivatedRoute,
-    private tokenService: TokenService
-  ) { }
+  });
 
   ngOnInit(): void {
-    this.dto.numeroUsuario = this.activatedRoute.snapshot.params.numero;
-    this.isAdmin = this.tokenService.isRRHH();
-    this.listarElementos()
+    const numero = this.activatedRoute.snapshot.params.numero;
+    if (numero) {
+      this.updateDto('numeroUsuario', numero);
+    }
+    this.isAdmin.set(this.tokenService.isRRHH());
+    this.listarElementos();
   }
 
   listarElementos(): void {
-    this.service.getElements(this.dto, this.pag.page, this.pag.size, this.order, this.asc).subscribe(
-      data => {
-        this.listaElementos = data.content
-        this.pag.isFirst = data.first
-        this.pag.isLast = data.last
-        this.pag.totalPages = new Array(data.totalPages)
+    this.service.getElements(
+      this.dto(),
+      this.pag().page,
+      this.pag().size,
+      this.order(),
+      this.asc()
+    ).subscribe({
+      next: data => {
+        this.listaElementos.set(data.content);
+        this.pag.update(p => ({
+          ...p,
+          isFirst: data.first,
+          isLast: data.last,
+          totalPages: new Array(data.totalPages)
+        }));
       },
-      err => {
-        console.log(err)
-      }
-    )
+      error: err => console.error(err)
+    });
   }
 
-  onPaginate(pag: Pagination) {
-    this.pag = pag;
-    this.listarElementos()
+  onPaginate(newPag: Pagination) {
+    this.pag.set(newPag);
+    this.listarElementos();
   }
 
   setOrder(order: string): void {
-    this.order = order
-    this.asc = !this.asc
-    this.listarElementos()
+    if (this.order() === order) {
+      this.asc.update(a => !a);
+    } else {
+      this.order.set(order);
+      this.asc.set(true);
+    }
+    this.listarElementos();
   }
 
-  clearNumero(): void {
-    this.dto.numeroUsuario = ''
-    this.listarElementos()
-  }
-  clearNombre(): void {
-    this.dto.nombreUsuario = ''
-    this.listarElementos()
+  updateDto(field: keyof FichajeDto, value: any): void {
+    this.dto.update(d => ({ ...d, [field]: value }));
+    this.listarElementos();
   }
 
-
-  clearDiaDesde(): void {
-    this.dto.diaDesde = ''
-    this.listarElementos()
-  }
-  clearDiaHasta(): void {
-    this.dto.diaHasta = ''
-    this.listarElementos()
-  }
-  clearHoraDesde(): void {
-    this.dto.horaDesde = ''
-    this.listarElementos()
-  }
-  clearHoraHasta(): void {
-    this.dto.horaHasta = ''
-    this.listarElementos()
-  }
-  clearOrigen(): void {
-    this.dto.origen = ''
-    this.listarElementos()
-  }
-  clearTipo(): void {
-    this.dto.tipo = ''
-    this.listarElementos()
+  clearField(field: keyof FichajeDto): void {
+    this.updateDto(field, field === 'origen' ? null : '');
   }
 
   clear(): void {
-    this.dto.diaDesde = ''
-    this.dto.horaDesde = ''
-    this.dto.diaHasta = ''
-    this.dto.horaHasta = ''
-    this.dto.origen = null
-    this.dto.tipo = ''
-
-    this.dto.numeroUsuario = ''
-    this.dto.nombreUsuario = ''
-
-    this.listarElementos()
+    this.dto.set({
+      diaDesde: '',
+      diaHasta: '',
+      horaDesde: '',
+      horaHasta: '',
+      hora: '',
+      dia: '',
+      origen: null,
+      tipo: '',
+      numeroUsuario: '',
+      nombreUsuario: '',
+    });
+    this.listarElementos();
   }
-
 }
