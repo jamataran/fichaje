@@ -39,4 +39,40 @@ public final class IncidenciaSpecifications extends CommonSpecificationImpl<Inci
 				.like(root.get("resumen"), SpecificationHelper.contains(expression));
 	}
 
+	public Specification<Incidencia> getFilter(org.fichaje.dto.entity.IncidenciaDtoFilter dto) {
+		return (root, query, cb) -> {
+			Specification<Incidencia> spec = Specification.where((Specification<Incidencia>) null);
+
+			if (dto.getUsuarioNombre() != null) {
+				spec = spec.and(nombreUsuarioContains(dto.getUsuarioNombre()));
+			}
+			if (dto.getUsuarioEmail() != null) {
+				spec = spec.and(emailUsuarioContains(dto.getUsuarioEmail()));
+			}
+			if (dto.getUsuarioNumero() != null) {
+				spec = spec.and(numeroUsuarioContains(dto.getUsuarioNumero()));
+			}
+			if (dto.getUsuarioDni() != null) {
+				spec = spec.and(dniUsuarioContains(dto.getUsuarioDni()));
+			}
+			if (dto.getExplicacion() != null) {
+				spec = spec.and(explicacionContains(dto.getExplicacion()));
+			}
+			if (dto.getResumen() != null) {
+				spec = spec.and(resumenContains(dto.getResumen()));
+			}
+			if (dto.getResuelta() != null) {
+				spec = spec.and(isResuelta(dto.getResuelta()));
+			}
+			if (dto.getDiaDesde() != null) {
+				spec = spec.and(diaDesde(dto.getDiaDesde()));
+			}
+			if (dto.getDiaHasta() != null) {
+				spec = spec.and(diaHasta(dto.getDiaHasta()));
+			}
+
+			return spec.toPredicate(root, query, cb);
+		};
+	}
+
 }

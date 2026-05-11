@@ -2,12 +2,7 @@ package org.fichaje.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,44 +13,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.fichaje.converter.IncidenciaDtoConverter;
-import org.fichaje.dto.entity.ChartDataDto;
 import org.fichaje.dto.entity.IncidenciaDtoEdit;
 import org.fichaje.dto.entity.IncidenciaDtoFilter;
-import org.fichaje.dto.interfaces.ITopIncidencias;
-import org.fichaje.dto.interfaces.IUsuarioDtoEstadistica;
 import org.fichaje.provider.db.entity.Incidencia;
 import org.fichaje.service.IncidenciaService;
-import org.fichaje.provider.db.specifications.IncidenciaSpecifications;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-import org.fichaje.util.SecurityUtils;
-
 @RestController
 @RequestMapping("/incidencia")
-//@CrossOrigin(origins = "http://localhost:4200")
 public class IncidenciaController
 		extends CommonController<Incidencia, IncidenciaService> {
 
-//	@Autowired
-//	IncidenciaDtoConverter dtoConverter;
-	@Autowired
-	IncidenciaSpecifications specifications;
-	@Autowired
-	IncidenciaDtoConverter dtoConverter;
-
-//	@Operation(summary = "Obtiene una lista de objetos dado un id de usuario")
-//	@GetMapping("/usuario/{id}")
-//	public ResponseEntity<?> getByUsuarioId(@PathVariable Long id) {
-//		List<Incidencia> result = service.findByUser(id);
-//		if (result == null)
-//			return ResponseEntity.notFound().build();
-//		else
-//			return ResponseEntity.ok(result);
-//	}
-
-	@Operation(summary = "Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
+	@Operation(summary = "Obtiene una lista paginada y filtrada de objetos")
 	@PostMapping("/pagesFiltered")
 	public ResponseEntity<Page<Incidencia>> pageDtoSpec(
 			@RequestBody IncidenciaDtoFilter dto,
@@ -64,166 +34,40 @@ public class IncidenciaController
 			@RequestParam(defaultValue = "id") String order,
 			@RequestParam(defaultValue = "true") boolean asc) {
 
-		Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
-		String currentUserNumber = SecurityUtils.getCurrentUserNumber();
-		boolean isRrhh = SecurityUtils.isRRHH();
-		boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
-
-		// Si NO es RRHH ni SuperAdmin, filtrar por su número de usuario
-		if (!isRrhh && !isSuperAdmin) {
-			dto.setUsuarioNumero(currentUserNumber);
-		}
-
-		Specification<Incidencia> spec = (root, query, cb) -> cb.conjunction();
-
-		if (dto.getUsuarioNombre() != null) {
-			spec = spec.and(specifications.nombreUsuarioContains(dto.getUsuarioNombre()));
-		}
-		if (dto.getUsuarioEmail() != null) {
-			spec = spec.and(specifications.emailUsuarioContains(dto.getUsuarioEmail()));
-		}
-		if (dto.getUsuarioNumero() != null) {
-			spec = spec.and(specifications.numeroUsuarioContains(dto.getUsuarioNumero()));
-		}
-		if (dto.getUsuarioDni() != null) {
-			spec = spec.and(specifications.dniUsuarioContains(dto.getUsuarioDni()));
-		}
-		if (dto.getExplicacion() != null) {
-			spec = spec.and(specifications.explicacionContains(dto.getExplicacion()));
-		}
-		if (dto.getResumen() != null) {
-			spec = spec.and(specifications.resumenContains(dto.getResumen()));
-		}
-		if (dto.getResuelta() != null) {
-			spec = spec.and(specifications.isResuelta(dto.getResuelta()));
-		}
-		if (dto.getDiaDesde() != null) {
-			spec = spec.and(specifications.diaDesde(dto.getDiaDesde()));
-		}
-		if (dto.getDiaHasta() != null) {
-			spec = spec.and(specifications.diaHasta(dto.getDiaHasta()));
-		}
-
-		// Aislamiento Multi-empresa
-		if (currentEmpresaId != null) {
-			spec = spec.and(specifications.hasEmpresa(currentEmpresaId));
-		} else if (!isSuperAdmin) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-		}
-
-		Page<Incidencia> entities = service.pagesAndSpec(
-				spec,
-				PageRequest.of(page, size, asc ? Sort.by(order).ascending() : Sort.by(order).descending()));
-
-//		Page<VacacionesDto> entitiesDto = entities
-//				.map(usu -> dtoConverter.inverseTransform(usu));
-
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.body(entities);
-
+		return ResponseEntity.ok(service.getFilteredPages(dto, page, size, order, asc));
 	}
 
-	@Operation(summary = "Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
+	@Operation(summary = "Obtiene una lista filtrada de objetos")
 	@PostMapping("/listFiltered")
 	public ResponseEntity<List<Incidencia>> filteredList(@RequestBody IncidenciaDtoFilter dto) {
 
-		Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
-		String currentUserNumber = SecurityUtils.getCurrentUserNumber();
-		boolean isRrhh = SecurityUtils.isRRHH();
-		boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
-
-		// Si NO es RRHH ni SuperAdmin, filtrar por su número de usuario
-		if (!isRrhh && !isSuperAdmin) {
-			dto.setUsuarioNumero(currentUserNumber);
-		}
-
-		Specification<Incidencia> spec = (root, query, cb) -> cb.conjunction();
-
-		if (dto.getUsuarioNombre() != null) {
-			spec = spec.and(specifications.nombreUsuarioContains(dto.getUsuarioNombre()));
-		}
-		if (dto.getUsuarioEmail() != null) {
-			spec = spec.and(specifications.emailUsuarioContains(dto.getUsuarioEmail()));
-		}
-		if (dto.getUsuarioNumero() != null) {
-			spec = spec.and(specifications.numeroUsuarioContains(dto.getUsuarioNumero()));
-		}
-		if (dto.getUsuarioDni() != null) {
-			spec = spec.and(specifications.dniUsuarioContains(dto.getUsuarioDni()));
-		}
-		if (dto.getExplicacion() != null) {
-			spec = spec.and(specifications.explicacionContains(dto.getExplicacion()));
-		}
-		if (dto.getResumen() != null) {
-			spec = spec.and(specifications.resumenContains(dto.getResumen()));
-		}
-		if (dto.getResuelta() != null) {
-			spec = spec.and(specifications.isResuelta(dto.getResuelta()));
-		}
-		if (dto.getDiaDesde() != null) {
-			spec = spec.and(specifications.diaDesde(dto.getDiaDesde()));
-		}
-		if (dto.getDiaHasta() != null) {
-			spec = spec.and(specifications.diaHasta(dto.getDiaHasta()));
-		}
-
-		// Aislamiento Multi-empresa
-		if (currentEmpresaId != null) {
-			spec = spec.and(specifications.hasEmpresa(currentEmpresaId));
-		} else if (!isSuperAdmin) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-		}
-
-		List<Incidencia> entities = service.filterAndList(spec);
-
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.body(entities);
-
+		return ResponseEntity.ok(service.getFilteredList(dto));
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<?> editIncidencia(@RequestBody IncidenciaDtoEdit editar,
 			@PathVariable Long id) {
 
-		return service.findById(id).map(d -> {
-			Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
-			boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
-
-			if (!isSuperAdmin && currentEmpresaId != null && d.getEmpresa() != null &&
-					!d.getEmpresa().getId().equals(currentEmpresaId)) {
-				return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-			}
-
-			dtoConverter.transformEdit(d, editar);
-			return ResponseEntity.ok(service.save(d));
-
-		}).orElseGet(() -> {
-			return ResponseEntity.notFound().build();
-		});
+		return service.updateIncidencia(id, editar)
+				.map(ResponseEntity::ok)
+				.orElse(ResponseEntity.notFound().build());
 	}
 
 	@Operation(summary = "Obtiene el número de incidencias de los últimos 12 meses")
 	@GetMapping("/count")
 	public ResponseEntity<?> countLast12Months() {
-		// Aquí deberíamos filtrar por empresaId también, pero el service parece que no lo soporta aún.
-		// FIXME: Los métodos estadísticos del service deberían recibir el empresaId.
-		ChartDataDto result = service.numberOfIncidenciasLast12Months();
-		return ResponseEntity.ok(result);
+		return ResponseEntity.ok(service.getStatsLast12Months());
 	}
 
 	@Operation(summary = "Obtiene el número de incidencias por usuario de los últimos 12 meses")
 	@GetMapping("/count/users")
 	public ResponseEntity<?> countUsersLast12Months() {
-		List<IUsuarioDtoEstadistica> result = service.numberOfIncidenciasPerUserLast12Months();
-		return ResponseEntity.ok(result);
+		return ResponseEntity.ok(service.getStatsPerUserLast12Months());
 	}
 
 	@Operation(summary = "Obtiene el número de incidencias agrupadas por resumen de los últimos 12 meses")
 	@GetMapping("/count/top")
 	public ResponseEntity<?> topIncidenciasLast12Months() {
-		List<ITopIncidencias> result = service.topIncidenciasLast12Months();
-		return ResponseEntity.ok(result);
+		return ResponseEntity.ok(service.getTopStatsLast12Months());
 	}
 }
