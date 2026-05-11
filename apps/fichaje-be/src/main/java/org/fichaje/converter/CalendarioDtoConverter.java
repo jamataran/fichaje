@@ -1,10 +1,8 @@
 package org.fichaje.converter;
 
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
 import org.fichaje.dto.entity.CalendarioDto;
 import org.fichaje.provider.db.entity.Calendario;
 
@@ -12,38 +10,37 @@ import org.fichaje.provider.db.entity.Calendario;
 @RequiredArgsConstructor
 public class CalendarioDtoConverter {
 
-	private final DiaDtoConverter diaConverter;
+    private final DiaDtoConverter diaConverter;
 
-	public Calendario transform(CalendarioDto dto) {
-		Calendario c = new Calendario();
-		c.setId(dto.getId());
-		c.setNombre(dto.getNombre());
-		c.setActive(dto.isActive());
-		c.setMinutosMasEntrada(dto.getMinutosMasEntrada());
-		c.setMinutosMenosEntrada(dto.getMinutosMenosEntrada());
-		c.setYear(dto.getYear());
-		if (dto.getDias() != null) {
-			c.setDias(dto.getDias().stream()
-					.map(diaConverter::transform)
-					.collect(Collectors.toList()));
-		}
-		return c;
-	}
+    public Calendario transform(CalendarioDto dto) {
+        Calendario c = Calendario.builder()
+                .id(dto.id())
+                .nombre(dto.nombre())
+                .active(dto.active())
+                .minutosMasEntrada(dto.minutosMasEntrada())
+                .minutosMenosEntrada(dto.minutosMenosEntrada())
+                .year(dto.year())
+                .build();
+        
+        if (dto.dias() != null) {
+            c.setDias(dto.dias().stream()
+                    .map(diaDto -> diaConverter.transformWithCalendario(diaDto, c))
+                    .collect(Collectors.toList()));
+        }
+        return c;
+    }
 
-	public CalendarioDto inverseTransform(Calendario c) {
-		CalendarioDto dto = new CalendarioDto();
-		dto.setId(c.getId());
-		dto.setNombre(c.getNombre());
-		dto.setActive(c.isActive());
-		dto.setYear(c.getYear());
-		dto.setMinutosMasEntrada(c.getMinutosMasEntrada());
-		dto.setMinutosMenosEntrada(c.getMinutosMenosEntrada());
-		if (c.getDias() != null) {
-			dto.setDias(c.getDias().stream()
-					.map(diaConverter::inverseTransform)
-					.collect(Collectors.toList()));
-		}
-		return dto;
-	}
-
+    public CalendarioDto inverseTransform(Calendario c) {
+        return new CalendarioDto(
+            c.getId(),
+            c.getNombre(),
+            c.getYear(),
+            c.isActive(),
+            c.getMinutosMasEntrada(),
+            c.getMinutosMenosEntrada(),
+            c.getDias() != null ? c.getDias().stream()
+                    .map(diaConverter::inverseTransform)
+                    .collect(Collectors.toList()) : null
+        );
+    }
 }
