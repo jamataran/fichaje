@@ -10,8 +10,13 @@
           <form (ngSubmit)="changePassword()" #passForm="ngForm">
             <div class="mb-3">
               <label for="pass1" class="form-label">Nueva Contraseña</label>
-              <input #d1="ngModel" type="password" class="form-control" name="pass1" id="pass1" [ngModel]="pass1()"
-                (ngModelChange)="updatePass1($event)" required pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$">
+              <div class="input-group">
+                <input #d1="ngModel" [type]="showPass1() ? 'text' : 'password'" class="form-control" name="pass1" id="pass1" [ngModel]="pass1()"
+                  (ngModelChange)="updatePass1($event)" required pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,}$">
+                <button class="btn btn-outline-secondary" type="button" (click)="togglePass1()">
+                  <i class="bi" [ngClass]="showPass1() ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
               <div *ngIf="d1.invalid && (d1.dirty || d1.touched)" class="alert alert-danger mt-2 py-1 px-2 small">
                 <div *ngIf="d1.errors?.required">El campo es obligatorio.</div>
                 <div *ngIf="d1.errors?.pattern">Debe tener al menos 6 caracteres, mayúsculas, minúsculas y números.</div>
@@ -20,8 +25,13 @@
 
             <div class="mb-3">
               <label for="pass2" class="form-label">Confirmar Contraseña</label>
-              <input #d2="ngModel" type="password" class="form-control" name="pass2" id="pass2" [ngModel]="pass2()"
-                (ngModelChange)="updatePass2($event)" required>
+              <div class="input-group">
+                <input #d2="ngModel" [type]="showPass2() ? 'text' : 'password'" class="form-control" name="pass2" id="pass2" [ngModel]="pass2()"
+                  (ngModelChange)="updatePass2($event)" required>
+                <button class="btn btn-outline-secondary" type="button" (click)="togglePass2()">
+                  <i class="bi" [ngClass]="showPass2() ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
               <div *ngIf="pass1() !== pass2() && (d2.dirty || d2.touched)" class="alert alert-danger mt-2 py-1 px-2 small">
                 Las contraseñas no coinciden.
               </div>

@@ -21,6 +21,17 @@ export class CuentaComponent {
   pass1 = signal<string>('');
   pass2 = signal<string>('');
 
+  showPass1 = signal<boolean>(false);
+  showPass2 = signal<boolean>(false);
+
+  togglePass1(): void {
+    this.showPass1.update(v => !v);
+  }
+
+  togglePass2(): void {
+    this.showPass2.update(v => !v);
+  }
+
   changePassword(): void {
     if (this.checkPasswords()) {
       const userId = this.tokenService.getId();
