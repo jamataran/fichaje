@@ -12,7 +12,7 @@ const routes: Routes = [
         , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
       },
       {
-        path: 'incidencias', loadChildren: () => import('./incidencias/incidencias.module').then(m => m.IncidenciasModule)
+        path: 'incidencias', loadChildren: () => import('./incidencias/incidencias.routes').then(m => m.INCIDENCIAS_ROUTES)
         , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
       },
       {
