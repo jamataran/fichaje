@@ -60,16 +60,7 @@ public class IncidenciaService extends CommonServiceImpl<Incidencia, IncidenciaR
 			dto.setUsuarioNumero(currentUserNumber);
 		}
 
-		Specification<Incidencia> spec = specifications.getFilter(dto);
-
-		// Aislamiento Multi-empresa
-		if (currentEmpresaId != null) {
-			spec = spec.and(specifications.hasEmpresa(currentEmpresaId));
-		} else if (!isSuperAdmin) {
-			return (root, query, cb) -> cb.disjunction();
-		}
-
-		return spec;
+		return specifications.buildSpecification(dto, currentEmpresaId, isSuperAdmin);
 	}
 
 	public Optional<Incidencia> updateIncidencia(Long id, IncidenciaDtoEdit editar) {
@@ -79,7 +70,7 @@ public class IncidenciaService extends CommonServiceImpl<Incidencia, IncidenciaR
 
 			if (!isSuperAdmin && currentEmpresaId != null && d.getEmpresa() != null &&
 					!d.getEmpresa().getId().equals(currentEmpresaId)) {
-				return null; // O lanzar una excepción personalizada
+				return null;
 			}
 
 			dtoConverter.transformEdit(d, editar);
