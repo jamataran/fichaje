@@ -6,14 +6,12 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { CoreModule } from 'src/app/core/core.module';
 import { HomeService } from './service/home.service';
 import { HomeComponent } from './containers/home/home.component';
-import { FichajeService } from '../fichajes/service/fichaje.service';
 import { FichajesUserComponent } from './containers/fichajes-user/fichajes-user.component';
 import { FichajesSharedModule } from '../fichajes/components/fichajes-shared.module';
 import { PermisosUserComponent } from './containers/permisos-user/permisos-user.component';
 import { NuevoPermisoComponent } from './containers/nuevo-permiso/nuevo-permiso.component';
 import { NuevasVacacionesComponent } from './containers/nuevas-vacaciones/nuevas-vacaciones.component';
 import { VacacionesUserComponent } from './containers/vacaciones-user/vacaciones-user.component';
-import { VacacionesSharedModule } from '../vacaciones/components/vacaciones-shared.module';
 import { CuentaComponent } from './containers/cuenta/cuenta.component';
 import { EmpleadosService } from '../empleados/service/empleados.service';
 
@@ -22,8 +20,6 @@ import { EmpleadosService } from '../empleados/service/empleados.service';
   declarations: [
     HomeComponent,
     FichajesUserComponent,
-    NuevasVacacionesComponent,
-    VacacionesUserComponent,
     CuentaComponent
   ],
   imports: [
@@ -32,9 +28,10 @@ import { EmpleadosService } from '../empleados/service/empleados.service';
     SharedModule,
     CoreModule,
     FichajesSharedModule,
-    VacacionesSharedModule,
     PermisosUserComponent,
-    NuevoPermisoComponent
+    NuevoPermisoComponent,
+    NuevasVacacionesComponent,
+    VacacionesUserComponent
   ],
   providers: [
     HomeService,

@@ -27,10 +27,9 @@ const routes: Routes = [
         , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
       },
       {
-        path: 'vacaciones', loadChildren: () => import('./vacaciones/vacaciones.module').then(m => m.VacacionesModule)
+        path: 'vacaciones', loadChildren: () => import('./vacaciones/vacaciones.routes').then(m => m.VACACIONES_ROUTES)
         , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
-      },
-      {
+      },      {
         path: 'register', loadChildren: () => import('./register/register.module').then(m => m.RegisterModule)
         , canActivate: [GuardService], data: { expectedRol: ['admin', 'rrhh'] }
       },

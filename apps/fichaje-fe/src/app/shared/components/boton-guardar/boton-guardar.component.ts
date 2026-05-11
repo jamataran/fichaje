@@ -1,18 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-boton-guardar',
-    templateUrl: './boton-guardar.component.html',
-    styleUrls: ['./boton-guardar.component.css'],
-    standalone: false
+  selector: 'app-boton-guardar',
+  templateUrl: './boton-guardar.component.html',
+  styleUrls: ['./boton-guardar.component.css'],
+  standalone: true,
+  imports: [CommonModule]
 })
-export class BotonGuardarComponent implements OnInit {
-
+export class BotonGuardarComponent {
   @Input() valid: boolean | null = null;
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
 }
