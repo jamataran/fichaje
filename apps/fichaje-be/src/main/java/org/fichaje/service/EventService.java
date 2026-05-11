@@ -2,7 +2,7 @@ package org.fichaje.service;
 
 import java.time.LocalDate;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import org.fichaje.provider.db.entity.Incidencia;
@@ -10,12 +10,11 @@ import org.fichaje.provider.db.entity.Usuario;
 import org.fichaje.provider.mail.EmailService;
 
 @Component
+@RequiredArgsConstructor
 public class EventService {
 
-	@Autowired
-	private IncidenciaService incidenciaService;
-	@Autowired
-	private NotificationService notificationService;
+	private final IncidenciaService incidenciaService;
+	private final NotificationService notificationService;
 
 	public void createEvent(String subject, String descripcion, LocalDate dia,
 			Usuario usuario, String resumen) {

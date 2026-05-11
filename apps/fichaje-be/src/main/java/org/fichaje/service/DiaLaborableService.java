@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import org.fichaje.converter.DiaDtoConverter;
@@ -22,11 +21,14 @@ import org.fichaje.provider.db.repository.DiaLaborableRepository;
 public class DiaLaborableService
 		extends CommonServiceImpl<DiaLaborable, DiaLaborableRepository> {
 
-	@Autowired
-	private DiaDtoConverter dtoConverter;
+	private final DiaDtoConverter dtoConverter;
+	private final CalendarioRepository calendarioRepository;
 
-	@Autowired
-	private CalendarioRepository calendarioRepository;
+	public DiaLaborableService(DiaLaborableRepository repository, DiaDtoConverter dtoConverter, CalendarioRepository calendarioRepository) {
+		super(repository);
+		this.dtoConverter = dtoConverter;
+		this.calendarioRepository = calendarioRepository;
+	}
 
 	public boolean existsByDia(LocalDate dia) {
 		return repository.existsByDia(dia);

@@ -25,6 +25,10 @@ import io.swagger.v3.oas.annotations.Operation;
 public class IncidenciaController
 		extends CommonController<Incidencia, IncidenciaService> {
 
+	public IncidenciaController(IncidenciaService service) {
+		super(service);
+	}
+
 	@Operation(summary = "Obtiene una lista paginada y filtrada de objetos")
 	@PostMapping("/pagesFiltered")
 	public ResponseEntity<Page<Incidencia>> pageDtoSpec(

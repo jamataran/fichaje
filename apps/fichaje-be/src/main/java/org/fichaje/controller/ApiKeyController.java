@@ -1,5 +1,6 @@
 package org.fichaje.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.fichaje.dto.ApiKeyCreateDto;
 import org.fichaje.dto.ApiKeyDto;
 import org.fichaje.dto.entity.Mensaje;
@@ -7,7 +8,6 @@ import org.fichaje.provider.db.entity.ApiKey;
 import org.fichaje.service.ApiKeyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,12 +27,12 @@ import java.util.stream.Collectors;
 // TODO: Configurar CORS de forma segura en producción, limitando a dominios específicos
 // @CrossOrigin(origins = {"https://tudominio.com", "https://app.tudominio.com"})
 @CrossOrigin(origins = "${client.url}") // Usar configuración desde properties
+@RequiredArgsConstructor
 public class ApiKeyController {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiKeyController.class);
 
-    @Autowired
-    private ApiKeyService apiKeyService;
+    private final ApiKeyService apiKeyService;
 
     /**
      * Crear una nueva API Key

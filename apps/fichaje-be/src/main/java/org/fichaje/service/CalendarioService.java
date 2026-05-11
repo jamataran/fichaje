@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +24,17 @@ import org.fichaje.util.SecurityUtils;
 public class CalendarioService
 		extends CommonServiceImpl<Calendario, CalendarioRepository> {
 
-	@Autowired
-	private CalendarioSpecifications specifications;
+	private final CalendarioSpecifications specifications;
+	private final CalendarioDtoConverter dtoConverter;
+	private final DiaDtoConverter diaDtoConverter;
 
-	@Autowired
-	private CalendarioDtoConverter dtoConverter;
-
-	@Autowired
-	private DiaDtoConverter diaDtoConverter;
+	public CalendarioService(CalendarioRepository repository, CalendarioSpecifications specifications,
+			CalendarioDtoConverter dtoConverter, DiaDtoConverter diaDtoConverter) {
+		super(repository);
+		this.specifications = specifications;
+		this.dtoConverter = dtoConverter;
+		this.diaDtoConverter = diaDtoConverter;
+	}
 
 	public Optional<Calendario> findByNombre(String nombre) {
 		return repository.findByNombre(nombre);

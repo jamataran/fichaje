@@ -1,11 +1,11 @@
 package org.fichaje.config.security.apikey;
 
+import lombok.RequiredArgsConstructor;
 import org.fichaje.config.security.service.UserDetailsServiceImpl;
 import org.fichaje.provider.db.entity.Usuario;
 import org.fichaje.service.ApiKeyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,16 +22,15 @@ import java.util.Optional;
  * Filtro para autenticación mediante API Key
  * Se ejecuta antes que el filtro JWT para permitir ambos métodos de autenticación
  */
+@RequiredArgsConstructor
 public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiKeyAuthenticationFilter.class);
     private static final String API_KEY_HEADER = "X-API-KEY";
 
-    @Autowired
-    private ApiKeyService apiKeyService;
+    private final ApiKeyService apiKeyService;
 
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, 

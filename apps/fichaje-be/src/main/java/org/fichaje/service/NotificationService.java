@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -16,16 +16,14 @@ import org.fichaje.provider.db.entity.Usuario;
 import org.fichaje.provider.mail.EmailService;
 
 @Service
+@RequiredArgsConstructor
 public class NotificationService {
 
-	@Autowired
-	private UsuarioService usuarioService;
+	private final UsuarioService usuarioService;
 
-	@Autowired
-	private RolService rolService;
+	private final RolService rolService;
 
-	@Autowired
-	private EmailService emailService;
+	private final EmailService emailService;
 
 	/**
 	 * Obtiene los destinatarios para una notificación (usuarios RRHH + el usuario causante)

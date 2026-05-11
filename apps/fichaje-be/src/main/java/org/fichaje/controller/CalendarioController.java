@@ -24,6 +24,10 @@ import io.swagger.v3.oas.annotations.Operation;
 public class CalendarioController
 		extends CommonController<Calendario, CalendarioService> {
 
+	public CalendarioController(CalendarioService service) {
+		super(service);
+	}
+
 	@Operation(summary = "Crea un nuevo calendario")
 	@PostMapping("/create")
 	public ResponseEntity<?> newCalendario(

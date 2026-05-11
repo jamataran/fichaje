@@ -25,6 +25,10 @@ import io.swagger.v3.oas.annotations.Operation;
 public class VacacionesController
 		extends CommonController<Vacaciones, VacacionesService> {
 
+	public VacacionesController(VacacionesService service) {
+		super(service);
+	}
+
 	@PostMapping("/create")
 	public ResponseEntity<?> newVacaciones(@RequestBody VacacionesDto dto) {
 		return ResponseEntity

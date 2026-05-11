@@ -1,6 +1,6 @@
 package org.fichaje.converter;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import org.fichaje.dto.entity.FichajeDto;
@@ -10,10 +10,10 @@ import org.fichaje.provider.db.entity.Usuario;
 import org.fichaje.service.UsuarioService;
 
 @Component
+@RequiredArgsConstructor
 public class FichajeDtoConverter {
 
-	@Autowired
-	private UsuarioService usuarioService;
+	private final UsuarioService usuarioService;
 
 	public FichajeDto inverseTransform(Fichaje f) {
 		if (f == null) return null;

@@ -22,7 +22,6 @@ import org.fichaje.util.SecurityUtils;
 import org.fichaje.provider.db.entity.Sede;
 import org.fichaje.provider.db.repository.SedeRepository;
 import org.fichaje.exception.SedeNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("/sedes")
@@ -31,14 +30,13 @@ public class SedeController {
     private final SedeService sedeService;
     private final SedeParametroService parametroService;
     private final JwtProvider jwtProvider;
-    
-    @Autowired
-    private SedeRepository sedeRepository;
+    private final SedeRepository sedeRepository;
 
-    public SedeController(SedeService sedeService, SedeParametroService parametroService, JwtProvider jwtProvider) {
+    public SedeController(SedeService sedeService, SedeParametroService parametroService, JwtProvider jwtProvider, SedeRepository sedeRepository) {
         this.sedeService = sedeService;
         this.parametroService = parametroService;
         this.jwtProvider = jwtProvider;
+        this.sedeRepository = sedeRepository;
     }
 
     private void validateSedeAccess(Long sedeId) {

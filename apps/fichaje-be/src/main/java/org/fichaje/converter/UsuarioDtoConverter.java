@@ -3,7 +3,6 @@ package org.fichaje.converter;
 import org.fichaje.dto.entity.UsuarioDTO;
 import org.fichaje.provider.db.entity.Sede;
 import org.fichaje.provider.db.entity.Empresa;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 

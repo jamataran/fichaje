@@ -32,10 +32,12 @@ public class VacacionesService
 	private final NotificationService notificationService;
 	private final VacacionesSpecifications specifications;
 
-	public VacacionesService(VacacionesDtoConverter dtoConverter,
+	public VacacionesService(VacacionesRepository repository,
+							 VacacionesDtoConverter dtoConverter,
 							 EmailService emailService,
 							 NotificationService notificationService,
 							 VacacionesSpecifications specifications) {
+		super(repository);
 		this.dtoConverter = dtoConverter;
 		this.emailService = emailService;
 		this.notificationService = notificationService;

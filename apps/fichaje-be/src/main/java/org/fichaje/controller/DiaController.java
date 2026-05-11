@@ -20,6 +20,10 @@ import org.fichaje.service.DiaLaborableService;
 public class DiaController
 		extends CommonController<DiaLaborable, DiaLaborableService> {
 
+	public DiaController(DiaLaborableService service) {
+		super(service);
+	}
+
 	@PostMapping("/create/{idCalendario}")
 	public ResponseEntity<?> newDia(@RequestBody DiaDto diaDTO,
 			@PathVariable Long idCalendario) {

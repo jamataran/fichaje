@@ -1,6 +1,5 @@
 package org.fichaje.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,10 +12,13 @@ import org.springframework.http.HttpStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
 
-public class CommonController<E, S extends CommonService<E>> {
+public abstract class CommonController<E, S extends CommonService<E>> {
 
-	@Autowired
-	protected S service;
+	protected final S service;
+
+	protected CommonController(S service) {
+		this.service = service;
+	}
 
 //
 //	@Operation(summary = "Devuelve una lista con paginación de los objetos")

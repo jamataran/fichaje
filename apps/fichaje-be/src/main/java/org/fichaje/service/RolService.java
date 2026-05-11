@@ -14,6 +14,10 @@ import org.fichaje.provider.db.repository.RolRepository;
 @Transactional
 public class RolService extends CommonServiceImpl<Rol, RolRepository> {
 
+	public RolService(RolRepository repository) {
+		super(repository);
+	}
+
 	public Optional<Rol> findByRolNombre(RolNombre rolNombre) {
 		return repository.findByRolNombre(rolNombre);
 	}

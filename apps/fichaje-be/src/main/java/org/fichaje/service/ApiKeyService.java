@@ -1,12 +1,12 @@
 package org.fichaje.service;
 
+import lombok.RequiredArgsConstructor;
 import org.fichaje.provider.db.entity.ApiKey;
 import org.fichaje.provider.db.entity.Usuario;
 import org.fichaje.provider.db.repository.ApiKeyRepository;
 import org.fichaje.provider.db.repository.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,19 +19,17 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class ApiKeyService {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiKeyService.class);
     private static final int API_KEY_LENGTH = 32; // 32 bytes = 256 bits
 
-    @Autowired
-    private ApiKeyRepository apiKeyRepository;
+    private final ApiKeyRepository apiKeyRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Genera una nueva API Key

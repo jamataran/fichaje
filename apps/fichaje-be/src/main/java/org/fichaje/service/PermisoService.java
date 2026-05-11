@@ -36,10 +36,12 @@ public class PermisoService extends CommonServiceImpl<Permiso, PermisoRepository
 	private final NotificationService notificationService;
 	private final PermisoSpecifications specifications;
 
-	public PermisoService(PermisoDtoConverter dtoConverter,
+	public PermisoService(PermisoRepository repository,
+						  PermisoDtoConverter dtoConverter,
 						  EmailService emailService,
 						  NotificationService notificationService,
 						  PermisoSpecifications specifications) {
+		super(repository);
 		this.dtoConverter = dtoConverter;
 		this.emailService = emailService;
 		this.notificationService = notificationService;

@@ -27,6 +27,10 @@ import org.fichaje.util.SecurityUtils;
 public class UsuarioController
 		extends CommonController<Usuario, UsuarioService> {
 
+	public UsuarioController(UsuarioService service) {
+		super(service);
+	}
+
 	@Operation(summary = "Punto único de obtención de usuarios: permite listado, paginación y filtrado mediante query params")
 	@GetMapping
 	public ResponseEntity<Page<UsuarioDTO>> list(

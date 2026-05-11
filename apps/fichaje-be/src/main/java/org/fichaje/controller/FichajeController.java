@@ -26,6 +26,10 @@ import io.swagger.v3.oas.annotations.Operation;
 public class FichajeController
 		extends CommonController<Fichaje, FichajeService> {
 
+	public FichajeController(FichajeService service) {
+		super(service);
+	}
+
 	@PostMapping("/now")
 	public ResponseEntity<?> nuevoFichajeNow(
 			@RequestBody FichajeDtoReqRes fichajeDto) {

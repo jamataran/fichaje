@@ -2,17 +2,17 @@ package org.fichaje.converter;
 
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import org.fichaje.dto.entity.CalendarioDto;
 import org.fichaje.provider.db.entity.Calendario;
 
 @Component
+@RequiredArgsConstructor
 public class CalendarioDtoConverter {
 
-	@Autowired
-	private DiaDtoConverter diaConverter;
+	private final DiaDtoConverter diaConverter;
 
 	public Calendario transform(CalendarioDto dto) {
 		Calendario c = new Calendario();

@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import jakarta.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -30,14 +29,16 @@ import org.fichaje.util.SecurityUtils;
 public class FichajeService
 		extends CommonServiceImpl<Fichaje, FichajeRepository> {
 
-	@Autowired
-	private UsuarioService usuarioService;
+	private final UsuarioService usuarioService;
+	private final EmpresaRepository empresaRepository;
+	private final FichajeSpecifications specifications;
 
-	@Autowired
-	private EmpresaRepository empresaRepository;
-
-	@Autowired
-	private FichajeSpecifications specifications;
+	public FichajeService(FichajeRepository repository, UsuarioService usuarioService, EmpresaRepository empresaRepository, FichajeSpecifications specifications) {
+		super(repository);
+		this.usuarioService = usuarioService;
+		this.empresaRepository = empresaRepository;
+		this.specifications = specifications;
+	}
 
 	public List<Fichaje> findByUsuarioAndDia(Usuario usuario, LocalDate dia) {
 		return repository.findByUsuarioAndDiaOrderByHora(usuario, dia);

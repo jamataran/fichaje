@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import jakarta.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -29,11 +28,14 @@ import org.fichaje.converter.IncidenciaDtoConverter;
 @Transactional
 public class IncidenciaService extends CommonServiceImpl<Incidencia, IncidenciaRepository> {
 
-	@Autowired
-	private IncidenciaSpecifications specifications;
+	private final IncidenciaSpecifications specifications;
+	private final IncidenciaDtoConverter dtoConverter;
 
-	@Autowired
-	private IncidenciaDtoConverter dtoConverter;
+	public IncidenciaService(IncidenciaRepository repository, IncidenciaSpecifications specifications, IncidenciaDtoConverter dtoConverter) {
+		super(repository);
+		this.specifications = specifications;
+		this.dtoConverter = dtoConverter;
+	}
 
 	public List<Incidencia> findByUser(Long id) {
 		return repository.findByUsuarioId(id);

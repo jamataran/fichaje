@@ -42,7 +42,8 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
     private final EmpresaDtoConverter empresaDtoConverter;
     private final UsuarioSpecifications specifications;
 
-    public UsuarioService(PasswordEncoder passwordEncoder, RolService rolService, EmailService emailService, SedeRepository sedeRepository, UsuarioDtoConverter usuarioDtoConverter, SedeDtoConverter sedeDtoConverter, EmpresaDtoConverter empresaDtoConverter, UsuarioSpecifications specifications) {
+    public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncoder, RolService rolService, EmailService emailService, SedeRepository sedeRepository, UsuarioDtoConverter usuarioDtoConverter, SedeDtoConverter sedeDtoConverter, EmpresaDtoConverter empresaDtoConverter, UsuarioSpecifications specifications) {
+        super(repository);
         this.passwordEncoder = passwordEncoder;
         this.rolService = rolService;
         this.emailService = emailService;

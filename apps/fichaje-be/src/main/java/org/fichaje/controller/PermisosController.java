@@ -19,7 +19,7 @@ import java.util.List;
 public class PermisosController extends CommonController<Permiso, PermisoService> {
 
 	public PermisosController(PermisoService service) {
-		this.service = service;
+		super(service);
 	}
 
 	@PostMapping("/create")

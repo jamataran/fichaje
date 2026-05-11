@@ -3,7 +3,6 @@ package org.fichaje.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,8 +13,11 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public class CommonServiceImpl<E, R extends JpaRepository<E, Long> & JpaSpecificationExecutor<E>>
 		implements CommonService<E> {
 
-	@Autowired
-	protected R repository;
+	protected final R repository;
+
+	public CommonServiceImpl(R repository) {
+		this.repository = repository;
+	}
 
 	@Override
 	public E save(E entity) {
