@@ -3,17 +3,18 @@ package org.fichaje.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.fichaje.dto.entity.*;
+import org.fichaje.provider.db.specifications.UsuarioSpecifications;
+import org.fichaje.util.SecurityUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.fichaje.converter.EmpresaDtoConverter;
 import org.fichaje.converter.SedeDtoConverter;
 import org.fichaje.converter.UsuarioDtoConverter;
-import org.fichaje.dto.entity.EmpresaDTO;
-import org.fichaje.dto.entity.EmpresaDTOWithoutSedes;
-import org.fichaje.dto.entity.EmpresaParametroDTO;
-import org.fichaje.dto.entity.SedeDTO;
-import org.fichaje.dto.entity.UsuarioDTO;
+import org.fichaje.exception.BusinessException;
 import org.fichaje.exception.SedeNotFoundException;
 import org.fichaje.exception.UsuarioNotFoundException;
 import org.fichaje.provider.db.entity.Empresa;
@@ -39,8 +40,9 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
     private final UsuarioDtoConverter usuarioDtoConverter;
     private final SedeDtoConverter sedeDtoConverter;
     private final EmpresaDtoConverter empresaDtoConverter;
+    private final UsuarioSpecifications specifications;
 
-    public UsuarioService(PasswordEncoder passwordEncoder, RolService rolService, EmailService emailService, SedeRepository sedeRepository, UsuarioDtoConverter usuarioDtoConverter, SedeDtoConverter sedeDtoConverter, EmpresaDtoConverter empresaDtoConverter) {
+    public UsuarioService(PasswordEncoder passwordEncoder, RolService rolService, EmailService emailService, SedeRepository sedeRepository, UsuarioDtoConverter usuarioDtoConverter, SedeDtoConverter sedeDtoConverter, EmpresaDtoConverter empresaDtoConverter, UsuarioSpecifications specifications) {
         this.passwordEncoder = passwordEncoder;
         this.rolService = rolService;
         this.emailService = emailService;
@@ -48,6 +50,7 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
         this.usuarioDtoConverter = usuarioDtoConverter;
         this.sedeDtoConverter = sedeDtoConverter;
         this.empresaDtoConverter = empresaDtoConverter;
+        this.specifications = specifications;
     }
 
     public Optional<Usuario> findByNumero(String numero) {
@@ -87,6 +90,27 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
 
     public boolean existsByEmail(String email) {
         return repository.existsByEmail(email);
+    }
+
+    public void sumarVacacionesPlantilla(int dias) {
+        Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+        boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+        if (currentEmpresaId == null && !isSuperAdmin) {
+            throw new BusinessException("No tienes permisos para realizar esta acción.");
+        }
+
+        List<Usuario> usuarios;
+        if (isSuperAdmin && currentEmpresaId == null) {
+            usuarios = list();
+        } else {
+            usuarios = filterAndList(specifications.hasEmpresa(currentEmpresaId));
+        }
+
+        usuarios.forEach(u -> {
+            u.setDiasVacaciones(u.getDiasVacaciones() + dias);
+            save(u);
+        });
     }
 
     /**
@@ -343,6 +367,21 @@ public class UsuarioService extends CommonServiceImpl<Usuario, UsuarioRepository
         Usuario usuario = repository.findByNumero(numeroUsuario)
                 .orElseThrow(() -> new UsuarioNotFoundException(numeroUsuario));
         return usuarioDtoConverter.inverseTransformForSession(usuario, empresaId);
+    }
+
+    public Page<UsuarioDTO> getUsuariosPaged(UsuarioDtoFilter filter, org.springframework.data.domain.Pageable pageable) {
+        Long currentEmpresaId = SecurityUtils.getCurrentEmpresaId();
+        boolean isSuperAdmin = SecurityUtils.isSuperAdmin();
+
+        if (!isSuperAdmin) {
+            if (currentEmpresaId == null) {
+                throw new BusinessException("No tienes permisos para acceder a esta información.");
+            }
+            filter.setEmpresaId(currentEmpresaId);
+        }
+
+        Specification<Usuario> spec = specifications.buildSpecification(filter, currentEmpresaId, isSuperAdmin);
+        return pagesAndSpec(spec, pageable).map(usuarioDtoConverter::inverseTransform);
     }
 
 }
