@@ -17,4 +17,6 @@ public interface VacacionesRepository extends JpaRepository<Vacaciones, Long>,
 			Usuario usuario);
 
 	List<Vacaciones> findByUsuarioId(Long id);
+
+	List<Vacaciones> findByUsuarioAndInicioBeforeAndFinAfter(Usuario usuario, java.time.LocalDate fin, java.time.LocalDate inicio);
 }

@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ProblemDetail handleDataIntegrity(DataIntegrityViolationException ex) {
-        String mensaje = "Ya existe un registro duplicado en el sistema";
+        String mensaje = "Error de integridad de datos en el sistema";
         String causa = ex.getMostSpecificCause().getMessage().toLowerCase();
 
         if (causa.contains("uk_empresa_cif") || causa.contains("cif")) {
@@ -50,6 +50,10 @@ public class GlobalExceptionHandler {
             mensaje = "Ya existe un parámetro con esa clave en esta empresa";
         } else if (causa.contains("uk_sede_parametros_sede_clave")) {
             mensaje = "Ya existe un parámetro con esa clave en esta sede";
+        } else if (causa.contains("duplicate") || causa.contains("entry")) {
+            mensaje = "Ya existe un registro duplicado en el sistema";
+        } else if (causa.contains("null") || causa.contains("not-null") || causa.contains("cannot be null")) {
+            mensaje = "Faltan campos obligatorios en el registro";
         }
 
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, mensaje);

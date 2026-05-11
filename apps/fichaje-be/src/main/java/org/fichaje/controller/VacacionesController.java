@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.fichaje.converter.VacacionesDtoConverter;
 import org.fichaje.dto.entity.Mensaje;
 import org.fichaje.dto.entity.VacacionesDto;
 import org.fichaje.dto.entity.VacacionesDtoFilter;
@@ -42,8 +41,6 @@ public class VacacionesController
 		extends CommonController<Vacaciones, VacacionesService> {
 
 	@Autowired
-	VacacionesDtoConverter dtoConverter;
-	@Autowired
 	EmailService emailService;
 	@Autowired
 	NotificationService notificationService;
@@ -52,30 +49,9 @@ public class VacacionesController
 
 	@PostMapping("/create")
 	public ResponseEntity<?> newVacaciones(@RequestBody VacacionesDto dto) {
-
-		notificationService.sendNotification(dto.getNumeroUsuario(),
-				"Petición de vacaciones",
-				emailService.generateBodyForVacaciones(dto.getNombreUsuario(),
-						dto.getNumeroUsuario(),
-						dto.getInicio().toString(),
-						dto.getFin().toString(),
-						EstadosPeticion.PENDIENTE.toString()));
-
-		Vacaciones vacaciones = dtoConverter.transform(dto);
-
-		if (vacaciones != null) {
-			return ResponseEntity
-					.status(HttpStatus.CREATED)
-					.body(service.save(vacaciones));
-
-		} else {
-			return ResponseEntity
-					.status(HttpStatus.BAD_REQUEST)
-					.body(new Mensaje(
-							"La fecha de fin debe ser posterior a la de inicio."));
-
-		}
-
+		return ResponseEntity
+				.status(HttpStatus.CREATED)
+				.body(service.createVacaciones(dto));
 	}
 
 	@PutMapping("/aprobar/{id}")
