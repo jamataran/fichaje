@@ -8,6 +8,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.function.Supplier;
+
 @Component
 public class SecurityUtils {
 
@@ -62,5 +65,11 @@ public class SecurityUtils {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes acceso a este recurso");
             }
         }
+    }
+
+    public static <T, ID> T checkTenantAccessById(ID id, JpaRepository<T, ID> repository, Supplier<? extends RuntimeException> notFoundException) {
+        T entity = repository.findById(id).orElseThrow(notFoundException);
+        checkTenantAccess(entity);
+        return entity;
     }
 }

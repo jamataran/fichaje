@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @AllArgsConstructor
 @Entity
 @Table(name = "sede")
-public class Sede {
+public class Sede implements TenantEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
