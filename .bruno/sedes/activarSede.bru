@@ -1,0 +1,15 @@
+meta {
+    name: Activar Sede
+    type: http
+    seq: 4
+}
+
+patch {
+    url: {{baseUrl}}/sedes/:sedeId/activar
+    auth: inherit
+}
+
+params:path {
+    sedeId: 1
+}
+

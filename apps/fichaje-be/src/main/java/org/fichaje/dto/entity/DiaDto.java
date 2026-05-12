@@ -2,29 +2,28 @@ package org.fichaje.dto.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class DiaDto {
-
-//	private Date dia;
-//	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss", timezone = "Europe/Madrid")
-//	private Date horaInicio;
-//	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss",timezone="Europe/Madrid" )
-//	private Date horaFin;
-	@JsonFormat(pattern = "yyyy-MM-dd")
-	private LocalDate dia;
-	@JsonFormat(pattern = "HH:mm")
-	private LocalTime horaInicio;
-	@JsonFormat(pattern = "HH:mm")
-	private LocalTime horaFin;
-	private String calendarioNombre;
-
-}
+/**
+ * DTO para representar un día laborable en un calendario.
+ */
+@Schema(description = "Datos de un día laborable")
+public record DiaDto(
+    Long id,
+    
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Schema(description = "Fecha del día", example = "2024-01-01")
+    LocalDate dia,
+    
+    @JsonFormat(pattern = "HH:mm")
+    @Schema(description = "Hora de inicio de la jornada", example = "08:00")
+    LocalTime horaInicio,
+    
+    @JsonFormat(pattern = "HH:mm")
+    @Schema(description = "Hora de fin de la jornada", example = "17:00")
+    LocalTime horaFin,
+    
+    @Schema(description = "Nombre del calendario asociado")
+    String calendarioNombre
+) {}

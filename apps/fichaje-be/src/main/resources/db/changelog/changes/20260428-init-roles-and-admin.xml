@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="init-role-super-admin" author="fichaje">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM roles WHERE rol_nombre = 'ROLE_SUPER_ADMIN'</sqlCheck>
+        </preConditions>
+        <insert tableName="roles">
+            <column name="rol_nombre" value="ROLE_SUPER_ADMIN"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="init-role-user" author="fichaje">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM roles WHERE rol_nombre = 'ROLE_USER'</sqlCheck>
+        </preConditions>
+        <insert tableName="roles">
+            <column name="rol_nombre" value="ROLE_USER"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="init-role-rrhh" author="fichaje">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM roles WHERE rol_nombre = 'ROLE_RRHH'</sqlCheck>
+        </preConditions>
+        <insert tableName="roles">
+            <column name="rol_nombre" value="ROLE_RRHH"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="init-role-admin" author="fichaje">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM roles WHERE rol_nombre = 'ROLE_ADMIN'</sqlCheck>
+        </preConditions>
+        <insert tableName="roles">
+            <column name="rol_nombre" value="ROLE_ADMIN"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="init-admin-user" author="fichaje">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM usuarios WHERE numero = 'fichajesPi000'</sqlCheck>
+        </preConditions>
+        <insert tableName="usuarios">
+            <column name="nombre_empleado" value="AdminFichaje"/>
+            <column name="numero" value="fichajesPi000"/>
+            <column name="password" value="$2a$10$7czCVSWuTj4nHQrxP6tR9.M8/HWf4LvDzAS28xdyccuiSm4JXhj82"/>
+            <column name="email" value="fichajespi@fichajespi.com"/>
+            <column name="dni" value="zzz"/>
+            <column name="admin" valueBoolean="true"/>
+            <column name="en_vacaciones" valueBoolean="false"/>
+            <column name="de_baja" valueBoolean="false"/>
+            <column name="dias_vacaciones" valueNumeric="0"/>
+            <column name="horas_generadas" valueNumeric="0"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="init-admin-roles" author="fichaje">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM usuario_rol ur
+                                         INNER JOIN usuarios u ON ur.usuario_id = u.id
+                WHERE u.numero = 'fichajesPi000'
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            INSERT INTO usuario_rol (usuario_id, rol_id)
+            SELECT u.id, r.id FROM usuarios u, roles r
+            WHERE u.numero = 'fichajesPi000'
+              AND r.rol_nombre IN ('ROLE_SUPER_ADMIN', 'ROLE_RRHH', 'ROLE_ADMIN', 'ROLE_USER');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

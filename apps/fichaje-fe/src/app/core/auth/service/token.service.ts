@@ -45,7 +45,7 @@ export class TokenService {
 
   public getId(): number {
     if (!this.isLogged()) {
-      return 0 
+      return 0
     }
     const token = this.getToken()
     const payload = token!.split('.')[1]
@@ -80,7 +80,7 @@ export class TokenService {
   }
 
 
-  public isAdmin(): boolean {
+  public isRRHH(): boolean {
     if (!this.isLogged()) {
       return false
     }
@@ -95,9 +95,51 @@ export class TokenService {
     return true
   }
 
+  public isSuperAdmin(): boolean {
+    if (!this.isLogged()) {
+      return false
+    }
+    const token = this.getToken()
+    const payload = token!.split('.')[1]
+    const payloadDecoded = atob(payload)
+    const values = JSON.parse(payloadDecoded)
+    const roles = values.roles
+    if (roles.indexOf('ROLE_SUPER_ADMIN') < 0) {
+      return false
+    }
+    return true
+  }
+
+  public isAdmin(): boolean {
+    if (!this.isLogged()) {
+      return false
+    }
+    const token = this.getToken()
+    const payload = token!.split('.')[1]
+    const payloadDecoded = atob(payload)
+    const values = JSON.parse(payloadDecoded)
+    const roles = values.roles
+    if (roles.indexOf('ROLE_ADMIN') < 0) {
+      return false
+    }
+    return true
+  }
+
   public logOut(): void {
     window.localStorage.clear()
     this.router.navigate(['/'])
+  }
+
+  public getEmpresaId(): number | null {
+    if (!this.isLogged()) {
+      return null
+    }
+    const token = this.getToken()
+    const payload = token!.split('.')[1]
+    const payloadDecoded = atob(payload)
+    const values = JSON.parse(payloadDecoded)
+    const empresaId = values.empresaId
+    return empresaId ?? null
   }
 
 }

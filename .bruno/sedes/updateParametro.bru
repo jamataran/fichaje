@@ -1,0 +1,24 @@
+meta {
+    name: Update Parametro
+    type: http
+    seq: 8
+}
+
+put {
+    url: {{baseUrl}}/sedes/:sedeId/parametros/:parametroId
+    body: json
+    auth: inherit
+}
+
+params:path {
+    sedeId: 1
+    parametroId: 1
+}
+
+body:json {
+    {
+        "clave": "horario_entrada",
+        "valor": "08:30"
+    }
+}
+

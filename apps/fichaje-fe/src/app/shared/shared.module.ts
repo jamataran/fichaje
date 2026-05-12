@@ -21,23 +21,12 @@ import { ChartModule } from 'primeng/chart';
 import { StaticsTableComponent } from './components/statics-table/statics-table.component';
 import { GeolocationComponent } from './components/geolocation/geolocation.component';
 
-
-
-
 @NgModule({
   declarations: [
     HeaderComponent,
     MenuComponent,
-    PaginationComponent,
-    InputFilterTextComponent,
     InputFilterRangeComponent,
-    ThSortComponent,
-    InputFilterRangeDatesComponent,
     InputFilterRangeTimeComponent,
-    BotonDescargaCsvComponent,
-    BotonBorrarFiltrosComponent,
-    BotonGuardarComponent,
-    BotonVolverComponent,
     ChartComponent,
     StaticsTableComponent,
     GeolocationComponent
@@ -47,8 +36,16 @@ import { GeolocationComponent } from './components/geolocation/geolocation.compo
     RouterModule,
     FormsModule,
     CoreModule,
-    ChartModule
-
+    ChartModule,
+    // Standalone Components
+    PaginationComponent,
+    InputFilterTextComponent,
+    ThSortComponent,
+    InputFilterRangeDatesComponent,
+    BotonDescargaCsvComponent,
+    BotonBorrarFiltrosComponent,
+    BotonGuardarComponent,
+    BotonVolverComponent
   ],
   exports: [
     HeaderComponent,
@@ -68,8 +65,6 @@ import { GeolocationComponent } from './components/geolocation/geolocation.compo
     ChartComponent,
     StaticsTableComponent,
     GeolocationComponent
-  ],
-  providers: [
   ]
 })
 export class SharedModule { }

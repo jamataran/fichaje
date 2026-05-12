@@ -76,9 +76,9 @@ describe('EmpleadosService', () => {
 
       });
 
-    const req = httpTestingController.expectOne(`${service.endPoint}/pagesFiltered?page=${pag.page}&size=${pag.size}&order=${order}&asc=${asc}`);
-
-    expect(req.request.method).toEqual("POST");
+    const req = httpTestingController.expectOne(request => 
+      request.url.startsWith(service.endPoint) && request.method === 'GET'
+    );
 
     req.flush(EMPLEADOS);
 

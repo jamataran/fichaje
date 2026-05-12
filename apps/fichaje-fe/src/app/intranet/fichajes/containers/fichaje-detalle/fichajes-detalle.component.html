@@ -15,7 +15,7 @@
           <label for="u-nombre"><b>Nombre Empleado:</b></label>
           <div class="input-group input-group-sm">
             <input type="text" class="form-control" name="u-nombre" id="u-nombre"
-              [(ngModel)]="model.usuario!.nombreEmpleado" disabled>
+              [ngModel]="model().usuario?.nombreEmpleado" disabled>
           </div>
         </div>
       </div>
@@ -24,7 +24,7 @@
         <div class="form-group small w-100">
           <label for="u-numero"><b>Número Empleado:</b></label>
           <div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="u-numero" id="u-numero" [(ngModel)]="model.usuario!.numero"
+            <input type="text" class="form-control" name="u-numero" id="u-numero" [ngModel]="model().usuario?.numero"
               disabled>
           </div>
         </div>
@@ -34,7 +34,7 @@
         <div class="form-group small w-100">
           <label for="u-email"><b>Email Empleado:</b></label>
           <div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="u-email" id="u-email" [(ngModel)]="model.usuario!.email"
+            <input type="text" class="form-control" name="u-email" id="u-email" [ngModel]="model().usuario?.email"
               disabled>
           </div>
         </div>
@@ -44,7 +44,7 @@
         <div class="form-group small w-100">
           <label for="dia"><b>Día:</b></label>
           <div class="input-group input-group-sm">
-            <input type="date" class="form-control" name="dia" id="dia" [(ngModel)]="model.dia">
+            <input type="date" class="form-control" name="dia" id="dia" [ngModel]="model().dia" (ngModelChange)="updateModel('dia', $event)">
           </div>
         </div>
       </div>
@@ -53,7 +53,7 @@
         <div class="form-group small w-100">
           <label for="dia"><b>Hora:</b></label>
           <div class="input-group input-group-sm">
-            <input type="time" class="form-control" name="hora" id="hora" [(ngModel)]="model.hora">
+            <input type="time" class="form-control" name="hora" id="hora" [ngModel]="model().hora" (ngModelChange)="updateModel('hora', $event)">
           </div>
         </div>
       </div>
@@ -61,7 +61,7 @@
       <div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 d-flex align-items-end justify-content-end mb-3">
         <div class="form-group small w-100">
           <label for="tipo"><b>Tipo:</b></label>
-          <select class="form-control form-control-sm" name="tipo" id="tipo" [(ngModel)]="model.tipo">
+          <select class="form-control form-control-sm" name="tipo" id="tipo" [ngModel]="model().tipo" (ngModelChange)="updateModel('tipo', $event)">
             <option value="ENTRADA">Entrada</option>
             <option value="SALIDA">Salida</option>
           </select>

@@ -16,17 +16,22 @@ public class PermisoDtoFilter {
 
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate diaDesde;
+
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate diaHasta;
+
 	@JsonFormat(pattern = "HH:mm")
 	private LocalTime horaInicioDesde;
+
 	@JsonFormat(pattern = "HH:mm")
 	private LocalTime horaInicioHasta;
+
 	@JsonFormat(pattern = "HH:mm")
 	private LocalTime horaFinDesde;
+
 	@JsonFormat(pattern = "HH:mm")
 	private LocalTime horaFinHasta;
-	@JsonFormat(pattern = "HH:mm")
+
 	private String descripcion;
 	private String estado;
 

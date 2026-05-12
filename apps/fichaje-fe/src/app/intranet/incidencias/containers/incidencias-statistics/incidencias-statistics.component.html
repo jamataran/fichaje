@@ -23,10 +23,12 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let elemento of listaElementos">
-            <td>{{elemento.cantidad}}</td>
-            <td>{{elemento.resumen}}</td>
-          </tr>
+          @for (elemento of listaElementos(); track $index) {
+            <tr>
+              <td>{{elemento.cantidad}}</td>
+              <td>{{elemento.resumen}}</td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>

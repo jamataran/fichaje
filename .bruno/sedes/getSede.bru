@@ -1,0 +1,14 @@
+meta {
+    name: Get Sede
+    type: http
+    seq: 1
+}
+
+get {
+    url: {{baseUrl}}/sedes/:sedeId
+    auth: inherit
+}
+
+params:path {
+    sedeId: 1
+}

@@ -1,0 +1,14 @@
+meta {
+    name: List Parametros
+    type: http
+    seq: 6
+}
+
+get {
+    url: {{baseUrl}}/empresas/:id/parametros
+    auth: inherit
+}
+
+params:path {
+    id: 1
+}

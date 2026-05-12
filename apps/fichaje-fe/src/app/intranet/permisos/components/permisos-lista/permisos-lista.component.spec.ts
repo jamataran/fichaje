@@ -7,10 +7,7 @@ import { of } from "rxjs";
 import { TokenService } from "src/app/core/auth/service/token.service";
 import { PERMISOS } from "src/mock/mock.permisos";
 import { PermisoService } from "../../service/permiso.service";
-import { PermisosSharedModule } from "../permisos-shared.module";
 import { PermisosListaComponent } from "./permisos-lista.component";
-
-
 
 describe('PermisosListaComponent', () => {
 
@@ -25,19 +22,19 @@ describe('PermisosListaComponent', () => {
   beforeEach(waitForAsync(() => {
 
     const permisoServiceSpy = jasmine.createSpyObj('PermisoService', ['getElements'])
-    const tokenServiceSpy = jasmine.createSpyObj('TokenService', ['isAdmin'])
+    const tokenServiceSpy = jasmine.createSpyObj('TokenService', ['isRRHH'])
 
     let activatedRouteSpy = {
       snapshot: {
-        params: convertToParamMap({
+        params: {
           numero: '001',
-        })
+        }
       }
     };
 
     TestBed.configureTestingModule({
       imports: [
-        PermisosSharedModule,
+        PermisosListaComponent,
         RouterTestingModule
       ],
       providers: [
@@ -62,33 +59,41 @@ describe('PermisosListaComponent', () => {
 
   it("should display permisos - not admin user -", () => {
 
-    permisoService.getElements.and.returnValue(of(permisos));
-    tokenService.isAdmin.and.returnValue(false);
+    permisoService.getElements.and.returnValue(of({
+      content: permisos,
+      first: true,
+      last: false,
+      totalPages: 1
+    }));
+    tokenService.isRRHH.and.returnValue(false);
 
     fixture.detectChanges();
 
     const columns = el.queryAll(By.css('th'));
-    const rows = el.queryAll(By.css('tr'));
+    const rows = el.queryAll(By.css('tbody tr'));
 
     expect(columns.length).toBe(7, "Unexpected number of columns found");
-
-    expect(rows.length).toBe(16, "Unexpected number of rows found");
+    expect(rows.length).toBe(permisos.length, "Unexpected number of rows found");
 
   });
 
   it("should display permisos - admin user -", () => {
 
-    permisoService.getElements.and.returnValue(of(permisos));
-    tokenService.isAdmin.and.returnValue(true);
+    permisoService.getElements.and.returnValue(of({
+      content: permisos,
+      first: true,
+      last: false,
+      totalPages: 1
+    }));
+    tokenService.isRRHH.and.returnValue(true);
 
     fixture.detectChanges();
 
     const columns = el.queryAll(By.css('th'));
-    const rows = el.queryAll(By.css('tr'));
+    const rows = el.queryAll(By.css('tbody tr'));
 
     expect(columns.length).toBe(8, "Unexpected number of columns found");
-
-    expect(rows.length).toBe(16, "Unexpected number of rows found");
+    expect(rows.length).toBe(permisos.length, "Unexpected number of rows found");
 
   });
 

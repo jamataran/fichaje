@@ -27,8 +27,9 @@
           <label class="filter-label">Hora Desde</label>
           <div class="filter-input-wrapper">
             <app-input-filter-range-time
-              [(inputValue)]="dto.horaDesde"
-              (clear)="clearHoraDesde()"
+              [inputValue]="dto().horaDesde"
+              (inputValueChange)="updateDto('horaDesde', $event)"
+              (clear)="clearField('horaDesde')"
               (list)="listarElementos()"
               [name]="'Hora Desde'"
               [id]="'hora-desde'">
@@ -40,8 +41,9 @@
           <label class="filter-label">Hora Hasta</label>
           <div class="filter-input-wrapper">
             <app-input-filter-range-time
-              [(inputValue)]="dto.horaHasta"
-              (clear)="clearHoraHasta()"
+              [inputValue]="dto().horaHasta"
+              (inputValueChange)="updateDto('horaHasta', $event)"
+              (clear)="clearField('horaHasta')"
               (list)="listarElementos()"
               [name]="'Hora Hasta'"
               [id]="'hora-hasta'">
@@ -54,8 +56,9 @@
           <label class="filter-label">Desde</label>
           <div class="filter-input-wrapper">
             <app-input-filter-range-dates
-              [(inputValue)]="dto.diaDesde"
-              (clear)="clearDiaDesde()"
+              [inputValue]="dto().diaDesde"
+              (inputValueChange)="updateDto('diaDesde', $event)"
+              (clear)="clearField('diaDesde')"
               (list)="listarElementos()"
               [name]="'Desde'"
               [id]="'desde'">
@@ -67,8 +70,9 @@
           <label class="filter-label">Hasta</label>
           <div class="filter-input-wrapper">
             <app-input-filter-range-dates
-              [(inputValue)]="dto.diaHasta"
-              (clear)="clearDiaHasta()"
+              [inputValue]="dto().diaHasta"
+              (inputValueChange)="updateDto('diaHasta', $event)"
+              (clear)="clearField('diaHasta')"
               (list)="listarElementos()"
               [name]="'Hasta'"
               [id]="'hasta'">
@@ -77,13 +81,14 @@
         </div>
 
         <!-- Admin Filters -->
-        <ng-container *ngIf="isAdmin">
+        <ng-container *ngIf="isAdmin()">
           <div class="filter-group">
             <label class="filter-label">Nombre Empleado</label>
             <div class="filter-input-wrapper">
               <app-input-filter-text
-                [(inputValue)]="dto.nombreUsuario"
-                (clear)="clearNombre()"
+                [inputValue]="dto().nombreUsuario"
+                (inputValueChange)="updateDto('nombreUsuario', $event)"
+                (clear)="clearField('nombreUsuario')"
                 (list)="listarElementos()"
                 [name]="'Nombre Emp'"
                 [id]="'nombre'">
@@ -95,8 +100,9 @@
             <label class="filter-label">Número Empleado</label>
             <div class="filter-input-wrapper">
               <app-input-filter-text
-                [(inputValue)]="dto.numeroUsuario"
-                (clear)="clearNumero()"
+                [inputValue]="dto().numeroUsuario"
+                (inputValueChange)="updateDto('numeroUsuario', $event)"
+                (clear)="clearField('numeroUsuario')"
                 (list)="listarElementos()"
                 [name]="'Número Emp'"
                 [id]="'numero'">
@@ -117,7 +123,7 @@
       </h5>
       <app-boton-descarga-csv
         [apiEndPoint]="'fichaje/listFiltered'"
-        [dto]="dto"
+        [dto]="dto()"
         [fileName]="'fichajes'"
         [service]="service"
         [headers]="headers">
@@ -133,8 +139,8 @@
               <app-th-sort
                 [entity]="'dia'"
                 [name]="'Día'"
-                [asc]="asc"
-                [order]="order"
+                [asc]="asc()"
+                [order]="order()"
                 (sort)="setOrder($event)">
               </app-th-sort>
             </th>
@@ -142,8 +148,8 @@
               <app-th-sort
                 [entity]="'hora'"
                 [name]="'Hora'"
-                [asc]="asc"
-                [order]="order"
+                [asc]="asc()"
+                [order]="order()"
                 (sort)="setOrder($event)">
               </app-th-sort>
             </th>
@@ -151,8 +157,8 @@
               <app-th-sort
                 [entity]="'tipo'"
                 [name]="'Tipo'"
-                [asc]="asc"
-                [order]="order"
+                [asc]="asc()"
+                [order]="order()"
                 (sort)="setOrder($event)">
               </app-th-sort>
             </th>
@@ -160,8 +166,8 @@
               <app-th-sort
                 [entity]="'usuarioNombreEmpleado'"
                 [name]="'Nombre Empleado'"
-                [asc]="asc"
-                [order]="order"
+                [asc]="asc()"
+                [order]="order()"
                 (sort)="setOrder($event)">
               </app-th-sort>
             </th>
@@ -169,8 +175,8 @@
               <app-th-sort
                 [entity]="'usuarioNumero'"
                 [name]="'Número Empleado'"
-                [asc]="asc"
-                [order]="order"
+                [asc]="asc()"
+                [order]="order()"
                 (sort)="setOrder($event)">
               </app-th-sort>
             </th>
@@ -178,8 +184,8 @@
               <app-th-sort
                 [entity]="'origen'"
                 [name]="'Origen'"
-                [asc]="asc"
-                [order]="order"
+                [asc]="asc()"
+                [order]="order()"
                 (sort)="setOrder($event)">
               </app-th-sort>
             </th>
@@ -187,7 +193,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let elemento of listaElementos" class="table-row">
+          <tr *ngFor="let elemento of listaElementos()" class="table-row">
             <td class="cell-date">{{ elemento.dia }}</td>
             <td class="cell-time">{{ elemento.hora }}</td>
             <td class="cell-type">
@@ -204,7 +210,7 @@
             </td>
             <td class="cell-actions">
               <button
-                *ngIf="isAdmin"
+                *ngIf="isAdmin()"
                 class="btn-view-detail"
                 [routerLink]="'/intranet/fichajes/list/' + elemento.id"
                 title="Ver detalles">
@@ -218,7 +224,7 @@
 
     <!-- Pagination -->
     <div class="pagination-wrapper">
-      <app-pagination [pag]="pag" (paginacion)="onPaginate($event)"></app-pagination>
+      <app-pagination [pag]="pag()" (paginacion)="onPaginate($event)"></app-pagination>
     </div>
   </div>
 </div>

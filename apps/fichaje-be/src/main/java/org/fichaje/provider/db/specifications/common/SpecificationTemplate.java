@@ -12,4 +12,8 @@ public interface SpecificationTemplate<E> {
 
 	public Specification<E> emailUsuarioContains(String expression);
 
+	public Specification<E> hasEmpresa(Long empresaId);
+
+	public Specification<E> hasSede(Long sedeId);
+
 }

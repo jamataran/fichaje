@@ -17,13 +17,13 @@ public interface IncidenciaRepository extends JpaRepository<Incidencia, Long>,
 
 	List<Incidencia> findByUsuarioId(Long id);
 
-	@Query(value = "SELECT COUNT(i.dia) numero FROM incidencias i WHERE MONTH(i.dia)=?1 AND YEAR(i.dia)=?2", nativeQuery = true)
-	Integer countNumberOfIncidenciasOfMonth(int mes, int year);
+	@Query(value = "SELECT COUNT(i.dia) numero FROM incidencias i WHERE MONTH(i.dia)=?1 AND YEAR(i.dia)=?2 AND i.empresa_id=?3", nativeQuery = true)
+	Integer countNumberOfIncidenciasOfMonth(int mes, int year, Long empresaId);
 
-	@Query(value = "SELECT COUNT(i.id) cantidad, u.nombre_empleado nombreEmpleado, u.numero id FROM incidencias i, usuarios u WHERE i.usuario_id=u.id AND i.dia >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY i.usuario_id ORDER BY cantidad DESC", nativeQuery = true)
-	List<IUsuarioDtoEstadistica> numberOfIncidenciasPerUserLast12Months();
+	@Query(value = "SELECT COUNT(i.id) cantidad, u.nombre_empleado nombreEmpleado, u.numero id FROM incidencias i JOIN usuarios u ON i.usuario_id=u.id WHERE i.empresa_id=?1 AND i.dia >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY i.usuario_id ORDER BY cantidad DESC", nativeQuery = true)
+	List<IUsuarioDtoEstadistica> numberOfIncidenciasPerUserLast12Months(Long empresaId);
 
-	@Query(value = "SELECT COUNT(id) cantidad, resumen FROM incidencias WHERE dia >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY resumen ORDER BY cantidad DESC", nativeQuery = true)
-	List<ITopIncidencias> topIncidenciasLast12Months();
+	@Query(value = "SELECT COUNT(id) cantidad, resumen FROM incidencias WHERE empresa_id=?1 AND dia >= DATE_SUB(NOW(), INTERVAL 12 MONTH) GROUP BY resumen ORDER BY cantidad DESC", nativeQuery = true)
+	List<ITopIncidencias> topIncidenciasLast12Months(Long empresaId);
 
 }

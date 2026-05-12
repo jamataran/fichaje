@@ -10,4 +10,6 @@ export interface EmpleadoDto {
   enVacaciones: boolean | null
   deBaja: boolean | null
   working: boolean | null
+  empresaId?: number | null
+  sedeId?: number | null
 }

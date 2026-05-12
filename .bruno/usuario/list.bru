@@ -1,0 +1,23 @@
+meta {
+    name: List Users
+    type: http
+    seq: 13
+}
+
+get {
+    url: {{baseUrl}}/usuario
+    auth: inherit
+}
+
+params:query {
+    ~page: 0
+    ~size: 20
+    ~sort: id,asc
+    ~empresaId: 1
+    ~sedeId: 1
+    ~nombreEmpleado: 
+    ~email: 
+    ~working: 
+    ~enVacaciones: 
+    ~deBaja: 
+}

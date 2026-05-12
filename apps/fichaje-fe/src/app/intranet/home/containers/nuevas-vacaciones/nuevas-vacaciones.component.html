@@ -10,7 +10,7 @@
         <div class="form-group w-100">
           <label for="inicio"><b><i class="bi bi-person"></i>Día Inicio:</b></label>
           <div class="input-group ">
-            <input type="date" class="form-control" name="inicio" id="inicio" [(ngModel)]="inicio" required>
+            <input type="date" class="form-control" name="inicio" id="inicio" [ngModel]="inicio()" (ngModelChange)="inicio.set($event)" required>
           </div>
         </div>
       </div>
@@ -19,7 +19,7 @@
         <div class="form-group w-100">
           <label for="fin"><b><i class="bi bi-person"></i>Día Fin:</b></label>
           <div class="input-group ">
-            <input type="date" class="form-control" name="fin" id="fin" [(ngModel)]="fin" required>
+            <input type="date" class="form-control" name="fin" id="fin" [ngModel]="fin()" (ngModelChange)="fin.set($event)" required>
           </div>
         </div>
       </div>
@@ -34,7 +34,7 @@
       </div>
 
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
-        <app-boton-volver class="w-100" routerLink="/intranet/home/vacaciones/{{numeroUsuario}}"></app-boton-volver>
+        <app-boton-volver class="w-100" [routerLink]="['/intranet/home/vacaciones/', numeroUsuario()]"></app-boton-volver>
       </div>
 
     </div>

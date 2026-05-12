@@ -1,0 +1,15 @@
+meta {
+    name: Delete Parametro
+    type: http
+    seq: 9
+}
+
+delete {
+    url: {{baseUrl}}/empresas/:id/parametros/:parametroId
+    auth: inherit
+}
+
+params:path {
+    id: 1
+    parametroId: 1
+}

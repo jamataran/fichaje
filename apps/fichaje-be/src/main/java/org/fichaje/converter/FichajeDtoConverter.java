@@ -1,39 +1,38 @@
 package org.fichaje.converter;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import org.fichaje.dto.entity.FichajeDto;
 import org.fichaje.dto.entity.FichajeDtoReqRes;
 import org.fichaje.provider.db.entity.Fichaje;
 import org.fichaje.provider.db.entity.Usuario;
-import org.fichaje.provider.db.entity.enums.TipoFichaje;
-import org.fichaje.service.FichajeService;
 import org.fichaje.service.UsuarioService;
 
 @Component
+@RequiredArgsConstructor
 public class FichajeDtoConverter {
 
-	@Autowired
-	private UsuarioService service;
-	@Autowired
-	private FichajeService fichajeService;
+	private final UsuarioService usuarioService;
 
 	public FichajeDto inverseTransform(Fichaje f) {
-
-		return null;
-
+		if (f == null) return null;
+		return FichajeDto.builder()
+				.hora(f.getHora())
+				.dia(f.getDia())
+				.numeroUsuario(f.getUsuario() != null ? f.getUsuario().getNumero() : null)
+				.nombreUsuario(f.getUsuario() != null ? f.getUsuario().getNombreEmpleado() : null)
+				.tipo(f.getTipo())
+				.origen(f.getOrigen())
+				.build();
 	}
 
 	public Fichaje transform(FichajeDtoReqRes dto) {
+		if (dto == null) return null;
 		Fichaje f = new Fichaje();
 		f.setHora(dto.getHora());
 		f.setDia(dto.getDia());
-		Usuario usuario = service
+		Usuario usuario = usuarioService
 				.findByNumero(dto.getNumeroUsuario())
 				.orElse(null);
 		f.setUsuario(usuario);
@@ -41,46 +40,6 @@ public class FichajeDtoConverter {
 		f.setOrigen(dto.getOrigen());
 
 		return f;
-	}
-
-	public FichajeDtoReqRes fichar(FichajeDtoReqRes fichajeDto) {
-
-		fichajeDto.setHora(LocalTime.now());
-		fichajeDto.setDia(LocalDate.now());
-
-		Fichaje fichaje = transform(fichajeDto);
-
-		Usuario usuario = fichaje.getUsuario();
-		if (usuario != null) {
-			boolean workingState = usuario.getWorking();
-			if (workingState)
-				fichaje.setTipo(TipoFichaje.SALIDA.toString());
-//				fichaje.setTipo("SALIDA");
-			else
-				fichaje.setTipo(TipoFichaje.ENTRADA.toString());
-//				fichaje.setTipo("ENTRADA");
-			usuario.setWorking(!workingState);
-			StringBuilder sb = new StringBuilder();
-			sb.append(fichaje.getDia());
-			sb.append(" ");
-			DateTimeFormatter myTime = DateTimeFormatter.ofPattern("HH:mm:ss");
-			sb.append(myTime.format(fichaje.getHora()));
-			sb.append(" - ");
-			sb.append(fichaje.getTipo());
-			usuario.setUltimoFichaje(sb.toString());
-			service.save(usuario);
-			fichaje.setUsuario(usuario);
-			fichajeService.save(fichaje);
-			fichajeDto
-					.setNombreUsuario(fichaje.getUsuario().getNombreEmpleado());
-			fichajeDto.setHora(fichaje.getHora());
-			fichajeDto.setTipo(
-					fichaje.getUsuario().getWorking() ? "entrada" : "salida");
-
-			return fichajeDto;
-		}
-		return null;
-
 	}
 
 }

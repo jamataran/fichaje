@@ -1,46 +1,52 @@
 package org.fichaje.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
  * DTO para transferencia de datos de API Keys
  * No expone el hash de la key por seguridad
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class ApiKeyDto {
-    
-    private Long id;
-    
-    @NotBlank(message = "El nombre es obligatorio")
-    private String name;
-    
-    private String description;
-    
-    @NotNull(message = "El ID de usuario es obligatorio")
-    private Long usuarioId;
-    
-    private String usuarioNombre;
-    
-    private Boolean active;
-    
-    private LocalDateTime expiresAt;
-    
-    private LocalDateTime lastUsedAt;
-    
-    private LocalDateTime createdAt;
-    
-    private LocalDateTime updatedAt;
-    
-    private String createdBy;
-    
-    // Este campo solo se incluye en la respuesta de creación
-    private String plainApiKey;
+public record ApiKeyDto(
+    Long id,
+    String name,
+    String description,
+    Long usuarioId,
+    String usuarioNombre,
+    Boolean active,
+    LocalDateTime expiresAt,
+    LocalDateTime lastUsedAt,
+    LocalDateTime createdAt,
+    LocalDateTime updatedAt,
+    String createdBy,
+    String plainApiKey // Solo se incluye en la respuesta de creación
+) {
+    /**
+     * Constructor para convertir desde la entidad convenientemente (sin plainApiKey)
+     */
+    public static ApiKeyDto fromEntity(org.fichaje.provider.db.entity.ApiKey apiKey) {
+        return new ApiKeyDto(
+            apiKey.getId(),
+            apiKey.getName(),
+            apiKey.getDescription(),
+            apiKey.getUsuario().getId(),
+            apiKey.getUsuario().getNombreEmpleado(),
+            apiKey.getActive(),
+            apiKey.getExpiresAt(),
+            apiKey.getLastUsedAt(),
+            apiKey.getCreatedAt(),
+            apiKey.getUpdatedAt(),
+            apiKey.getCreatedBy(),
+            null
+        );
+    }
+
+    /**
+     * Crea un DTO con la API Key en texto plano
+     */
+    public ApiKeyDto withPlainApiKey(String plainApiKey) {
+        return new ApiKeyDto(
+            id, name, description, usuarioId, usuarioNombre, active, 
+            expiresAt, lastUsedAt, createdAt, updatedAt, createdBy, plainApiKey
+        );
+    }
 }

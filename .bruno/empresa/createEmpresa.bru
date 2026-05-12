@@ -1,0 +1,29 @@
+meta {
+    name: Create Empresa
+    type: http
+    seq: 1
+}
+
+post {
+    url: {{baseUrl}}/empresas
+    body: json
+    auth: inherit
+}
+
+body:json {
+    {
+        "nombre": "Tech Solutions S.L.",
+        "razonSocial": "Tech Solutions Sociedad Limitada",
+        "cif": "A58818501",
+        "email": "contact@techsolutions.es",
+        "telefono": "+34912345678",
+        "direccion": "Calle Principal 123",
+        "codigoPostal": "28001",
+        "localidad": "Madrid",
+        "provincia": "Madrid",
+        "pais": "España",
+        "latitud": 40.4168,
+        "longitud": -3.7038,
+        "activa": true
+    }
+}

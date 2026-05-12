@@ -1,41 +1,35 @@
 package org.fichaje.converter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import org.fichaje.dto.entity.DiaDto;
 import org.fichaje.provider.db.entity.Calendario;
 import org.fichaje.provider.db.entity.DiaLaborable;
-import org.fichaje.service.CalendarioService;
 
 @Component
 public class DiaDtoConverter {
 
-	@Autowired
-	private CalendarioService service;
+    public DiaLaborable transform(DiaDto dto) {
+        return DiaLaborable.builder()
+                .id(dto.id())
+                .dia(dto.dia())
+                .horaInicio(dto.horaInicio())
+                .horaFin(dto.horaFin())
+                .build();
+    }
 
-	public DiaLaborable transform(DiaDto dto) {
-		DiaLaborable dia = new DiaLaborable();
-		dia.setDia(dto.getDia());
-		dia.setHoraInicio(dto.getHoraInicio());
-		dia.setHoraFin(dto.getHoraFin());
-		Calendario calendario = service
-				.findByNombre(dto.getCalendarioNombre())
-				.orElse(null);
-		dia.setCalendario(calendario);
-		return dia;
-	}
+    public DiaLaborable transformWithCalendario(DiaDto dto, Calendario calendario) {
+        DiaLaborable dia = transform(dto);
+        dia.setCalendario(calendario);
+        return dia;
+    }
 
-	public DiaLaborable transformById(DiaDto dto, Long idCalendario) {
-		DiaLaborable dia = new DiaLaborable();
-		dia.setDia(dto.getDia());
-		dia.setHoraInicio(dto.getHoraInicio());
-		dia.setHoraFin(dto.getHoraFin());
-		Calendario calendario = service
-				.findById(idCalendario)
-				.orElse(null);
-		dia.setCalendario(calendario);
-		return dia;
-	}
-
+    public DiaDto inverseTransform(DiaLaborable dia) {
+        return new DiaDto(
+            dia.getId(),
+            dia.getDia(),
+            dia.getHoraInicio(),
+            dia.getHoraFin(),
+            dia.getCalendario() != null ? dia.getCalendario().getNombre() : null
+        );
+    }
 }

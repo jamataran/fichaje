@@ -1,18 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { VacacionesListaComponent } from '../../components/vacaciones-lista/vacaciones-lista.component';
 
 @Component({
-    selector: 'app-vacaciones',
-    templateUrl: './vacaciones.component.html',
-    styleUrls: ['./vacaciones.component.css'],
-    standalone: false
+  selector: 'app-vacaciones',
+  templateUrl: './vacaciones.component.html',
+  styleUrls: ['./vacaciones.component.css'],
+  standalone: true,
+  imports: [VacacionesListaComponent]
 })
-export class VacacionesComponent implements OnInit {
-
-
-  constructor(
-  ) { }
-
-  ngOnInit(): void {
-  }
-
+export class VacacionesComponent {
 }

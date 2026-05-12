@@ -6,5 +6,17 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
     <include file="/db/changelog/changes/20260303-initial-schema.xml"/>
+    <include file="/db/changelog/changes/20260310-add-autoincrement-ids.xml"/>
+    <include file="/db/changelog/changes/20260305-multi_empresa_schema.xml"/>
+    <include file="/db/changelog/changes/20260323-add-contact-information.xml"/>
+    <include file="/db/changelog/changes/20260323-add-geolocation.xml"/>
+    <include file="/db/changelog/changes/20260323-empresa-parameters.xml"/>
+    <include file="/db/changelog/changes/20260324-sede.xml"/>
+    <include file="/db/changelog/changes/20260324-sede-parameters.xml"/>
+    <include file="/db/changelog/changes/20260325-empresa-refactor.xml"/>
+    <include file="/db/changelog/changes/20260325-sede-refactor.xml"/>
+    <include file="/db/changelog/changes/20260326-usuario-sede.xml"/>
+    <include file="/db/changelog/changes/20260326-change-calendar.xml"/>
+    <include file="/db/changelog/changes/20260428-init-roles-and-admin.xml"/>
 
 </databaseChangeLog>

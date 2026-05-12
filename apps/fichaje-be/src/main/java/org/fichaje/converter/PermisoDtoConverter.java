@@ -2,7 +2,6 @@ package org.fichaje.converter;
 
 import java.time.LocalDateTime;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import org.fichaje.dto.entity.PermisoDto;
@@ -13,8 +12,11 @@ import org.fichaje.service.UsuarioService;
 @Component
 public class PermisoDtoConverter {
 
-	@Autowired
-	private UsuarioService service;
+	private final UsuarioService service;
+
+	public PermisoDtoConverter(UsuarioService service) {
+		this.service = service;
+	}
 
 	public Permiso transform(PermisoDto dto) {
 

@@ -1,7 +1,6 @@
 package org.fichaje.provider.db.repository;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,7 +15,7 @@ import org.fichaje.provider.db.entity.DiaLaborable;
 @Repository
 public interface DiaLaborableRepository extends JpaRepository<DiaLaborable, Long>,JpaSpecificationExecutor<DiaLaborable> {
 
-	boolean existsByDia(Date dia);
+	boolean existsByDia(LocalDate dia);
 
 	@Query("select d from DiaLaborable d where d.dia = :dia and d.calendario = :calendario")
 	Optional<DiaLaborable> getByDiaActive(@Param("dia") LocalDate dia, @Param("calendario") Calendario calendario);

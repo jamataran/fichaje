@@ -6,22 +6,22 @@
     <div class="row mb-4">
 
       <div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 d-flex align-items-end justify-content-end mb-3">
-        <app-input-filter-range-dates class="w-100" [(inputValue)]="dto.inicioDesde" (clear)="clearInicioDesde()"
+        <app-input-filter-range-dates class="w-100" [inputValue]="dto().inicioDesde" (inputValueChange)="updateDto('inicioDesde', $event)" (clear)="clearField('inicioDesde')"
           (list)="listarElementos()" [name]="'Desde'" [id]="'desde'">
         </app-input-filter-range-dates>
       </div>
 
       <div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 d-flex align-items-end justify-content-end mb-3">
-        <app-input-filter-range-dates class="w-100" [(inputValue)]="dto.inicioHasta" (clear)="clearInicioHasta()"
+        <app-input-filter-range-dates class="w-100" [inputValue]="dto().inicioHasta" (inputValueChange)="updateDto('inicioHasta', $event)" (clear)="clearField('inicioHasta')"
           (list)="listarElementos()" [name]="'Hasta'" [id]="'hasta'">
         </app-input-filter-range-dates>
       </div>
 
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
         <div class="form-group small w-100">
-          <label class="small" for="en-vacaciones"><b>Estado:</b></label>
-          <select class="form-control form-control-sm" name="estado" id="estado" [(ngModel)]="dto.estado"
-            (change)="listarElementos()">
+          <label class="small" for="estado"><b>Estado:</b></label>
+          <select class="form-control form-control-sm" name="estado" id="estado" [ngModel]="dto().estado"
+            (ngModelChange)="updateDto('estado', $event)">
             <option value="">Todos</option>
             <option value="PENDIENTE">Pendiente</option>
             <option value="APROBADO">Aprobado</option>
@@ -32,25 +32,27 @@
 
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
         <div class="form-group small w-100">
-          <label class="small" for="en-vacaciones"><b>Consumidas:</b></label>
-          <select class="form-control form-control-sm" name="agotado" id="agotado" [(ngModel)]="dto.consumidas"
-            (change)="listarElementos()">
-            <option value="">Todos</option>
-            <option value="true">Si</option>
-            <option value="false">No</option>
+          <label class="small" for="agotado"><b>Consumidas:</b></label>
+          <select class="form-control form-control-sm" name="agotado" id="agotado" [ngModel]="dto().consumidas"
+            (ngModelChange)="updateDto('consumidas', $event)">
+            <option [ngValue]="null">Todos</option>
+            <option [ngValue]="true">Si</option>
+            <option [ngValue]="false">No</option>
           </select>
         </div>
       </div>
 
-      <div *ngIf="isAdmin" class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
-        <app-input-filter-text class="w-100" [(inputValue)]="dto.usuarioNombre" (clear)="clearNombre()"
-          (list)="listarElementos()" [name]="'Nombre Emp'" [id]="'nombre'"></app-input-filter-text>
-      </div>
+      @if (isAdmin()) {
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
+          <app-input-filter-text class="w-100" [inputValue]="dto().usuarioNombre" (inputValueChange)="updateDto('usuarioNombre', $event)" (clear)="clearField('usuarioNombre')"
+            (list)="listarElementos()" [name]="'Nombre Emp'" [id]="'nombre'"></app-input-filter-text>
+        </div>
 
-      <div *ngIf="isAdmin" class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
-        <app-input-filter-text class="w-100" [(inputValue)]="dto.usuarioNumero" (clear)="clearNumero()"
-          (list)="listarElementos()" [name]="'Número Emp'" [id]="'numero'"></app-input-filter-text>
-      </div>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
+          <app-input-filter-text class="w-100" [inputValue]="dto().usuarioNumero" (inputValueChange)="updateDto('usuarioNumero', $event)" (clear)="clearField('usuarioNumero')"
+            (list)="listarElementos()" [name]="'Número Emp'" [id]="'numero'"></app-input-filter-text>
+        </div>
+      }
 
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
         <app-boton-borrar-filtros class="w-100" (click)="clear()"></app-boton-borrar-filtros>
@@ -63,54 +65,61 @@
     <thead>
       <tr>
         <th>
-          <app-th-sort [entity]="'inicio'" [name]="'Día Inicio'" [asc]="asc" [order]="order" (sort)="setOrder($event)">
+          <app-th-sort [entity]="'inicio'" [name]="'Día Inicio'" [asc]="asc()" [order]="order()" (sort)="setOrder($event)">
           </app-th-sort>
         </th>
         <th>
-          <app-th-sort [entity]="'fin'" [name]="'Día Fin'" [asc]="asc" [order]="order" (sort)="setOrder($event)">
+          <app-th-sort [entity]="'fin'" [name]="'Día Fin'" [asc]="asc()" [order]="order()" (sort)="setOrder($event)">
           </app-th-sort>
         </th>
         <th>
-          <app-th-sort [entity]="'estado'" [name]="'Estado'" [asc]="asc" [order]="order" (sort)="setOrder($event)">
+          <app-th-sort [entity]="'estado'" [name]="'Estado'" [asc]="asc()" [order]="order()" (sort)="setOrder($event)">
           </app-th-sort>
         </th>
         <th>
-          <app-th-sort [entity]="'consumidas'" [name]="'Consumidas'" [asc]="asc" [order]="order"
+          <app-th-sort [entity]="'consumidas'" [name]="'Consumidas'" [asc]="asc()" [order]="order()"
             (sort)="setOrder($event)">
           </app-th-sort>
         </th>
         <th>
-          <app-th-sort [entity]="'usuarioNombreEmpleado'" [name]="'Nombre Empleado'" [asc]="asc" [order]="order"
+          <app-th-sort [entity]="'usuarioNombreEmpleado'" [name]="'Nombre Empleado'" [asc]="asc()" [order]="order()"
             (sort)="setOrder($event)">
           </app-th-sort>
         </th>
         <th>
-          <app-th-sort [entity]="'usuarioNumero'" [name]="'Número Empleado'" [asc]="asc" [order]="order"
+          <app-th-sort [entity]="'usuarioNumero'" [name]="'Número Empleado'" [asc]="asc()" [order]="order()"
             (sort)="setOrder($event)">
           </app-th-sort>
         </th>
-        <th *ngIf="isAdmin">Ver Detalle</th>
+        @if (isAdmin()) {
+          <th>Ver Detalle</th>
+        }
       </tr>
     </thead>
 
     <tbody>
-      <tr *ngFor="let elemento of listaElementos">
-        <td>{{elemento.inicio}}</td>
-        <td>{{elemento.fin}}</td>
-        <td>{{elemento.estado}}</td>
-        <td *ngIf="elemento.consumidas">Si</td>
-        <td *ngIf="!elemento.consumidas">No</td>
-        <td>{{elemento.usuario.nombreEmpleado}}</td>
-        <td>{{elemento.usuario.numero}}</td>
-        <td *ngIf="isAdmin" routerLink='/intranet/vacaciones/list/{{elemento.id}}'><div class="w-100 h-100 btn btn-outline-secondary"><i class="bi bi-eye-fill"></i></div></td>
-      </tr>
+      @for (elemento of listaElementos(); track elemento.id) {
+        <tr>
+          <td>{{elemento.inicio}}</td>
+          <td>{{elemento.fin}}</td>
+          <td>{{elemento.estado}}</td>
+          <td>{{elemento.consumidas ? 'Si' : 'No'}}</td>
+          <td>{{elemento.usuario.nombreEmpleado}}</td>
+          <td>{{elemento.usuario.numero}}</td>
+          @if (isAdmin()) {
+            <td [routerLink]="['/intranet/vacaciones/list/', elemento.id]">
+              <div class="w-100 h-100 btn btn-outline-secondary"><i class="bi bi-eye-fill"></i></div>
+            </td>
+          }
+        </tr>
+      }
     </tbody>
   </table>
 
-  <app-pagination [pag]="pag" (paginacion)="onPaginate($event)"></app-pagination>
+  <app-pagination [pag]="pag()" (paginacion)="onPaginate($event)"></app-pagination>
 
 </div>
 
-<app-boton-descarga-csv [apiEndPoint]="'vacaciones/listFiltered'" [dto]="dto" [fileName]="'vacaciones'"
+<app-boton-descarga-csv [apiEndPoint]="'vacaciones/listFiltered'" [dto]="dto()" [fileName]="'vacaciones'"
   [service]="service" [headers]="headers">
 </app-boton-descarga-csv>

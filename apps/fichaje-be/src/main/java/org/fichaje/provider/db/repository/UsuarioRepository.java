@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import org.fichaje.provider.db.entity.Rol;
@@ -17,7 +19,11 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>,
 
 	Optional<Usuario> findByEmail(String email);
 
+	@EntityGraph(attributePaths = {"sedes", "empresas"})
 	Optional<Usuario> findByNumero(String numero);
+
+	@Query("SELECT u FROM Usuario u WHERE u.numero = ?1")
+	Optional<Usuario> findSimpleByNumero(String numero);
 
 	Optional<Usuario> findByDni(String dni);
 
@@ -33,6 +39,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>,
 	List<Usuario> findByEnVacacionesTrueAndDeBajaFalse();
 
 	List<Usuario> findByRolesIn(Set<Rol> roles);
+
+	@EntityGraph(attributePaths = {"sedes", "empresas"})
+	Optional<Usuario> findById(Long id);
 
 
 }

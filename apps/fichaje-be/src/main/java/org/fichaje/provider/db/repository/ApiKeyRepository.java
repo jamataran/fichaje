@@ -12,6 +12,17 @@ import java.util.Optional;
 public interface ApiKeyRepository extends JpaRepository<ApiKey, Long> {
 
     /**
+     * Buscar API Keys activas
+     */
+    List<ApiKey> findByActiveTrue();
+
+    /**
+     * Buscar API Keys activas que no han expirado
+     */
+    @org.springframework.data.jpa.repository.Query("SELECT a FROM ApiKey a WHERE a.active = true AND (a.expiresAt IS NULL OR a.expiresAt > :now)")
+    List<ApiKey> findActiveAndNotExpired(java.time.LocalDateTime now);
+
+    /**
      * Buscar API Key por su hash
      */
     Optional<ApiKey> findByKeyHash(String keyHash);

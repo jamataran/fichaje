@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UsuarioDTO {
 
-	private long id;
+	private Long id;
 
 	private String email;
 	private String password;
@@ -32,5 +32,10 @@ public class UsuarioDTO {
 	private Boolean deBaja;
 
 	private Boolean working;
+
+	private List<SedeDTO> sedes;
+	private List<EmpresaDTOWithoutSedes> empresas;
+
+	private Long sedeId;
 
 }

@@ -1,0 +1,16 @@
+meta {
+    name: List Empresas
+    type: http
+    seq: 2
+}
+
+get {
+    url: {{baseUrl}}/empresas?page=0&size=10&sort=id,desc
+    auth: inherit
+}
+
+params:query {
+    page: 0
+    size: 10
+    sort: id,desc
+}

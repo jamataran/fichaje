@@ -22,7 +22,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLogged = this.tokenService.isLogged();
-    this.isAdmin = this.tokenService.isAdmin();
+    this.isAdmin = this.tokenService.isRRHH();
     this.nombre = this.tokenService.getNombre();
   }
 
