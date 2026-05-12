@@ -23,6 +23,8 @@ jobs:
   build:
     name: Monorepo build (Turbo, Java 25)
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - uses: actions/checkout@v5
