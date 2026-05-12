@@ -1,52 +1,77 @@
 package org.fichaje.provider.db.entity;
 
 import java.util.List;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-
+import java.util.Objects;
+import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+/**
+ * Entidad que representa un calendario laboral.
+ */
 @Entity
 @Table(name = "calendarios")
-public class Calendario {
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Calendario implements TenantEntity {
 
-	@Id
-	@GeneratedValue()
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@NotNull
-	@Column(unique = true)
-	private String nombre;
+    @NotNull
+    @Column(nullable = false)
+    private String nombre;
 
-	@Column(columnDefinition = "boolean default false")
-	private boolean active;
+    @Builder.Default
+    @Column(columnDefinition = "boolean default false")
+    private boolean active = false;
 
-	@NotNull
-	@Column(unique = true)
-	private int year;
+    @NotNull
+    @Column(nullable = false)
+    private int year;
 
-	@NotNull
-	private int minutosMasEntrada;
+    @NotNull
+    @Column(nullable = false)
+    private int minutosMasEntrada;
 
-	@NotNull
-	private int minutosMenosEntrada;
+    @NotNull
+    @Column(nullable = false)
+    private int minutosMenosEntrada;
 
-	@JsonIgnoreProperties(value = { "calendario" })
-	@OneToMany(mappedBy = "calendario", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<DiaLaborable> dias;
+    @JsonIgnoreProperties(value = { "calendario" })
+    @OneToMany(mappedBy = "calendario", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DiaLaborable> dias;
+
+    @JsonIgnoreProperties(value = { "calendarios" })
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sede_id")
+    private Sede sede;
+
+    @Override
+    public Empresa getEmpresa() {
+        return (sede != null) ? sede.getEmpresa() : null;
+    }
+
+    @Override
+    public void setEmpresa(Empresa empresa) {
+        // La empresa se establece a través de la sede.
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Calendario that = (Calendario) o;
+        return id != null && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

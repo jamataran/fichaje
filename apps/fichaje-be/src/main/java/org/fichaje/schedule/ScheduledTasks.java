@@ -6,7 +6,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 import org.fichaje.service.EventService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +16,6 @@ import org.fichaje.provider.db.entity.DiaLaborable;
 import org.fichaje.provider.db.entity.Fichaje;
 import org.fichaje.provider.db.entity.Permiso;
 import org.fichaje.provider.db.entity.Usuario;
-import org.fichaje.provider.db.entity.Vacaciones;
 import org.fichaje.events.Incidencias;
 import org.fichaje.provider.logger.LoggerService;
 import org.fichaje.service.CalendarioService;
@@ -29,24 +27,35 @@ import org.fichaje.service.VacacionesService;
 
 @Component
 public class ScheduledTasks {
-	@Autowired
-	CalendarioService calendarioService;
-	@Autowired
-	DiaLaborableService diaService;
-	@Autowired
-	UsuarioService usuarioService;
-	@Autowired
-	FichajeService fichajeService;
-	@Autowired
-    EventService incidenciaSender;
-	@Autowired
-	FichajeDtoConverter fichajeDtoToFichaje;
-	@Autowired
-	VacacionesService vacacionesService;
-	@Autowired
-	PermisoService permisoService;
-	@Autowired
-	LoggerService logger;
+	private final CalendarioService calendarioService;
+	private final DiaLaborableService diaService;
+	private final UsuarioService usuarioService;
+	private final FichajeService fichajeService;
+	private final EventService incidenciaSender;
+	private final FichajeDtoConverter fichajeDtoToFichaje;
+	private final VacacionesService vacacionesService;
+	private final PermisoService permisoService;
+	private final LoggerService logger;
+
+	public ScheduledTasks(CalendarioService calendarioService,
+						  DiaLaborableService diaService,
+						  UsuarioService usuarioService,
+						  FichajeService fichajeService,
+						  EventService incidenciaSender,
+						  FichajeDtoConverter fichajeDtoToFichaje,
+						  VacacionesService vacacionesService,
+						  PermisoService permisoService,
+						  LoggerService logger) {
+		this.calendarioService = calendarioService;
+		this.diaService = diaService;
+		this.usuarioService = usuarioService;
+		this.fichajeService = fichajeService;
+		this.incidenciaSender = incidenciaSender;
+		this.fichajeDtoToFichaje = fichajeDtoToFichaje;
+		this.vacacionesService = vacacionesService;
+		this.permisoService = permisoService;
+		this.logger = logger;
+	}
 
 	// second-minute-hour-day_of_month-month-day(s)_of_week
 	@Scheduled(cron = "0 1 0 * * ?") // todos los dias a las 00:01
@@ -73,19 +82,17 @@ public class ScheduledTasks {
 			// Obtenemos una lista de usuarios que no están de baja o de
 			// vacaciones
 			List<Usuario> usuarios = usuarioService.list();
-			usuarios.stream().forEach(u -> {
+			usuarios.forEach(u -> {
 
 				// no comprobamos los fichajes de admin
 				if (!u.getAdmin()) {
-
-					// Obtenemos los periodos de vacaciones aprobados y sin agotar
-					List<Vacaciones> vacaciones = vacacionesService.findByUsuarioSinAgotar(u);
 
 					// Comprobamos si el usuario tiene un periodo de vacaciones
 					// vigente y lo marcamos como de vacaciones
 					// Si se ha agotado sus vacaciones volvemos a marcar las
 					// vacaciones como false
-					managePeriodoVacaciones(vacaciones, u, diaLaborable);
+					vacacionesService.managePeriodoVacaciones(u, diaLaborable.getDia());
+					usuarioService.save(u);
 
 					// comprobamos si el usuario está trabajando o no
 					if (u.getEnVacaciones()) { // Usuario de vacaciones
@@ -102,7 +109,7 @@ public class ScheduledTasks {
 						// hoy+++++++++++++++++++++++++++++++++++++++
 						List<Fichaje> fichajes = fichajeService.findByUsuarioAndDia(u, diaLaborable.getDia());
 
-						if (fichajes.size() == 0) { // No se han realizado fichajes
+						if (fichajes.isEmpty()) { // No se han realizado fichajes
 							generaIncidencia(diaLaborable, u, Incidencias.AUSENCIA);
 						} else if (fichajes.size() % 2 != 0) { // impar
 							// Cerramos el fichaje abierto
@@ -112,7 +119,7 @@ public class ScheduledTasks {
 							/////////////////////////////////////////////////////
 							// comentar para realizar pruebas y que el fichaje que guarde no repita key con
 							///////////////////////////////////////////////////// los generados con mockaroo
-							fichajeDtoToFichaje.fichar(fichaje);
+							fichajeService.fichar(fichaje);
 							/////////////////////////////////////////////////////
 
 							generaIncidencia(diaLaborable, u, Incidencias.FICHAJE_IMPAR);
@@ -145,7 +152,7 @@ public class ScheduledTasks {
 								// Si no hemos obtenido ningún permiso lanzamos una
 								// incidencia para evidenciar que se han producido
 								// salidas no autorizadas
-								if (permisos.size() == 0) {
+								if (permisos.isEmpty()) {
 									generaIncidencia(diaLaborable, u, Incidencias.AUSENCIA_NO_AUTORIZADA);
 								}
 
@@ -196,9 +203,9 @@ public class ScheduledTasks {
 	private void generaIncidencia(DiaLaborable dia, Usuario u, String incidencia) {
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("El día: " + dia.getDia());
-		sb.append("\n\nEl usuario " + u.getNombreEmpleado());
-		sb.append(" con el número " + u.getNumero());
+		sb.append("El día: ").append(dia.getDia());
+		sb.append("\n\nEl usuario ").append(u.getNombreEmpleado());
+		sb.append(" con el número ").append(u.getNumero());
 		sb.append(" ha generado la siguiente incidencia");
 		sb.append(":\n\n");
 		sb.append(incidencia);
@@ -226,27 +233,6 @@ public class ScheduledTasks {
 		if (minTrabajados < minTeoricos) {
 			generaIncidencia(diaLaborable, u, Incidencias.MENOS_HORAS);
 		}
-	}
-
-	private void managePeriodoVacaciones(List<Vacaciones> vacaciones, Usuario u, DiaLaborable diaLaborable) {
-
-		vacaciones.stream().forEach(v -> {
-			int compareIni = diaLaborable.getDia().compareTo(v.getInicio());
-			int compareFin = diaLaborable.getDia().compareTo(v.getFin());
-
-			if (compareIni >= 0 && compareFin <= 0) {
-				// el usuario está de vacaciones
-				u.setEnVacaciones(true);
-				usuarioService.save(u);
-			} else if (compareFin > 0) {
-				// las vacaciones se pasaron y las marcamos como
-				// agotadas
-				v.setConsumidas(true);
-				vacacionesService.save(v);
-				u.setEnVacaciones(false);
-				usuarioService.save(u);
-			}
-		});
 	}
 
 	private long sumaMinutosPermisos(List<Permiso> permisos, DiaLaborable diaLaborable) {

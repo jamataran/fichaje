@@ -1,11 +1,6 @@
 package org.fichaje.provider.db.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import org.fichaje.config.security.enums.RolNombre;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "roles")
 public class Rol {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotNull
 	@Enumerated(EnumType.STRING)

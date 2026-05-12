@@ -7,7 +7,8 @@ export class Popup {
       severity: 'success',
       summary: title,
       detail: msg,
-      life: 8000
+      life: 2500,
+      closable: false
     });
   }
 
@@ -16,7 +17,8 @@ export class Popup {
       severity: 'error',
       summary: title,
       detail: msg,
-      life: 8000
+      life: 2500,
+      closable: false
     });
   }
 
@@ -25,7 +27,8 @@ export class Popup {
       severity: 'warn',
       summary: title,
       detail: msg,
-      life: 8000
+      life: 2500,
+      closable: false
     });
   }
 
@@ -34,7 +37,8 @@ export class Popup {
       severity: 'info',
       summary: title,
       detail: msg,
-      life: 8000
+      life: 2500,
+      closable: false
     });
   }
 

@@ -10,7 +10,7 @@
         <div class="form-group small w-100">
           <label for="resumen"><b>Resumen:</b></label>
           <div class="input-group input-group-sm">
-            <textarea type="text" class="form-control" name="resumen" id="resumen" [(ngModel)]="model.resumen"
+            <textarea type="text" class="form-control" name="resumen" id="resumen" [ngModel]="model().resumen" (ngModelChange)="model().resumen = $event"
               disabled></textarea>
           </div>
         </div>
@@ -20,7 +20,7 @@
         <div class="form-group small w-100">
           <label for="dia"><b>Día:</b></label>
           <div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="dia" id="dia" [(ngModel)]="model.dia" disabled>
+            <input type="text" class="form-control" name="dia" id="dia" [ngModel]="model().dia" (ngModelChange)="model().dia = $event" disabled>
           </div>
         </div>
       </div>
@@ -30,7 +30,7 @@
           <label for="u-nombre"><b>Nombre Empleado:</b></label>
           <div class="input-group input-group-sm">
             <input type="text" class="form-control" name="u-nombre" id="u-nombre"
-              [(ngModel)]="model.usuario!.nombreEmpleado" disabled>
+              [ngModel]="model().usuario!.nombreEmpleado" (ngModelChange)="model().usuario!.nombreEmpleado = $event" disabled>
           </div>
         </div>
       </div>
@@ -39,7 +39,7 @@
         <div class="form-group small w-100">
           <label for="u-numero"><b>Número Empleado:</b></label>
           <div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="u-numero" id="u-numero" [(ngModel)]="model.usuario!.numero"
+            <input type="text" class="form-control" name="u-numero" id="u-numero" [ngModel]="model().usuario!.numero" (ngModelChange)="model().usuario!.numero = $event"
               disabled>
           </div>
         </div>
@@ -49,7 +49,7 @@
         <div class="form-group small w-100">
           <label for="u-email"><b>Email Empleado:</b></label>
           <div class="input-group input-group-sm">
-            <input type="text" class="form-control" name="u-email" id="u-email" [(ngModel)]="model.usuario!.email"
+            <input type="text" class="form-control" name="u-email" id="u-email" [ngModel]="model().usuario!.email" (ngModelChange)="model().usuario!.email = $event"
               disabled>
           </div>
         </div>
@@ -60,9 +60,9 @@
       <div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 d-flex align-items-end justify-content-end mb-3">
         <div class="form-group small w-100">
           <label for="resuelta"><b>Incidencia resuelta:</b></label>
-          <select class="form-control form-control-sm" name="resuelta" id="resuelta" [(ngModel)]="model.resuelta">
-            <option value="true">Si</option>
-            <option value="false">No</option>
+          <select class="form-control form-control-sm" name="resuelta" id="resuelta" [ngModel]="model().resuelta" (ngModelChange)="model().resuelta = $event">
+            <option [ngValue]="true">Si</option>
+            <option [ngValue]="false">No</option>
           </select>
         </div>
       </div>
@@ -72,7 +72,7 @@
           <label for="explicacion"><b>Explicación:</b></label>
           <div class="input-group input-group-sm">
             <textarea type="text" class="form-control" name="explicacion" id="explicacion"
-              [(ngModel)]="model.explicacion"></textarea>
+              [ngModel]="model().explicacion" (ngModelChange)="model().explicacion = $event"></textarea>
           </div>
         </div>
       </div>
@@ -80,7 +80,7 @@
 
     <div class="row d-flex flex-row justify-content-end">
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">
-        <app-boton-guardar class="w-100" [valid]="f.valid"></app-boton-guardar>
+        <app-boton-guardar class="w-100" [valid]="f.valid!"></app-boton-guardar>
       </div>
 
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 d-flex align-items-end justify-content-end mb-3">

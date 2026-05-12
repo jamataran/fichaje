@@ -1,6 +1,5 @@
 package org.fichaje.converter;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import org.fichaje.dto.entity.VacacionesDto;
@@ -11,8 +10,11 @@ import org.fichaje.service.UsuarioService;
 @Component
 public class VacacionesDtoConverter {
 
-	@Autowired
-	private UsuarioService service;
+	private final UsuarioService service;
+
+	public VacacionesDtoConverter(UsuarioService service) {
+		this.service = service;
+	}
 
 	public Vacaciones transform(VacacionesDto dto) {
 		Vacaciones vacaciones = new Vacaciones();

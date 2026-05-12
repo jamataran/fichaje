@@ -78,8 +78,8 @@
           type="submit"
           class="btn btn-login w-100"
           [disabled]="!loginForm.valid">
-          <span *ngIf="!isLoading">Iniciar Sesión</span>
-          <span *ngIf="isLoading">
+          <span *ngIf="!isLoading()">Iniciar Sesión</span>
+          <span *ngIf="isLoading()">
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             Verificando...
           </span>
@@ -89,6 +89,47 @@
       <div class="form-footer">
         <p class="text-muted">¿Problemas para acceder? Contacta a tu administrador</p>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal intermedio de selección de empresa -->
+<div class="empresa-modal-backdrop" *ngIf="showEmpresaSelectorModal()">
+  <div class="empresa-modal-card">
+    <div class="empresa-modal-header">
+      <h3>
+        <i class="bi bi-building"></i>
+        Selecciona tu empresa
+      </h3>
+      <p>Hemos encontrado varias empresas asociadas a tu usuario.</p>
+    </div>
+
+    <div class="empresa-options" *ngIf="empresaOptions().length > 0">
+      <label class="empresa-option" *ngFor="let empresa of empresaOptions()">
+        <input
+          type="radio"
+          name="empresaSelection"
+          [value]="empresa.id"
+          [(ngModel)]="selectedEmpresaId"
+        >
+        <div class="empresa-option-content">
+          <span class="empresa-name">{{ empresa.nombre }}</span>
+        </div>
+      </label>
+    </div>
+
+    <div class="empresa-modal-actions">
+      <button
+        type="button"
+        class="btn btn-login w-100"
+        [disabled]="!selectedEmpresaId() || isSelectingEmpresa()"
+        (click)="onConfirmEmpresaSelection()">
+        <span *ngIf="!isSelectingEmpresa()">Continuar</span>
+        <span *ngIf="isSelectingEmpresa()">
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          Aplicando empresa...
+        </span>
+      </button>
     </div>
   </div>
 </div>

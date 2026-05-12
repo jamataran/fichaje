@@ -1,5 +1,5 @@
 package org.fichaje.config.security.enums;
 
 public enum RolNombre {
-	ROLE_ADMIN, ROLE_RRHH, ROLE_USER
+	ROLE_ADMIN, ROLE_RRHH, ROLE_USER, ROLE_SUPER_ADMIN
 }

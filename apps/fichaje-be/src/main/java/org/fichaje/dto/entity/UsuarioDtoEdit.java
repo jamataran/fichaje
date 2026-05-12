@@ -11,9 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UsuarioDtoEdit {
 
-
 	private String email;
-	private String password;
 	private String numero;
 	private String nombreEmpleado;
 	private String dni;

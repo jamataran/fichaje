@@ -1,0 +1,25 @@
+meta {
+    name: Edit Empresa
+    type: http
+    seq: 3
+}
+
+put {
+    url: {{baseUrl}}/empresas/:id
+    body: json
+    auth: inherit
+}
+
+params:path {
+    id: 1
+}
+
+body:json {
+    {
+        "nombre": "Tech Solutions S.L. - Updated",
+        "razonSocial": "Tech Solutions Sociedad Limitada Actualizado",
+        "cif": "A58818501",
+        "activa": true
+    }
+}
+

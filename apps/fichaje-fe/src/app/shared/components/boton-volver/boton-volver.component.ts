@@ -1,16 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
-    selector: 'app-boton-volver',
-    templateUrl: './boton-volver.component.html',
-    styleUrls: ['./boton-volver.component.css'],
-    standalone: false
+  selector: 'app-boton-volver',
+  templateUrl: './boton-volver.component.html',
+  styleUrls: ['./boton-volver.component.css'],
+  standalone: true
 })
-export class BotonVolverComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+export class BotonVolverComponent {
 }

@@ -16,6 +16,8 @@ import org.fichaje.provider.db.entity.Usuario;
 public interface PermisoRepository extends JpaRepository<Permiso, Long>,
 		JpaSpecificationExecutor<Permiso> {
 
+	List<Permiso> findByUsuarioAndDia(Usuario usuario, LocalDate dia);
+
 	List<Permiso> findByUsuarioAndAprobadoTrue(Usuario usuario);
 
 	@Query(value = "SELECT SUM(TIME_TO_SEC(TIMEDIFF(p.hora_fin, p.hora_inicio))) numero FROM permisos p WHERE MONTH(p.dia)=?1 AND YEAR(p.dia)=?2 AND aprobado =1", nativeQuery = true)

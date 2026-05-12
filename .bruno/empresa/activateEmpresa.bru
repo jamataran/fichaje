@@ -1,0 +1,14 @@
+meta {
+    name: Activate Empresa
+    type: http
+    seq: 5
+}
+
+patch {
+    url: {{baseUrl}}/empresas/:id/activar
+    auth: inherit
+}
+
+params:path {
+    id: 1
+}

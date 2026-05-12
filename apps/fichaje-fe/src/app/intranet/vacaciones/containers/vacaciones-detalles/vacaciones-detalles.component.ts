@@ -1,92 +1,87 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Empleado } from 'src/app/intranet/empleados/model/empleado';
 import { Vacaciones } from '../../models/vacaciones';
 import { VacacionesService } from '../../service/vacaciones.service';
 import { Popup } from 'src/app/shared/helper/popup';
+import { CommonModule } from '@angular/common';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @Component({
-    selector: 'app-vacaciones-detalles',
-    templateUrl: './vacaciones-detalles.component.html',
-    styleUrls: ['./vacaciones-detalles.component.css'],
-    standalone: false
+  selector: 'app-vacaciones-detalles',
+  templateUrl: './vacaciones-detalles.component.html',
+  styleUrls: ['./vacaciones-detalles.component.css'],
+  standalone: true,
+  imports: [CommonModule, SharedModule]
 })
 export class VacacionesDetallesComponent implements OnInit {
+  private readonly service = inject(VacacionesService);
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
-  model: Vacaciones = new Vacaciones(null, null, '', '', '', new Empleado('', '', '', '', null, null, null, null, null,''))
-
-  constructor(
-    private service: VacacionesService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router
-  ) { }
+  model = signal<Vacaciones | null>(null);
 
   ngOnInit(): void {
     this.load();
   }
 
   load(): void {
-    const id = this.activatedRoute.snapshot.params.id
-    this.service.detail(id).subscribe(
-      data => {
-        this.model = data
-        //console.log(data)
+    const id = this.activatedRoute.snapshot.params.id;
+    this.service.detail(id).subscribe({
+      next: data => {
+        this.model.set(data);
       },
-      err => {
+      error: err => {
         Popup.toastDanger('Ocurrió un error', err.message);
-        console.log(err)
+        console.error(err);
       }
-    )
-
+    });
   }
 
-
   onDelete(): void {
-    const id = this.activatedRoute.snapshot.params.id
+    const id = this.activatedRoute.snapshot.params.id;
     Popup.dangerConfirmBox('¿Desea eliminar las vacaciones?', 'Esta operación no se puede deshacer', 'SI', 'NO', () => {
-      this.delete(id)
+      this.delete(id);
     });
   }
 
   delete(id: number) {
-    this.service.delete(id).subscribe(
-      data => {
+    this.service.delete(id).subscribe({
+      next: () => {
         Popup.toastWarning('', 'Vacaciones Eliminadas');
-        this.router.navigate(['intranet/vacaciones'])
+        this.router.navigate(['intranet/vacaciones']);
       },
-      err => {
+      error: err => {
         Popup.toastDanger('Ocurrió un error', err.message);
-        console.log(err)
+        console.error(err);
       }
-    )
+    });
   }
 
   onApprove(): void {
-    const id = this.activatedRoute.snapshot.params.id
-    this.service.aprobar(id).subscribe(
-      data => {
+    const id = this.activatedRoute.snapshot.params.id;
+    this.service.aprobar(id).subscribe({
+      next: () => {
         Popup.toastSucess('', 'Vacaciones Aprobadas');
         this.load();
       },
-      err => {
+      error: err => {
         Popup.toastDanger('Ocurrió un error', err.message);
-        console.log(err)
+        console.error(err);
       }
-    )
+    });
   }
 
   onDeny(): void {
-    const id = this.activatedRoute.snapshot.params.id
-    this.service.denegar(id).subscribe(
-      data => {
+    const id = this.activatedRoute.snapshot.params.id;
+    this.service.denegar(id).subscribe({
+      next: () => {
         Popup.toastDanger('', 'Vacaciones Denegadas');
         this.load();
       },
-      err => {
+      error: err => {
         Popup.toastDanger('Ocurrió un error', err.message);
-        console.log(err)
+        console.error(err);
       }
-    )
+    });
   }
-
 }

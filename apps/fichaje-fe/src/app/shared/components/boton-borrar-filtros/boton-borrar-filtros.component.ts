@@ -1,16 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
-    selector: 'app-boton-borrar-filtros',
-    templateUrl: './boton-borrar-filtros.component.html',
-    styleUrls: ['./boton-borrar-filtros.component.css'],
-    standalone: false
+  selector: 'app-boton-borrar-filtros',
+  templateUrl: './boton-borrar-filtros.component.html',
+  styleUrls: ['./boton-borrar-filtros.component.css'],
+  standalone: true
 })
-export class BotonBorrarFiltrosComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+export class BotonBorrarFiltrosComponent {
 }

@@ -7,6 +7,7 @@ import { EmpleadoDetalleComponent } from './containers/empleado-detalle/empleado
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CoreModule } from 'src/app/core/core.module';
 import { EmpleadosService } from './service/empleados.service';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { EmpleadosService } from './service/empleados.service';
     CommonModule,
     EmpleadosRoutingModule,
     SharedModule,
-    CoreModule
+    CoreModule,
+    ReactiveFormsModule
   ],
   providers:[
     EmpleadosService

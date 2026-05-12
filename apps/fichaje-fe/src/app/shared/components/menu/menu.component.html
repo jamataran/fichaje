@@ -33,15 +33,16 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link" routerLinkActive="active" routerLink="/intranet/home/cuenta">
+        <a class="nav-link" routerLinkActive="active" routerLink="/intranet/cuenta">
           <i class="bi bi-person-circle feather"></i>
           <span>Cuenta</span>
         </a>
       </li>
     </ul>
 
-    <!-- Admin Section -->
-    <div *ngIf="isAdmin" class="mt-auto">
+  <!-- RRHH / Administración -->
+   @if (canViewAdminPanel) {
+    <div class="mt-auto">
       <h6 class="sidebar-heading">
         <i class="bi bi-shield-lock" style="font-size: 0.85rem;"></i>
         Administración
@@ -98,6 +99,37 @@
         </li>
       </ul>
     </div>
+    }
+
+  <!-- Super Admin Section -->
+   @if (canViewSuperAdminPanel) {
+    <div class="mt-auto">
+      <h6 class="sidebar-heading">
+        <i class="bi bi-shield-lock" style="font-size: 0.85rem;"></i>
+        Sistema
+      </h6>
+
+      @if (isAdmin && !isSuperAdmin) {
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" routerLink="/intranet/sedes/list">
+            <i class="bi bi-building feather"></i>
+            <span>Sedes</span>
+          </a>
+        </li>
+      }
+
+      @if (isSuperAdmin) {
+      <ul class="nav">
+        <li class="nav-item">
+          <a class="nav-link" routerLinkActive="active" routerLink="/intranet/empresas/list">
+            <i class="bi bi-people feather"></i>
+            <span>Empresas</span>
+          </a>
+        </li>
+      </ul>
+    }
+    </div>
+    }
   </div>
 
 </nav>

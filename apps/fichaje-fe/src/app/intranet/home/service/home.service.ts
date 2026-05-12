@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, SkipSelf } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { FichajeDto } from '../../fichajes/model/fichajeDto';
 import { environment } from 'src/environments/environment';
@@ -8,13 +8,10 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class HomeService {
-
-  //endPoint = 'http://localhost:8080/'
-  endPoint = environment.apiURL + '/fichaje';
-
-  constructor(private httpClient: HttpClient) { }
+  private readonly httpClient = inject(HttpClient);
+  private readonly endPoint = environment.apiURL + '/fichaje';
 
   public now(dto: FichajeDto): Observable<any> {
-    return this.httpClient.post<any[]>(this.endPoint + `/now`, dto)
+    return this.httpClient.post<any>(`${this.endPoint}/now`, dto);
   }
 }

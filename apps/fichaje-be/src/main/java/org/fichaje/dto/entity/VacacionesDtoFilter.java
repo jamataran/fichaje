@@ -22,7 +22,6 @@ public class VacacionesDtoFilter {
 	private LocalDate finDesde;
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate finHasta;
-	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Boolean consumidas;
 	private Boolean aprobado;
 	private String usuarioNumero;

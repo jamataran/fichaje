@@ -1,34 +1,40 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, signal, inject } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TokenService } from 'src/app/core/auth/service/token.service';
 import { Pagination } from 'src/app/shared/components/pagination/model/pagination.model';
 import { VacacionesDto } from '../../models/vacacionesDto';
 import { VacacionesService } from '../../service/vacaciones.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @Component({
-    selector: 'app-vacaciones-lista',
-    templateUrl: './vacaciones-lista.component.html',
-    styleUrls: ['./vacaciones-lista.component.css'],
-    standalone: false
+  selector: 'app-vacaciones-lista',
+  templateUrl: './vacaciones-lista.component.html',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink, SharedModule]
 })
 export class VacacionesListaComponent implements OnInit {
+  public readonly service = inject(VacacionesService);
+  private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly tokenService = inject(TokenService);
 
-  headers = [
+  readonly headers = [
     "inicio",
     "fin",
     "estado",
     "consumidas",
     "usuario.nombreEmpleado",
     "usuario.numero"
-  ]
+  ];
 
-  //paginación
-  order = 'id'
-  asc = false
+  // State Signals
+  listaElementos = signal<any[]>([]);
+  order = signal<string>('id');
+  asc = signal<boolean>(false);
+  isAdmin = signal<boolean>(false);
 
-  listaElementos: Array<any> = []
-
-  pag: Pagination = {
+  pag = signal<Pagination>({
     totalPages: [],
     page: 0,
     isFirst: false,
@@ -36,119 +42,88 @@ export class VacacionesListaComponent implements OnInit {
     size: 15,
     sizeLimit: 100,
     listPagesLimits: 4,
-  }
+  });
 
-  dto: VacacionesDto = {
+  dto = signal<VacacionesDto>({
     consumidas: null,
     estado: '',
     inicioDesde: '',
     inicioHasta: '',
     finDesde: '',
     finHasta: '',
-
     usuarioEmail: '',
     usuarioNumero: '',
     usuarioNombre: '',
     usuarioDni: '',
-  }
-
-
-  isAdmin: boolean = false;
-
-  constructor(
-    public service: VacacionesService,
-    private activatedRoute: ActivatedRoute,
-    private tokenService: TokenService
-  ) { }
+  });
 
   ngOnInit(): void {
-    this.dto.usuarioNumero = this.activatedRoute.snapshot.params.numero;
-    this.isAdmin = this.tokenService.isAdmin();
-    this.listarElementos()
+    const numero = this.activatedRoute.snapshot.params.numero;
+    if (numero) {
+      this.updateDto('usuarioNumero', numero);
+    }
+    this.isAdmin.set(this.tokenService.isRRHH());
+    this.listarElementos();
   }
 
   listarElementos(): void {
-    this.service.getElements(this.dto, this.pag.page, this.pag.size, this.order, this.asc).subscribe(
-      data => {
-        this.listaElementos = data.content
-        this.pag.isFirst = data.first
-        this.pag.isLast = data.last
-        this.pag.totalPages = new Array(data.totalPages)
+    this.service.getElements(
+      this.dto(),
+      this.pag().page,
+      this.pag().size,
+      this.order(),
+      this.asc()
+    ).subscribe({
+      next: data => {
+        this.listaElementos.set(data.content);
+        this.pag.update(p => ({
+          ...p,
+          isFirst: data.first,
+          isLast: data.last,
+          totalPages: new Array(data.totalPages)
+        }));
       },
-      err => {
-        console.log(err)
-      }
-    )
+      error: err => console.error(err)
+    });
   }
 
-  onPaginate(pag: Pagination) {
-    this.pag = pag;
-    this.listarElementos()
+  onPaginate(newPag: Pagination) {
+    this.pag.set(newPag);
+    this.listarElementos();
   }
 
   setOrder(order: string): void {
-    this.order = order
-    this.asc = !this.asc
-    this.listarElementos()
+    if (this.order() === order) {
+      this.asc.update(a => !a);
+    } else {
+      this.order.set(order);
+      this.asc.set(true);
+    }
+    this.listarElementos();
   }
 
-  clearEmail(): void {
-    this.dto.usuarioEmail = ''
-    this.listarElementos()
-  }
-  clearNumero(): void {
-    this.dto.usuarioNumero = ''
-    this.listarElementos()
-  }
-  clearNombre(): void {
-    this.dto.usuarioNombre = ''
-    this.listarElementos()
-  }
-  clearDni(): void {
-    this.dto.usuarioDni = ''
-    this.listarElementos()
+  updateDto(field: keyof VacacionesDto, value: any): void {
+    this.dto.update(d => ({ ...d, [field]: value }));
+    this.listarElementos();
   }
 
-
-  clearEstado(): void {
-    this.dto.estado = ''
-    this.listarElementos()
-  }
-  clearConsumidas(): void {
-    this.dto.consumidas = null
-    this.listarElementos()
-  }
-  clearInicioDesde(): void {
-    this.dto.inicioDesde = ''
-    this.listarElementos()
-  }
-  clearInicioHasta(): void {
-    this.dto.inicioHasta = ''
-    this.listarElementos()
-  }
-  clearfinDesde(): void {
-    this.dto.finDesde = ''
-    this.listarElementos()
-  }
-  clearfinHasta(): void {
-    this.dto.finHasta = ''
-    this.listarElementos()
+  clearField(field: keyof VacacionesDto): void {
+    this.updateDto(field, field === 'consumidas' ? null : '');
   }
 
   clear(): void {
-    this.dto.consumidas = null
-    this.dto.estado = ''
-    this.dto.inicioDesde = ''
-    this.dto.inicioHasta = ''
-    this.dto.finDesde = ''
-    this.dto.finHasta = ''
-
-    this.dto.usuarioEmail = ''
-    this.dto.usuarioNumero = ''
-    this.dto.usuarioNombre = ''
-    this.dto.usuarioDni = ''
-
-    this.listarElementos()
+    this.dto.set({
+      consumidas: null,
+      estado: '',
+      inicioDesde: '',
+      inicioHasta: '',
+      finDesde: '',
+      finHasta: '',
+      usuarioEmail: '',
+      usuarioNumero: '',
+      usuarioNombre: '',
+      usuarioDni: '',
+    });
+    this.listarElementos();
   }
-
 }

@@ -1,8 +1,6 @@
 package org.fichaje.provider.db.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,14 +8,17 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
- * Entidad para gestionar API Keys de autenticación
- * Permite autenticación sin JWT para aplicaciones externas
+ * Entidad para gestionar API Keys de autenticación.
+ * Permite autenticación sin JWT para aplicaciones externas.
  */
 @Entity
 @Table(name = "api_keys")
-@Data
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiKey {
@@ -27,30 +28,31 @@ public class ApiKey {
     private Long id;
 
     @NotBlank
-    @Column(unique = true, nullable = false, length = 64)
-    private String keyHash; // Hash de la API Key (nunca almacenar en plano)
+    @Column(unique = true, nullable = false, length = 128) // Aumentado para soportar hashes más largos si es necesario
+    private String keyHash;
 
     @NotBlank
     @Column(nullable = false, length = 100)
-    private String name; // Nombre descriptivo de la API Key (ej: "App Mobile Producción")
+    private String name;
 
     @Column(length = 255)
-    private String description; // Descripción adicional
+    private String description;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY) // Cambiado a LAZY para mejor rendimiento
     @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario; // Usuario asociado a la API Key
+    private Usuario usuario;
 
     @NotNull
+    @Builder.Default
     @Column(nullable = false)
-    private Boolean active = true; // Estado de la API Key
+    private Boolean active = true;
 
     @Column
-    private LocalDateTime expiresAt; // Fecha de expiración (opcional, null = sin expiración)
+    private LocalDateTime expiresAt;
 
     @Column
-    private LocalDateTime lastUsedAt; // Última vez que se usó la API Key
+    private LocalDateTime lastUsedAt;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -61,25 +63,31 @@ public class ApiKey {
     private LocalDateTime updatedAt;
 
     @Column(length = 100)
-    private String createdBy; // Usuario que creó la API Key
+    private String createdBy;
 
-    /**
-     * Verifica si la API Key está activa y no ha expirado
-     */
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY) // Cambiado a LAZY
+    @JoinColumn(name = "empresa_id", nullable = false)
+    private Empresa empresa;
+
     public boolean isValid() {
-        if (!active) {
-            return false;
-        }
-        if (expiresAt != null && LocalDateTime.now().isAfter(expiresAt)) {
-            return false;
-        }
-        return true;
+        return Boolean.TRUE.equals(active) && (expiresAt == null || LocalDateTime.now().isBefore(expiresAt));
     }
 
-    /**
-     * Actualiza el timestamp de último uso
-     */
     public void updateLastUsed() {
         this.lastUsedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ApiKey apiKey = (ApiKey) o;
+        return id != null && Objects.equals(id, apiKey.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

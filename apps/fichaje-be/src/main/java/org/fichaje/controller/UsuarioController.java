@@ -1,221 +1,86 @@
 package org.fichaje.controller;
 
-import java.util.List;
-
 import org.fichaje.dto.entity.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 import org.fichaje.converter.UsuarioDtoConverter;
 import org.fichaje.dto.entity.UsuarioDTO;
 import org.fichaje.provider.db.entity.Usuario;
-import org.fichaje.config.security.jwt.JwtProvider;
+import org.fichaje.provider.db.entity.UsuarioPrincipal;
 import org.fichaje.service.UsuarioService;
-import org.fichaje.provider.db.specifications.UsuarioSpecifications;
 
 import io.swagger.v3.oas.annotations.Operation;
 
+import java.util.List;
+
+import org.fichaje.util.SecurityUtils;
+
 @RestController
 @RequestMapping("/usuario")
-//@CrossOrigin(origins = "http://localhost:4200")
 public class UsuarioController
 		extends CommonController<Usuario, UsuarioService> {
 
-	@Autowired
-	UsuarioDtoConverter dtoConverter;
-	@Autowired
-	JwtProvider jwtProvider;
-	@Autowired
-	UsuarioSpecifications specifications;
-
-	@Operation(summary = "Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
-	@PostMapping("/pagesFiltered")
-	public ResponseEntity<Page<UsuarioDTO>> pageDtoSpec(
-			@RequestBody UsuarioDtoFilter dto,
-			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "20") int size,
-			@RequestParam(defaultValue = "id") String order,
-			@RequestParam(defaultValue = "true") boolean asc) {
-
-		Specification<Usuario> spec = Specification
-				.where(dto.getNombreEmpleado() == null ? null
-						: specifications.nombreUsuarioContains(
-								dto.getNombreEmpleado()))
-				.and(dto.getEmail() == null ? null
-						: specifications.emailUsuarioContains(
-								dto.getEmail()))
-				.and(dto.getNumero() == null ? null
-						: specifications.numeroUsuarioContains(
-								dto.getNumero()))
-				.and(dto.getDni() == null ? null
-						: specifications.dniUsuarioContains(
-								dto.getDni()))
-				.and(dto.getWorking() == null ? null
-						: specifications.isWorking(
-								dto.getWorking()))
-				.and(dto.getEnVacaciones() == null ? null
-						: specifications.isEnVacaciones(
-								dto.getEnVacaciones()))
-				.and(dto.getDeBaja() == null ? null
-						: specifications.isDeBaja(
-								dto.getDeBaja()))
-				.and(dto.getDiasVacacionesDesde() == null ? null
-						: specifications.diasDesde(
-								dto.getDiasVacacionesDesde()))
-				.and(dto.getDiasVacacionesHasta() == null ? null
-						: specifications.diasHasta(
-								dto.getDiasVacacionesHasta()))
-				.and(dto.getHorasGeneradasDesde() == null ? null
-						: specifications.horasDesde(
-								dto.getHorasGeneradasDesde()))
-				.and(dto.getHorasGeneradasHasta() == null ? null
-						: specifications.horasHasta(
-								dto.getHorasGeneradasHasta()));
-
-		Page<Usuario> entities = service.pagesAndSpec(
-				spec,
-				PageRequest.of(page, size, Sort.by(order)));
-
-		if (!asc)
-			entities = service.pagesAndSpec(
-					spec,
-					PageRequest.of(page, size, Sort.by(order).descending()));
-
-		Page<UsuarioDTO> entitiesDto = entities
-				.map(usu -> dtoConverter.inverseTransform(usu));
-
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.body(entitiesDto);
-
+	public UsuarioController(UsuarioService service) {
+		super(service);
 	}
 
-	@Operation(summary = "Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
-	@PostMapping("/listFiltered")
-	public ResponseEntity<List<Usuario>> filteredList(@RequestBody UsuarioDtoFilter dto) {
+	@Operation(summary = "Punto único de obtención de usuarios: permite listado, paginación y filtrado mediante query params")
+	@GetMapping
+	public ResponseEntity<Page<UsuarioDTO>> list(
+			UsuarioDtoFilter filter,
+			@PageableDefault(size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+		
+		return ResponseEntity.ok(service.getUsuariosPaged(filter, pageable));
+	}
 
-		Specification<Usuario> spec = Specification
-				.where(dto.getNombreEmpleado() == null ? null
-						: specifications.nombreUsuarioContains(
-								dto.getNombreEmpleado()))
-				.and(dto.getEmail() == null ? null
-						: specifications.emailUsuarioContains(
-								dto.getEmail()))
-				.and(dto.getNumero() == null ? null
-						: specifications.numeroUsuarioContains(
-								dto.getNumero()))
-				.and(dto.getDni() == null ? null
-						: specifications.dniUsuarioContains(
-								dto.getDni()))
-				.and(dto.getWorking() == null ? null
-						: specifications.isWorking(
-								dto.getWorking()))
-				.and(dto.getEnVacaciones() == null ? null
-						: specifications.isEnVacaciones(
-								dto.getEnVacaciones()))
-				.and(dto.getDeBaja() == null ? null
-						: specifications.isDeBaja(
-								dto.getDeBaja()))
-				.and(dto.getDiasVacacionesDesde() == null ? null
-						: specifications.diasDesde(
-								dto.getDiasVacacionesDesde()))
-				.and(dto.getDiasVacacionesHasta() == null ? null
-						: specifications.diasHasta(
-								dto.getDiasVacacionesHasta()))
-				.and(dto.getHorasGeneradasDesde() == null ? null
-						: specifications.horasDesde(
-								dto.getHorasGeneradasDesde()))
-				.and(dto.getHorasGeneradasHasta() == null ? null
-						: specifications.horasHasta(
-								dto.getHorasGeneradasHasta()));
-
-		List<Usuario> entities = service.filterAndList(spec);
-
-//		List<UsuarioDTO> entitiesDto = (List<UsuarioDTO>) entities.stream()
-//				.map(usu -> dtoConverter.inverseTransform(usu));
-
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.body(entities);
-
+	@Override
+	@GetMapping("/{id}")
+	public ResponseEntity<?> getById(@PathVariable Long id) {
+		return ResponseEntity.ok(service.getUsuarioById(id));
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<?> editUser(@RequestBody UsuarioDtoEdit editar,
 			@PathVariable Long id) {
-
-		return service.findById(id).map(d -> {
-
-			dtoConverter.transformEdit(d, editar);
-			return ResponseEntity.ok(service.save(d));
-
-		}).orElseGet(() -> {
-			return ResponseEntity.notFound().build();
-		});
+		return ResponseEntity.ok(service.updateUsuario(id, editar));
 	}
 
 	@PutMapping("password/{id}")
 	public ResponseEntity<?> editUserPassword(@RequestBody UsuarioDtoEditPassword editar,
-			// @RequestHeader Map<String, String> headers,
-			@RequestHeader("authorization") String token,
 			@PathVariable Long id) {
-
-		token = token.replace("Bearer ", "");
-		Usuario usuario = service.findById(id).orElse(null);
-		if (usuario != null) {
-
-			if (jwtProvider.validateToken(token)
-					&& jwtProvider.getSubjectFromToken(token).equals(usuario.getNumero())) {
-
-				usuario = dtoConverter.transformEditPassword(usuario, editar);
-				return ResponseEntity.ok(service.save(usuario));
-			} else {
-				return ResponseEntity.status(HttpStatus.FORBIDDEN)
-						.body(new Mensaje("No puedes cambiar la contraseña de otro usuario"));
-			}
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		return ResponseEntity.ok(service.updatePassword(id, editar));
 	}
 
 	@PutMapping("/suma_vacaciones_plantilla/{dias}")
 	public ResponseEntity<?> sumarVacacionesPlantilla(@PathVariable int dias) {
-		service.list().stream().forEach(u -> {
-			u.setDiasVacaciones(u.getDiasVacaciones() + dias);
-			service.save(u);
-		});
+		service.sumVacacionesPlantilla(dias);
 		return ResponseEntity.ok().build();
 	}
 
 	@Operation(summary = "Usuario obtiene la información de su usario")
 	@GetMapping("/miusuario")
-	public ResponseEntity<?> getYourUser(@RequestHeader("authorization") String token) {
-		token = token.replace("Bearer ", "");
-		if (jwtProvider.validateToken(token)) {
-			String numeroUsuario = jwtProvider.getSubjectFromToken(token);
-			Usuario usuario = service.findByNumero(numeroUsuario).orElse(null);
-			if (usuario != null) {
-				return ResponseEntity.ok(usuario);
-			} else {
-				return ResponseEntity.notFound().build();
-			}
-		} else {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN)
-					.body(new Mensaje("Solo puedes acceder a la información de tú usuario"));
-		}
+	public ResponseEntity<UsuarioDTO> getYourUser() {
+		return ResponseEntity.ok(service.miUsuario());
+	}
+
+	@Operation(summary = "Asigna una sede a un usuario")
+	@PostMapping("/{id}/sedes/{sedeId}")
+	public ResponseEntity<UsuarioDTO> addSede(@PathVariable Long id, @PathVariable Long sedeId) {
+		// En un entorno multi-tenancy real, deberíamos validar que sedeId pertenece a la empresaId del token
+		return ResponseEntity.ok(service.addSede(id, sedeId));
+	}
+
+	@Operation(summary = "Quita una sede a un usuario")
+	@DeleteMapping("/{id}/sedes/{sedeId}")
+	public ResponseEntity<?> removeSede(@PathVariable Long id, @PathVariable Long sedeId) {
+		service.removeSede(id, sedeId);
+		return ResponseEntity.noContent().build();
 	}
 }

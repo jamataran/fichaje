@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Empleado } from '../../model/empleado';
 import { EmpleadosService } from '../../service/empleados.service';
 import { Popup } from 'src/app/shared/helper/popup';
@@ -11,60 +12,88 @@ import { Popup } from 'src/app/shared/helper/popup';
     standalone: false
 })
 export class EmpleadoDetalleComponent implements OnInit {
+  private service = inject(EmpleadosService);
+  private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
+  private fb = inject(FormBuilder);
 
-  model: Empleado = new Empleado('', '', '', '', null, null, null, null, null,'')
-
-  constructor(
-    private service: EmpleadosService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-  ) { }
+  model = signal<Empleado | null>(null);
+  editForm!: FormGroup;
+  isLoading = signal(true);
 
   ngOnInit(): void {
-    const id = this.activatedRoute.snapshot.params.id
-    this.service.detail(id).subscribe(
-      data => {
-        this.model = data
-      },
-      err => {
-        Popup.toastDanger('Ocurrió un error', err.message);
-        console.log(err)
-      }
-    )
+    this.initForm();
+    const id = this.activatedRoute.snapshot.params.id;
+    this.loadEmpleado(id);
   }
 
-  onUpdate(): void {
-    const id = this.activatedRoute.snapshot.params.id
-    this.service.update(id, this.model).subscribe(
-      data => {
-        Popup.toastSucess('', 'Cambios Guardados');
-      },
-      err => {
-        Popup.toastDanger('Ocurrió un error', err.message);
-        console.log(err)
-      }
-    )
-  }
-
-
-  onDelete(): void {
-    const id = this.activatedRoute.snapshot.params.id
-    Popup.dangerConfirmBox('¿Desea eliminar el usuario?', 'Esta operación no se puede deshacer', 'SI', 'NO', () => {
-      this.delete(id)
+  private initForm(): void {
+    this.editForm = this.fb.group({
+      nombreEmpleado: ['', Validators.required],
+      numero: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      dni: ['', Validators.required],
+      diasVacaciones: [0],
+      horasGeneradas: [0],
+      enVacaciones: [false],
+      deBaja: [false],
+      working: [false]
     });
   }
 
-  delete(id: number) {
-    this.service.delete(id).subscribe(
-      data => {
-        Popup.toastWarning('', 'Usuario Eliminado');
-        this.router.navigate(['intranet/empleados'])
+  private loadEmpleado(id: number): void {
+    this.isLoading.set(true);
+    this.service.detail(id).subscribe({
+      next: (data) => {
+        this.model.set(data);
+        this.editForm.patchValue(data);
+        this.isLoading.set(false);
       },
-      err => {
+      error: (err) => {
+        this.isLoading.set(false);
         Popup.toastDanger('Ocurrió un error', err.message);
-        console.log(err)
+        console.error(err);
       }
-    )
+    });
   }
 
+  onUpdate(): void {
+    if (this.editForm.invalid) {
+      this.editForm.markAllAsTouched();
+      return;
+    }
+
+    const id = this.activatedRoute.snapshot.params.id;
+    const updatedEmpleado = { ...this.model(), ...this.editForm.value };
+
+    this.service.update(id, updatedEmpleado).subscribe({
+      next: () => {
+        Popup.toastSucess('', 'Cambios Guardados');
+      },
+      error: (err) => {
+        Popup.toastDanger('Ocurrió un error', err.message);
+        console.error(err);
+      }
+    });
+  }
+
+  onDelete(): void {
+    const id = this.activatedRoute.snapshot.params.id;
+    Popup.dangerConfirmBox('¿Desea eliminar el usuario?', 'Esta operación no se puede deshacer', 'SI', 'NO', () => {
+      this.delete(id);
+    });
+  }
+
+  private delete(id: number) {
+    this.service.delete(id).subscribe({
+      next: () => {
+        Popup.toastWarning('', 'Usuario Eliminado');
+        this.router.navigate(['intranet/empleados']);
+      },
+      error: (err) => {
+        Popup.toastDanger('Ocurrió un error', err.message);
+        console.error(err);
+      }
+    });
+  }
 }

@@ -1,95 +1,52 @@
 package org.fichaje.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import org.fichaje.converter.CalendarioDtoConverter;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.fichaje.dto.entity.CalendarioDto;
 import org.fichaje.dto.entity.Mensaje;
 import org.fichaje.provider.db.entity.Calendario;
-import org.fichaje.provider.db.entity.DiaLaborable;
 import org.fichaje.service.CalendarioService;
-import org.fichaje.service.DiaLaborableService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import io.swagger.v3.oas.annotations.Operation;
+import java.util.List;
 
+/**
+ * Controlador para la gestión de calendarios laborales.
+ */
+@Slf4j
 @RestController
 @RequestMapping("/calendario")
-//@CrossOrigin(origins = "http://localhost:4200")
-public class CalendarioController
-		extends CommonController<Calendario, CalendarioService> {
+@Tag(name = "Calendario", description = "Endpoints para la gestión de calendarios laborales")
+public class CalendarioController extends CommonController<Calendario, CalendarioService> {
 
-	@Autowired
-	CalendarioDtoConverter dtoConverter;
-	@Autowired
-	DiaController diaController;
-	@Autowired
-	DiaLaborableService diaService;
+    public CalendarioController(CalendarioService service) {
+        super(service);
+    }
 
-	@Operation(summary = "Crea un nuevo calendario")
-	@PostMapping("/create")
-	public ResponseEntity<?> newCalendario(
-			@RequestBody CalendarioDto calendarioDto) {
-//		Calendario calendario = new Calendario();
-//		calendario.setNombre(calendarioDto.getNombre());
+    @PostMapping("/create")
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Crea un nuevo calendario")
+    public Mensaje newCalendario(@RequestBody CalendarioDto calendarioDto) {
+        log.info("Recibida petición para crear calendario: {}", calendarioDto.nombre());
+        service.createCalendario(calendarioDto);
+        return new Mensaje("Calendario creado correctamente");
+    }
 
-		service.save(dtoConverter.transform(calendarioDto));
-		diaController.newListaDias(calendarioDto.getDias());
+    @GetMapping("/list/dto")
+    @Operation(summary = "Lista todos los calendarios en formato DTO")
+    public List<CalendarioDto> listDto() {
+        return service.getCalendariosDto();
+    }
 
-//		return ResponseEntity.created(null).build();
-		return ResponseEntity.status(HttpStatus.CREATED)
-				.body(new Mensaje("Calendario creado"));
-
-//		return ResponseEntity.status(HttpStatus.CREATED)
-//				.body(service.save(dtoConverter.transform(calendarioDto)));
-	}
-
-	@Operation(summary = "Devuelve una lista de DTO de calendarios")
-	@GetMapping("/list/dto")
-	public ResponseEntity<List<CalendarioDto>> listDto() {
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.body(service.list().stream()
-						.map(c -> dtoConverter.inverseTransform(c))
-						.collect(Collectors.toList()));
-
-	}
-
-	@Operation(summary = "Edita un calendario")
-	@PutMapping("/{id}")
-	public ResponseEntity<?> editCalendario(@RequestBody Calendario editar,
-			@PathVariable Long id) {
-
-		return service.findById(id).map(c -> {
-			c.setId(editar.getId());
-			c.setYear(editar.getYear());
-			c.setNombre(editar.getNombre());
-			c.setMinutosMasEntrada(editar.getMinutosMasEntrada());
-			c.setMinutosMenosEntrada(editar.getMinutosMenosEntrada());
-			c.setActive(editar.isActive());
-			editar.getDias().forEach(d -> {
-				DiaLaborable dia = diaService.findById(d.getId()).get();
-				dia.setDia(d.getDia());
-				dia.setHoraInicio(d.getHoraInicio());
-				dia.setHoraFin(d.getHoraFin());
-				diaService.save(dia);
-			});
-
-			return ResponseEntity.ok(service.save(c));
-		}).orElseGet(() -> {
-			return ResponseEntity.notFound().build();
-		});
-	}
-
+    @PutMapping("/{id}")
+    @Operation(summary = "Edita un calendario existente")
+    public ResponseEntity<CalendarioDto> editCalendario(@PathVariable Long id, @RequestBody CalendarioDto editar) {
+        log.info("Recibida petición para editar calendario ID: {}", id);
+        return service.updateCalendario(id, editar)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

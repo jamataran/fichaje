@@ -193,3 +193,177 @@ a:hover {
 ::-webkit-scrollbar-thumb:hover {
   background: #a0aec0;
 }
+
+/* ============ Popups ============ */
+.p-toast {
+  opacity: 0.98;
+}
+
+.p-toast-message {
+    border-radius: 8px !important;
+    border-width: 0 0 0 6px !important;
+    margin-bottom: 1rem !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.p-toast-message-success {
+    background: #f0fdf4 !important;
+    border-color: #22c55e !important;
+    color: #166534 !important;
+}
+
+.p-toast-message-error {
+    background: #fef2f2 !important;
+    border-color: #ef4444 !important;
+    color: #991b1b !important;
+}
+
+.p-toast-message-warn {
+    background: #fffbeb !important;
+    border-color: #f59e0b !important;
+    color: #92400e !important;
+}
+
+.p-toast-message-content {
+    padding: 1rem !important;
+  padding-right: 1.5rem !important;
+    display: flex;
+    align-items: center;
+}
+
+.p-toast-message-icon {
+  display: none !important;
+}
+
+.p-toast-summary {
+    font-weight: 700 !important;
+}
+
+.p-toast-icon {
+    font-size: 1.5rem !important;
+    margin-right: 1rem !important;
+}
+
+.p-toast-close-icon {
+    color: inherit !important;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.p-toast-icon-close {
+  margin-left: 0.8rem !important;
+}
+
+.p-toast-close-button {
+  margin-left: 0.8rem !important;
+}
+
+.p-toast-close-icon:hover {
+    opacity: 1;
+}
+
+.p-dialog-mask {
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(4px);
+}
+
+.p-confirmdialog {
+    border-radius: 12px !important;
+    overflow: hidden;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    border: none !important;
+  width: min(92vw, 520px) !important;
+  max-width: 520px !important;
+}
+
+.p-confirmdialog .p-dialog-header {
+  background: #ffffff !important;
+  padding: 1.25rem 1.25rem 0.95rem 1.25rem !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+}
+
+.p-confirmdialog .p-dialog-title {
+    font-weight: 700 !important;
+    color: #111827 !important;
+  font-size: 1.2rem !important;
+  line-height: 1.3 !important;
+  max-width: calc(100% - 3rem) !important;
+}
+
+.p-confirmdialog .p-dialog-content {
+  padding: 1.1rem 1.5rem !important;
+    display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+    align-items: center !important;
+  gap: 0.5rem !important;
+  text-align: center !important;
+  background: #ffffff !important;
+}
+
+.p-confirmdialog-icon {
+  display: none !important;
+}
+
+.p-confirmdialog-message {
+  font-size: 0.98rem !important;
+  color: #6b7280 !important;
+  line-height: 1.45 !important;
+  margin: 0 !important;
+}
+
+.p-confirmdialog .p-dialog-footer {
+  padding: 0.85rem 1.5rem 1.35rem 1.5rem !important;
+    background: #f9fafb !important;
+    border-top: 1px solid #f3f4f6 !important;
+    display: flex !important;
+  justify-content: flex-end !important;
+  gap: 0.75rem !important;
+}
+
+.p-confirmdialog .p-button {
+  min-width: 5.4rem !important;
+  padding: 0.55rem 1.25rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+  font-size: 0.9rem !important;
+  letter-spacing: 0.01em !important;
+    transition: all 0.2s !important;
+}
+
+.p-confirmdialog .p-button-danger {
+    background-color: #ef4444 !important;
+    border-color: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+.p-confirmdialog .p-button-danger:hover {
+    background-color: #dc2626 !important;
+  border-color: #dc2626 !important;
+}
+
+.p-confirmdialog .p-button-secondary,
+.p-confirmdialog .p-dialog-footer .p-button:not(.p-button-danger) {
+    background-color: white !important;
+    color: #4b5563 !important;
+    border: 1px solid #d1d5db !important;
+}
+
+.p-confirmdialog .p-button-secondary:hover {
+    background-color: #f3f4f6 !important;
+}
+
+.p-confirmdialog .p-dialog-header .p-dialog-header-icon {
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  border-radius: 8px !important;
+  color: #6b7280 !important;
+}
+
+.p-confirmdialog .p-dialog-header .p-dialog-header-icon:hover {
+  background: #f3f4f6 !important;
+  color: #111827 !important;
+}
+
+

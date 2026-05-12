@@ -1,34 +1,22 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-th-sort',
-    templateUrl: './th-sort.component.html',
-    styleUrls: ['./th-sort.component.css'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'app-th-sort',
+  templateUrl: './th-sort.component.html',
+  styleUrls: ['./th-sort.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [CommonModule]
 })
-export class ThSortComponent implements OnInit {
-
+export class ThSortComponent {
   @Input() entity: string = "";
   @Input() name: string = "Title";
   @Input() asc: boolean = true;
   @Input() order: string = "id";
-  @Output() sort: EventEmitter<string> = new EventEmitter<string>();
-
-  con1=false;
-  con2=false;
-  con3=true;
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-  }
+  @Output() sort = new EventEmitter<string>();
 
   setOrder(): void {
     this.sort.emit(this.entity);
   }
-
 }

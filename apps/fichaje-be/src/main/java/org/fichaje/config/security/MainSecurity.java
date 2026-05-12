@@ -1,10 +1,12 @@
 package org.fichaje.config.security;
 
+import lombok.RequiredArgsConstructor;
 import org.fichaje.config.security.apikey.ApiKeyAuthenticationFilter;
 import org.fichaje.config.security.jwt.JwtEntryPoint;
+import org.fichaje.config.security.jwt.JwtProvider;
 import org.fichaje.config.security.jwt.JwtTokenFilter;
 import org.fichaje.config.security.service.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.fichaje.service.ApiKeyService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,28 +22,32 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class MainSecurity {
 
 	private final String RRHH = "RRHH";
 	private final String USER = "USER";
+	private final String SUPER_ADMIN = "SUPER_ADMIN";
+	private final String ADMIN = "ADMIN";
 
-	@Autowired
-	PasswordEncoder passwordEncoder;
+	private final PasswordEncoder passwordEncoder;
 
-	@Autowired
-	UserDetailsServiceImpl userDetailsService;
+	private final UserDetailsServiceImpl userDetailsService;
 
-	@Autowired
-	JwtEntryPoint jwtEntryPoint;
+	private final JwtEntryPoint jwtEntryPoint;
+
+	private final JwtProvider jwtProvider;
+
+	private final ApiKeyService apiKeyService;
 
 	@Bean
 	public JwtTokenFilter jwtTokenFilter() {
-		return new JwtTokenFilter();
+		return new JwtTokenFilter(jwtProvider, userDetailsService);
 	}
 
 	@Bean
 	public ApiKeyAuthenticationFilter apiKeyAuthenticationFilter() {
-		return new ApiKeyAuthenticationFilter();
+		return new ApiKeyAuthenticationFilter(apiKeyService, userDetailsService);
 	}
 
 	@Bean
@@ -71,11 +77,15 @@ public class MainSecurity {
 						.requestMatchers("/permiso/**").hasRole(RRHH)
 						.requestMatchers("/usuario/password/**").hasRole(USER)
 						.requestMatchers("/usuario/miusuario").hasRole(USER)
-						.requestMatchers("/usuario/**").hasRole(RRHH)
+						.requestMatchers("/usuario/**").hasAnyRole(RRHH, SUPER_ADMIN)
 						.requestMatchers("/vacaciones/create").hasRole(USER)
 						.requestMatchers("/vacaciones/pagesFiltered").hasRole(USER)
 						.requestMatchers("/vacaciones/listFiltered").hasRole(USER)
 						.requestMatchers("/vacaciones/**").hasRole(RRHH)
+						.requestMatchers("/empresas/list").hasRole(SUPER_ADMIN)
+						.requestMatchers("/empresas/*/sedes").hasAnyRole(SUPER_ADMIN, RRHH, ADMIN)
+						.requestMatchers("/empresas/**").hasAnyRole(SUPER_ADMIN)
+						.requestMatchers("/sedes/**").hasAnyRole(SUPER_ADMIN, ADMIN)
 						.requestMatchers("/auth/nuevo").hasRole(RRHH)
 						.requestMatchers("/auth/login").permitAll()
 						.requestMatchers("/apikey/**").hasRole(RRHH)

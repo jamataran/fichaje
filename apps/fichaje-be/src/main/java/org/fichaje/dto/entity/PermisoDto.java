@@ -14,17 +14,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PermisoDto {
 
-//	private Date dia;
-//	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss", timezone = "Europe/Madrid")
-//	private Date horaInicio;
-//	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss",timezone="Europe/Madrid" )
-//	private Date horaFin;
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate dia;
+
 	@JsonFormat(pattern = "HH:mm")
 	private LocalTime horaInicio;
+
 	@JsonFormat(pattern = "HH:mm")
 	private LocalTime horaFin;
+
 	private String descripcion;
 	private String numeroUsuario;
 	private String nombreUsuario;

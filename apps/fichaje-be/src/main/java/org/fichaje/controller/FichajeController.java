@@ -2,185 +2,67 @@ package org.fichaje.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.fichaje.converter.FichajeDtoConverter;
 import org.fichaje.dto.entity.FichajeDto;
 import org.fichaje.dto.entity.FichajeDtoReqRes;
 import org.fichaje.provider.db.entity.Fichaje;
-import org.fichaje.provider.db.entity.RrhhDto;
-import org.fichaje.service.SecurityService;
 import org.fichaje.service.FichajeService;
-import org.fichaje.provider.db.specifications.FichajeSpecifications;
+import org.fichaje.dto.entity.Mensaje;
 
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/fichaje")
-//@CrossOrigin(origins = "http://localhost:4200")
 public class FichajeController
 		extends CommonController<Fichaje, FichajeService> {
 
-	@Autowired
-	FichajeDtoConverter dtoConverter;
-	@Autowired
-	FichajeSpecifications specifications;
-	@Autowired
-    SecurityService securityService;
+	public FichajeController(FichajeService service) {
+		super(service);
+	}
 
 	@PostMapping("/now")
 	public ResponseEntity<?> nuevoFichajeNow(
 			@RequestBody FichajeDtoReqRes fichajeDto) {
-		System.out.println("Fichaje");
+		FichajeDtoReqRes result = service.fichar(fichajeDto);
+		if (result == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new Mensaje("No se ha podido realizar el fichaje: Usuario no encontrado o sin empresa asignada"));
+		}
 		return ResponseEntity
 				.status(HttpStatus.CREATED)
-				.body(dtoConverter.fichar(fichajeDto));
-
+				.body(result);
 	}
 
-	@Operation(summary = "Obtiene una lista paginada y filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
+	@Operation(summary = "Obtiene una lista paginada y filtrada de fichajes")
 	@PostMapping("/pagesFiltered")
 	public ResponseEntity<Page<Fichaje>> pageDtoSpec(
 			@RequestBody FichajeDto dto,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
 			@RequestParam(defaultValue = "id") String order,
-			@RequestParam(defaultValue = "true") boolean asc,
-			@RequestHeader(value = "authorization", required = false) String token) {
+			@RequestParam(defaultValue = "true") boolean asc) {
 
-		// Obtener usuario autenticado desde Spring Security (funciona con JWT o API Key)
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentUserNumber = authentication.getName();
-		
-		// Si se proporciona token JWT, usar la lógica de rrhhInfo
-		if (token != null && !token.isEmpty()) {
-			RrhhDto tokenUser = securityService.rrhhInfo(token);
-			// rrhhInfo() devuelve true cuando el usuario ES RRHH
-			// Si NO es RRHH, debe filtrar por su número de usuario
-			if (!tokenUser.isRrhh()) {
-				dto.setNumeroUsuario(tokenUser.getNumber());
-			}
-		} else {
-			// Si no hay token JWT (usando API Key), verificar roles desde Authentication
-			boolean isRrhh = authentication.getAuthorities().stream()
-					.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_RRHH"));
-			
-			// Si NO es RRHH, solo puede ver sus propios fichajes
-			if (!isRrhh) {
-				dto.setNumeroUsuario(currentUserNumber);
-			}
-		}
-
-		Specification<Fichaje> spec = Specification
-				.where(dto.getNombreUsuario() == null ? null
-						: specifications.nombreUsuarioContains(
-								dto.getNombreUsuario()))
-				.and(dto.getNumeroUsuario() == null ? null
-						: specifications.numeroUsuarioContains(
-								dto.getNumeroUsuario()))
-				.and(dto.getTipo() == null ? null
-						: specifications.tipoContains(
-								dto.getTipo()))
-				.and(dto.getHoraDesde() == null ? null
-						: specifications.horaMayorQue(
-								dto.getHoraDesde()))
-				.and(dto.getHoraHasta() == null ? null
-						: specifications.horaMenorQue(
-								dto.getHoraHasta()))
-				.and(dto.getDiaDesde() == null ? null
-						: specifications.diaMayorQue(
-								dto.getDiaDesde()))
-				.and(dto.getDiaHasta() == null ? null
-						: specifications.diaMenorQue(
-								dto.getDiaHasta()));
-
-		Page<Fichaje> entities = service.pagesAndSpec(
-				spec,
-				PageRequest.of(page, size, Sort.by(order)));
-
-		if (!asc)
-			entities = service.pagesAndSpec(
-					spec,
-					PageRequest.of(page, size, Sort.by(order).descending()));
-
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.body(entities);
+		Page<Fichaje> entities = service.getFilteredPages(dto, page, size, order, asc);
+		return ResponseEntity.ok(entities);
 	}
 
-	@Operation(summary = "Obtiene una lista filtrada de objetos, el filtro se realiza a través de un DTO de ejemplo")
+	@Operation(summary = "Obtiene una lista filtrada de fichajes")
 	@PostMapping("/listFiltered")
 	public ResponseEntity<List<Fichaje>> filteredList(
-			@RequestBody FichajeDto dto,
-			@RequestHeader(value = "authorization", required = false) String token) {
+			@RequestBody FichajeDto dto) {
 
-		// Obtener usuario autenticado desde Spring Security (funciona con JWT o API Key)
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentUserNumber = authentication.getName();
-		
-		// Si se proporciona token JWT, usar la lógica de rrhhInfo
-		if (token != null && !token.isEmpty()) {
-			RrhhDto tokenUser = securityService.rrhhInfo(token);
-			// rrhhInfo() devuelve true cuando el usuario ES RRHH
-			// Si NO es RRHH, debe filtrar por su número de usuario
-			if (!tokenUser.isRrhh()) {
-				dto.setNumeroUsuario(tokenUser.getNumber());
-			}
-		} else {
-			// Si no hay token JWT (usando API Key), verificar roles desde Authentication
-			boolean isRrhh = authentication.getAuthorities().stream()
-					.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_RRHH"));
-			
-			// Si NO es RRHH, solo puede ver sus propios fichajes
-			if (!isRrhh) {
-				dto.setNumeroUsuario(currentUserNumber);
-			}
-		}
-
-		Specification<Fichaje> spec = Specification
-				.where(dto.getNombreUsuario() == null ? null
-						: specifications.nombreUsuarioContains(
-								dto.getNombreUsuario()))
-				.and(dto.getNumeroUsuario() == null ? null
-						: specifications.numeroUsuarioContains(
-								dto.getNumeroUsuario()))
-				.and(dto.getTipo() == null ? null
-						: specifications.tipoContains(
-								dto.getTipo()))
-				.and(dto.getHoraDesde() == null ? null
-						: specifications.horaMayorQue(
-								dto.getHoraDesde()))
-				.and(dto.getHoraHasta() == null ? null
-						: specifications.horaMenorQue(
-								dto.getHoraHasta()))
-				.and(dto.getDiaDesde() == null ? null
-						: specifications.diaMayorQue(
-								dto.getDiaDesde()))
-				.and(dto.getDiaHasta() == null ? null
-						: specifications.diaMenorQue(
-								dto.getDiaHasta()));
-
-		List<Fichaje> entities = service.filterAndList(spec);
-
-		return ResponseEntity
-				.status(HttpStatus.OK)
-				.body(entities);
+		List<Fichaje> entities = service.getFilteredList(dto);
+		return ResponseEntity.ok(entities);
 	}
 
 	@PutMapping("/{id}")
@@ -191,9 +73,7 @@ public class FichajeController
 			x.setHora(editar.getHora());
 			x.setTipo(editar.getTipo());
 			return ResponseEntity.ok(service.save(x));
-		}).orElseGet(() -> {
-			return ResponseEntity.notFound().build();
-		});
+		}).orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
 }

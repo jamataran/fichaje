@@ -1,0 +1,21 @@
+.bg-waves {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+}
+
+.bg-blue {
+    background-color: #007bff;
+}
+
+.selected {
+    border-bottom: 3px solid #0056b3;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.small {
+    font-size: 0.85rem;
+}

@@ -1,0 +1,31 @@
+meta {
+    name: Add Sede
+    type: http
+    seq: 12
+}
+
+post {
+    url: {{baseUrl}}/empresas/:empresaId/sedes
+    body: json
+    auth: inherit
+}
+
+params:path {
+    empresaId: {{empresaId}}
+}
+
+body:json {
+    {
+        "nombre": "Sede Central Madrid",
+        "email": "madrid@techsolutions.es",
+        "telefono": "+34912345678",
+        "direccion": "Calle Principal 123",
+        "codigoPostal": "28001",
+        "localidad": "Madrid",
+        "provincia": "Madrid",
+        "pais": "España",
+        "latitud": 40.4168,
+        "longitud": -3.7038,
+        "activa": true
+    }
+}

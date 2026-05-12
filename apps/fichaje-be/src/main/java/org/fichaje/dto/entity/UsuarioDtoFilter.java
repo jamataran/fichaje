@@ -28,4 +28,7 @@ public class UsuarioDtoFilter {
 
 	private Boolean working;
 
+	private Long empresaId;
+	private Long sedeId;
+
 }
