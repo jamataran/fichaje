@@ -31,6 +31,5 @@ logs/
 **/application-local.properties
 
 # Turborepo
-node_modules/
 dist/
 .turbo/
